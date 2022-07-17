@@ -1,0 +1,32 @@
+﻿<Window x:Class="XJ_YSG.MainBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XJ_YSG" 
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"     
+        mc:Ignorable="d"
+        Title="MainBox" Height="1024" Width="768" WindowStyle="None" ResizeMode="CanMinimize" >
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="D:\WorksPace\Net\Project（项目）\钥匙柜2.0\Xj_KeyBox\XJ_YSG\Img\main.png"></ImageBrush>
+        </Grid.Background>
+        <Viewbox Stretch=" fill">
+            <Canvas Width="768" Height="1024"  Background="Transparent">
+                <Button Content="" HorizontalAlignment="Left"  x:Name="Smkey" Click="Smkey_Click" Opacity="0"  Background="Transparent" BorderThickness="0"  Height="150" VerticalAlignment="Top" Width="515" Canvas.Left="22" Canvas.Top="854"/>
+                <Button Content="" HorizontalAlignment="Left"  x:Name="Facekey" Click="Facekey_Click" Background="Transparent" Opacity="0" BorderThickness="0"   Height="150" VerticalAlignment="Top" Width="180" Canvas.Left="565" Canvas.Top="854"/>
+                <materialDesign:PopupBox 
+                 Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
+                      PlacementMode="BottomAndAlignCentres"
+                      ToggleCheckedContentCommandParameter="wowsers" Canvas.Left="688" Canvas.Top="10">
+                    <materialDesign:PopupBox.ToggleContent>
+                        <materialDesign:PackIcon Kind="FormatListBulleted" Width="30" Height="30" />
+                    </materialDesign:PopupBox.ToggleContent>
+                    <StackPanel>
+                        <Button  Style="{StaticResource MaterialDesignRaisedAccentButton}" Width="100" ToolTip="应急开启" x:Name="Emergency_open" Click="Emergency_open_Click">应急开启</Button>
+                    </StackPanel>
+                </materialDesign:PopupBox>
+            </Canvas>
+        </Viewbox>
+    </Grid>
+</Window>
