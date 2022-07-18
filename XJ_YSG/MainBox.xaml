@@ -9,7 +9,7 @@
         Title="MainBox" Height="1024" Width="768" WindowStyle="None" ResizeMode="CanMinimize" >
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="D:\WorksPace\Net\Project（项目）\钥匙柜2.0\Xj_KeyBox\XJ_YSG\Img\main.png"></ImageBrush>
+            <ImageBrush ImageSource="Img\main.png"></ImageBrush>
         </Grid.Background>
         <Viewbox Stretch=" fill">
             <Canvas Width="768" Height="1024"  Background="Transparent">

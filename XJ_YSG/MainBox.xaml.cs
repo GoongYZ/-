@@ -37,7 +37,8 @@ namespace XJ_YSG
         #region 输入钥匙码按钮
         private void Smkey_Click(object sender, RoutedEventArgs e)
         {
-          //xiel
+            Xj_Mima xj_Mima = new Xj_Mima();
+            xj_Mima.ShowDialog();
 
         }
         #endregion

@@ -9,7 +9,7 @@
         Title="Xj_Rlsb" Height="1024" Width="768" WindowStyle="None" ResizeMode="CanMinimize">
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="D:\WorksPace\Net\Project（项目）\钥匙柜2.0\Xj_KeyBox\XJ_YSG\Img\key_rlsb.png"></ImageBrush>
+            <ImageBrush ImageSource="Img\key_rlsb.png"></ImageBrush>
         </Grid.Background>
         <wfi:WindowsFormsHost Name="pictureHost" Margin="179,187,179,416">
             <aforge:VideoSourcePlayer  x:Name="rgbVideoSource" Paint="VideoSource_Paint"/>

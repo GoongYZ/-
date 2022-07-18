@@ -6,7 +6,70 @@
         xmlns:local="clr-namespace:XJ_YSG"
         mc:Ignorable="d"
         Title="Xj_Mima"  Height="1024" Width="768" WindowStyle="None" ResizeMode="CanMinimize">
-    <Grid>
-        
-    </Grid>
+    <StackPanel>
+        <StackPanel.Background>
+            <ImageBrush ImageSource="Img/xj_mima.png"></ImageBrush>
+        </StackPanel.Background>
+        <StackPanel>
+            <Button Width="80" Height="50" Margin="650,20,0,0" Content="取消"  FontSize="20" Background="#2196F3" x:Name="Shut_down" Click="Shut_down_Click"></Button>
+        </StackPanel>
+        <StackPanel Width="358" Height="116"  Margin="212,170,198,675">
+            <Label Height="66"  VerticalAlignment="Center"  HorizontalContentAlignment="Center" Background="Transparent" BorderBrush="Transparent" x:Name="mm" Foreground="White" FontSize="30"  VerticalContentAlignment="Center" Content="" Margin="43,35,43,0" />
+        </StackPanel>
+        <StackPanel Width="358" Height="469"  Margin="212,-675,198,233">
+            <StackPanel Width="336" Height="446"  Margin="11,12,11,11">
+                <Grid x:Name="btn_list">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="5"></RowDefinition>
+                        <!--0-->
+                        <RowDefinition Height="106"></RowDefinition>
+                        <!--1-->
+                        <RowDefinition Height="2"></RowDefinition>
+                        <!--2-->
+                        <RowDefinition Height="106"></RowDefinition>
+                        <!--3-->
+                        <RowDefinition Height="2"></RowDefinition>
+                        <!--4-->
+                        <RowDefinition Height="106"></RowDefinition>
+                        <!--5-->
+                        <RowDefinition Height="2"></RowDefinition>
+                        <!--6-->
+                        <RowDefinition Height="106"></RowDefinition>
+                        <!--7-->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5"></ColumnDefinition>
+                        <!--0-->
+                        <ColumnDefinition Width="107"></ColumnDefinition>
+                        <!--1-->
+                        <ColumnDefinition Width="2"></ColumnDefinition>
+                        <!--2-->
+                        <ColumnDefinition Width="107"></ColumnDefinition>
+                        <!--3-->
+                        <ColumnDefinition Width="2"></ColumnDefinition>
+                        <!--4-->
+                        <ColumnDefinition Width="107"></ColumnDefinition>
+                        <!--5-->
+                    </Grid.ColumnDefinitions>
+
+
+                    <Button Width="106" Height="110" Opacity="0" x:Name="btn_1" Tag="1"  Click="btn_mima_Click" Background="Red" Margin="5,-32,3,38" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+                    <Button Width="106" Height="105"  Grid.Column="2" Opacity="0" x:Name="btn_2" Tag="2" Click="btn_mima_Click" Background="Red" Margin="2,-31,3,37" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+                    <Button Width="106" Height="105"  Grid.Column="4" Opacity="0" x:Name="btn_3" Tag="3" Click="btn_mima_Click" Background="Red" Margin="2,-31,3,37" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+
+                    <Button Width="106" Height="105" Grid.Row="1" Opacity="0" x:Name="btn_4" Tag="4" Click="btn_mima_Click" Background="Red" Margin="5,84,3,25" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
+                    <Button Width="106" Height="105" Grid.Row="1"  Grid.Column="2" Opacity="0" x:Name="btn_5" Tag="5" Click="btn_mima_Click" Background="Red" Margin="2,83,3,26" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
+                    <Button Width="106" Height="105" Grid.Row="1"  Grid.Column="5" Opacity="0" x:Name="btn_6" Tag="6" Click="btn_mima_Click" Background="Red" Margin="1,84,1,25" Grid.RowSpan="3"/>
+
+                    <Button Width="106" Height="105" Grid.Row="3"  Grid.Column="1" Opacity="0" x:Name="btn_7" Tag="7" Click="btn_mima_Click" Background="Red" Margin="0,95,2,14" Grid.RowSpan="3"/>
+                    <Button Width="106" Height="105" Grid.Row="3"  Grid.Column="3" Opacity="0" x:Name="btn_8" Tag="8" Click="btn_mima_Click" Background="Red" Margin="1,98,1,11" Grid.RowSpan="3"/>
+                    <Button Width="106" Height="105" Grid.Row="3"  Grid.Column="5" Opacity="0" x:Name="btn_9" Tag="9" Click="btn_mima_Click" Background="Red" Margin="1,100,1,9" Grid.RowSpan="3"/>
+
+                    <Button Width="106" Height="105" Grid.Row="7"  Grid.Column="1" Opacity="0" x:Name="btn_Delete" Click="btn_Delete_Click"  Background="Red"/>
+                    <Button Width="106" Height="105" Grid.Row="7"  Grid.Column="3" Opacity="0" x:Name="btn_0" Tag="0"  Click="btn_mima_Click"  Background="Red"/>
+                    <Button Width="106" Height="105" Grid.Row="7"  Grid.Column="5" Opacity="0" x:Name="btn_Save"  Click="btn_Save_Click"  Background="Red"/>
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
 </Window>

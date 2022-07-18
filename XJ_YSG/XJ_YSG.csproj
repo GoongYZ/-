@@ -167,9 +167,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="MainBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
