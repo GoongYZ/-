@@ -12,7 +12,7 @@
             <ImageBrush ImageSource="Img\key_rlsb.png"></ImageBrush>
         </Grid.Background>
         <wfi:WindowsFormsHost Name="pictureHost" Margin="179,187,179,416">
-            <aforge:VideoSourcePlayer  x:Name="rgbVideoSource" Paint="VideoSource_Paint"/>
+            <aforge:VideoSourcePlayer  x:Name="rgbVideoSource" Paint="VideoSource_Paint" Dock="Fill"/>
         </wfi:WindowsFormsHost>
 
 

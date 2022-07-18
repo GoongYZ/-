@@ -8,19 +8,9 @@ using FaceBox.TheActivation;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace XJ_YSG
 {
@@ -38,6 +28,7 @@ namespace XJ_YSG
             this.Left = 0;
             this.Top = 0;
             btnStartVideo_Click();
+            Thread.Sleep(1000);
         }
 
         //启用摄像头
