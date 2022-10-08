@@ -138,6 +138,9 @@
     <Compile Include="Xj_Rlsb.xaml.cs">
       <DependentUpon>Xj_Rlsb.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Xj_Zwlr.xaml.cs">
+      <DependentUpon>Xj_Zwlr.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ZKFPModule\BitmapFormat.cs" />
     <Compile Include="ZKFPModule\Fingerprint.cs" />
     <Compile Include="ZKFPModule\ParameterModel.cs" />
@@ -184,6 +187,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Xj_Rlsb.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Xj_Zwlr.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

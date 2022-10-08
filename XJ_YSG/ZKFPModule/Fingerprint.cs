@@ -1,10 +1,11 @@
-﻿using System;
+﻿using BLL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZWSB
+namespace XJ_YSG
 {
 
     /// <summary>
@@ -12,18 +13,18 @@ namespace ZWSB
     /// </summary>
     public class Fingerprint
     {
-
+        Logo log = new Logo();
 
         /// <summary>
         /// 指纹设备链接
         /// </summary>
         /// <returns></returns>
-        //设备连接
         public string  ZW_Connection()
         {           
             if (ParameterModel.m_hDevice == IntPtr.Zero)
             {
                 ParameterModel.m_hDevice = ParameterModel.ZKFPModule_Connect("protocol=USB,vendor-id=6997,product-id=289");
+                ParameterModel.islj = true;
                 return "ok";
             }
             else
@@ -47,6 +48,7 @@ namespace ZWSB
                 {
                 
                     ParameterModel.m_hDevice = IntPtr.Zero;
+                    ParameterModel.islj = false;
                     return "ok";
                 }
                 else
@@ -59,7 +61,63 @@ namespace ZWSB
                 return "ok";
             }
         }
+        /// <summary>
+        /// 添加指纹
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns></returns>
+        public string Addzw(int userid)
+        {
+            // 登记用户模板(设备句柄，用户id)             
+            int nRet = ParameterModel.ZKFPModule_EnrollTemplateByImage(ParameterModel.m_hDevice, userid, ParameterModel.m_pImageBuffer, ParameterModel.m_nSize);
+            if (0 == nRet)
+            {
+                //想窗体发送消息（//初始化为零的指针，常量，用户id）                 
+                //MessageBox.Show("录入成功");
+                log.WriteLogo("录入成功", 5);
+                return "ok";
 
+            }
+            else
+            {
+                string erro = Erroneous(nRet.ToString());              
+                log.WriteLogo("录入失败!" + "错误原因:" + erro, 5);
+                return "erro";
+            }
+        }
+
+
+        /// <summary>
+        /// 删除指纹
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns></returns>
+        public string delzw(int userid)
+        {
+            if (ParameterModel.m_hDevice != IntPtr.Zero)
+            {
+                int nRet = ParameterModel.ZKFPModule_DeleteUser(ParameterModel.m_hDevice, userid);
+                if (0 == nRet)
+                {
+                    return "ok";
+                }
+                else
+                {
+                    return "erro";
+                }
+            }
+            else
+            {
+                return "erro";
+            }
+        }
+
+
+        /// <summary>
+        /// 错误码
+        /// </summary>
+        /// <param name="Iserro"></param>
+        /// <returns></returns>
         public string Erroneous(string  Iserro) 
         {
             string erro = "";

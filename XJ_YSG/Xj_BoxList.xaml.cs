@@ -29,7 +29,8 @@ namespace XJ_YSG
 
         private void Button_zwlr_Click(object sender, RoutedEventArgs e)
         {
-
+            Xj_Zwlr zwlr = new Xj_Zwlr();
+            zwlr.Show();
         }
     }
 }

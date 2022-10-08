@@ -10,7 +10,7 @@ using System.Threading;
 using System.Windows;
 using BLL;
 using System.Drawing;
-using ZWSB;
+using XJ_YSG;
 using System.Windows.Threading;
 
 namespace XJ_YSG
@@ -34,14 +34,8 @@ namespace XJ_YSG
             }           
             if (fingerprint.ZW_Connection() == "ok")
             {
-                zwthan();
-                //MessageBox.Show("连接成功");
-
-            }
-            else
-            {
-                //MessageBox.Show("连接失败");
-            }
+                zwthan();              
+            }          
         }
 
 

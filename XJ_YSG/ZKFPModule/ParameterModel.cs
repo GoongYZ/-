@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZWSB
+namespace XJ_YSG
 {
 
     /// <summary>
@@ -19,6 +19,7 @@ namespace ZWSB
         #region 存放临时登记模板
         public static int m_UserId = -1;  //用户ID
         public  static IntPtr m_hDevice = IntPtr.Zero;  //设备句柄
+        public static bool islj = false;
         public static byte[] m_pImageBuffer = new byte[640 * 480];  //指纹图像数据
         public static int m_nWidth = 0;
         public static int m_nHeight = 0;

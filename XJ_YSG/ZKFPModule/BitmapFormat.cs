@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.IO;
 
-namespace  ZWSB
+namespace  XJ_YSG
 {
     public class BitmapFormat
     {

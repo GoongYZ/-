@@ -1,0 +1,16 @@
+﻿<Window x:Class="XJ_YSG.Xj_Zwlr"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XJ_YSG"
+        mc:Ignorable="d"
+        Title="Xj_BoxList"  Height="650" Width="500" WindowStyle="None" ResizeMode="CanMinimize">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="Img\xj_zwlr.png"></ImageBrush>
+        </Grid.Background>
+        <Image x:Name="pictureBox_FingerImg"  HorizontalAlignment="Left" Height="320" Margin="130,90,0,0" VerticalAlignment="Top" Width="240"/>
+        <Button x:Name="tc" Width="100" Height="100"></Button>
+    </Grid>
+</Window>
