@@ -10,6 +10,8 @@ using System.Threading;
 using System.Windows;
 using BLL;
 using System.Drawing;
+using ZWSB;
+using System.Windows.Threading;
 
 namespace XJ_YSG
 {
@@ -19,6 +21,7 @@ namespace XJ_YSG
     public partial class MainBox : Window
     {
         Activation activation = new Activation();
+        Fingerprint fingerprint = new Fingerprint();
         Logo log = new Logo();
         public MainBox()
         {
@@ -29,6 +32,16 @@ namespace XJ_YSG
             {       
                 ChooseMultiImg();               
             }           
+            if (fingerprint.ZW_Connection() == "ok")
+            {
+                zwthan();
+                //MessageBox.Show("连接成功");
+
+            }
+            else
+            {
+                //MessageBox.Show("连接失败");
+            }
         }
 
 
@@ -60,6 +73,45 @@ namespace XJ_YSG
         #endregion
 
         #region 指纹识别
+
+        DispatcherTimer zwTimer = new DispatcherTimer();
+        public void zwthan()
+        {
+            zwTimer.Interval = new TimeSpan(0, 0, 0, 0, 200); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
+            zwTimer.Tick += new EventHandler(disTimer_Tick_canShow); //每一秒执行的方法
+            zwTimer.Start();
+        }
+
+        void disTimer_Tick_canShow(object sender, EventArgs e)
+        {
+            int UserID = 0;
+            int Index = 0;
+            int nRet = -1;
+            //每秒比对一次 
+            nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref ParameterModel.m_nWidth, ref ParameterModel.m_nHeight, ParameterModel.m_pImageBuffer, ref ParameterModel.m_nSize);
+            if (nRet == 0)
+            {
+                // 实时接收在模块指纹采集器上比对成功不否的数据到host
+                //( 设备句柄,返回识别到的用户ID,返回用户对应的手指索引号(0-9))
+                nRet = ParameterModel.ZKFPModule_FreeScan(ParameterModel.m_hDevice, ref UserID, ref Index);
+                if (nRet == 0)
+                {
+                    zwTimer.Stop();
+                    log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index,1);                                       
+                }
+                else
+                {
+                    string erro = fingerprint.Erroneous(nRet.ToString());
+                    log.WriteLogo("错误原因:" + erro, 5);                 
+                }
+            }
+            else
+            {
+                string erro = fingerprint.Erroneous(nRet.ToString());
+                log.WriteLogo("错误原因:" + erro, 5);
+                
+            }
+        }
 
         #endregion
 
@@ -147,7 +199,7 @@ namespace XJ_YSG
                             {
                                 this.Dispatcher.Invoke(new Action(delegate
                                 {
-                                    log.WriteLogo("未检测到人脸", 1);
+                                    log.WriteLogo("未检测到人脸", 3);
                                 }));
                                 if (image != null)
                                 {
@@ -205,7 +257,7 @@ namespace XJ_YSG
             {
                 if (imagePath == null)
                 {
-                    log.WriteLogo("图片不存在，请确认后再导入", 1);
+                    log.WriteLogo("图片不存在，请确认后再导入", 3);
                     return false;
                 }
                 try
@@ -223,23 +275,23 @@ namespace XJ_YSG
                 }
                 catch
                 {
-                    log.WriteLogo(string.Format("{0} 图片格式有问题，请确认后再导入", imagePath), 1);
+                    log.WriteLogo(string.Format("{0} 图片格式有问题，请确认后再导入", imagePath), 3);
                     return false;
                 }
                 FileInfo fileCheck = new FileInfo(imagePath);
                 if (!fileCheck.Exists)
                 {
-                    log.WriteLogo(string.Format("{0} 不存在", fileCheck.Name), 1);
+                    log.WriteLogo(string.Format("{0} 不存在", fileCheck.Name), 3);
                     return false;
                 }
                 else if (fileCheck.Length > EntityModel.maxSize)
                 {
-                    log.WriteLogo(string.Format("{0} 图片大小超过2M，请压缩后再导入", fileCheck.Name), 1);
+                    log.WriteLogo(string.Format("{0} 图片大小超过2M，请压缩后再导入", fileCheck.Name), 3);
                     return false;
                 }
                 else if (fileCheck.Length < 2)
                 {
-                    log.WriteLogo(string.Format("{0} 图像质量太小，请重新选择", fileCheck.Name), 1);
+                    log.WriteLogo(string.Format("{0} 图像质量太小，请重新选择", fileCheck.Name), 3);
                     return false;
                 }
             }

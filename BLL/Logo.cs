@@ -35,40 +35,22 @@ namespace BLL
             switch (type)
             {
                 case 0:
-                    rtn = "_info";
+                    rtn = "_用户日志";
                     break;
                 case 1:
-                    rtn = "_kgm";
+                    rtn = "_错误日志";
                     break;
                 case 2:
-                    rtn = "_DVR";
+                    rtn = "_读卡日志";
                     break;
                 case 3:
-                    rtn = "_ewm";
+                    rtn = "_人脸识别";
                     break;
                 case 4:
                     rtn = "_rfid";
                     break;
                 case 5:
-                    rtn = "_menjing";
-                    break;
-                case 6:
-                    rtn = "_gongkongji";
-                    break;
-                case 7:
-                    rtn = "_spjk";
-                    break;
-                case 8:
-                    rtn = "_UHF";
-                    break;
-                case 10:
-                    rtn = "_VOICE";
-                    break;
-                case 9:
-                    rtn = "_error";
-                    break;
-                case 11:
-                    rtn = "_UHF";
+                    rtn = "_指纹日志";
                     break;
             }
             return rtn;

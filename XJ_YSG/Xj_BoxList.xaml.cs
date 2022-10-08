@@ -24,7 +24,12 @@ namespace XJ_YSG
             InitializeComponent();
             this.Left = 0;
             this.Top = 0;
-            sjhm_lab.Content = sjhm;
+           
+        }
+
+        private void Button_zwlr_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

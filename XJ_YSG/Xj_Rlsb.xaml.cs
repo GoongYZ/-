@@ -41,7 +41,7 @@ namespace XJ_YSG
                 //必须保证有可用摄像头
                 if (EntityModel.filterInfoCollection.Count == 0)
                 {
-                    log.WriteLogo("未检测到摄像头，请确保已安装摄像头或驱动!", 1);
+                    log.WriteLogo("未检测到摄像头，请确保已安装摄像头或驱动!", 3);
                     return;
                 }
                 //显示摄像头控件
@@ -121,7 +121,7 @@ namespace XJ_YSG
                             FaceTrackUnit tempFaceTrack = EntityModel.trackRGBUnitDict.GetElementByKey(tempFaceId);
 
                             //RGB活体检测
-                            Console.WriteLine(string.Format("faceId:{0},活体检测第{1}次\r\n", tempFaceId, tryTime));
+                            log.WriteLogo(string.Format("faceId:{0},活体检测第{1}次\r\n", tempFaceId, tryTime),3);
                             SingleFaceInfo singleFaceInfo = new SingleFaceInfo();
                             singleFaceInfo.faceOrient = tempFaceTrack.FaceOrient;
                             singleFaceInfo.faceRect = tempFaceTrack.Rect;
@@ -226,7 +226,7 @@ namespace XJ_YSG
                             //特征搜索
                             int faceIndex = -1;
                             float similarity = 0f;
-                            Console.WriteLine(string.Format("faceId:{0},特征搜索第{1}次\r\n", tempFaceId, tryTime));
+                            log.WriteLogo(string.Format("faceId:{0},特征搜索第{1}次\r\n", tempFaceId, tryTime),3);
                             //提取人脸特征
                             SingleFaceInfo singleFaceInfo = new SingleFaceInfo();
                             singleFaceInfo.faceOrient = tempFaceTrack.FaceOrient;
@@ -407,6 +407,7 @@ namespace XJ_YSG
                                         string aimil = "";
                                         EntityModel.imageLists.TryGetValue(index, out aimil);
                                         //截取aimil 拿到手机号码  D:\ixjkj\synchro\龚于诏_19888925110.jpg
+                                        log.WriteLogo(aimil+"识别成功", 3);
                                         string sjhm = System.Text.RegularExpressions.Regex.Replace(aimil, @"[^0-9]+", "");
                                         //将手机号码传给新页面
                                         Xj_BoxList boxList = new Xj_BoxList(sjhm);
