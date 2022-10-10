@@ -31,11 +31,11 @@ namespace XJ_YSG
             if (activation.InitEngines() == "1")
             {       
                 ChooseMultiImg();               
-            }           
+            }
             if (fingerprint.ZW_Connection() == "ok")
             {
-                zwthan();              
-            }          
+                zwthan();
+            }
         }
 
 
