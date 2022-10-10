@@ -103,7 +103,10 @@ namespace XJ_YSG
                 if (nRet == 0)
                 {
                     zwTimer.Stop();
-                    log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index,1);                                       
+                    log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index,1);
+                    Xj_BoxList boxList = new Xj_BoxList();
+                    boxList.Show();
+                    
                 }
                 else
                 {

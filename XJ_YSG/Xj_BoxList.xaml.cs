@@ -25,7 +25,7 @@ namespace XJ_YSG
         public Xj_BoxList()
         {
             InitializeComponent();
-            this.Left = 0;
+            this.Left = 50;
             this.Top = 0;
             Bindinfo();
         }
