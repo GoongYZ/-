@@ -38,7 +38,7 @@ namespace XJ_YSG
             tb.Columns.Add("UriSource");
             tb.Columns.Add("BH1");
             tb.Columns.Add("BH2");
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 50; i++)
             {
                 DataRow dr = tb.NewRow();
                 dr["UriSource"] = "img/Boxlist_daifenpei.png";

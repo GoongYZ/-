@@ -94,6 +94,7 @@
     <Reference Include="MaterialDesignThemes.Wpf, Version=4.5.0.0, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignThemes.4.5.0\lib\net452\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -139,6 +140,9 @@
     </Compile>
     <Compile Include="Xj_Rlsb.xaml.cs">
       <DependentUpon>Xj_Rlsb.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Xj_Ycsy.xaml.cs">
+      <DependentUpon>Xj_Ycsy.xaml</DependentUpon>
     </Compile>
     <Compile Include="Xj_Zwlr.xaml.cs">
       <DependentUpon>Xj_Zwlr.xaml</DependentUpon>
@@ -190,6 +194,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Xj_Rlsb.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Xj_Ycsy.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

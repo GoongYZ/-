@@ -74,6 +74,7 @@
             </Setter>
         </Style>
     </Window.Resources>
+
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="Img\Boxlist.png"></ImageBrush>
@@ -85,7 +86,7 @@
         <ListBox x:Name="s_1"  Focusable="False" Width="740"  Height="740"   VerticalAlignment="Top" Opacity="1"  BorderThickness="0"  Background="Transparent"   ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Hidden"  BorderBrush="Transparent" ItemsSource="{Binding}" Margin="0,270,0,0" >
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Columns="4" Rows="17"/>
+                    <UniformGrid Columns="4" Rows="13"/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate >

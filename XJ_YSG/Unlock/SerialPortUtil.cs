@@ -6,7 +6,7 @@ using System.Threading;
 using System.IO;
 using System.Windows.Controls;
 
-namespace SerailPortForm
+namespace XJ_YSG
 {
     /// <summary>
     /// 串口开发辅助类

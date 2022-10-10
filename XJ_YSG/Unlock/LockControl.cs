@@ -1,16 +1,11 @@
 ﻿
 using BLL;
-using SerailPortForm;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
-namespace USB_send
+namespace XJ_YSG
 {
-     public class LockControl
+    public class LockControl
     {
         private SerialPortUtil port = new SerialPortUtil();
        // private static string ComPortName = ServerBase.XMLRead("Lock", "COM_LOCK");
