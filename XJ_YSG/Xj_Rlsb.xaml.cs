@@ -410,7 +410,7 @@ namespace XJ_YSG
                                         log.WriteLogo(aimil+"识别成功", 3);
                                         string sjhm = System.Text.RegularExpressions.Regex.Replace(aimil, @"[^0-9]+", "");
                                         //将手机号码传给新页面
-                                        Xj_BoxList boxList = new Xj_BoxList(sjhm);
+                                        Xj_BoxList boxList = new Xj_BoxList();
                                         this.Close();
                                         boxList.ShowDialog();
                                     }

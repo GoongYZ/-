@@ -59,6 +59,10 @@ namespace XJ_YSG
         }
         #endregion
 
+
+
+
+
         #region 应急开启按钮
         private void Emergency_open_Click(object sender, RoutedEventArgs e)
         {
@@ -66,9 +70,17 @@ namespace XJ_YSG
         }
         #endregion
 
+
+
+
+
         #region 指纹识别
 
         DispatcherTimer zwTimer = new DispatcherTimer();
+
+        /// <summary>
+        /// 指纹识别倒计时
+        /// </summary>
         public void zwthan()
         {
             zwTimer.Interval = new TimeSpan(0, 0, 0, 0, 200); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
@@ -108,6 +120,10 @@ namespace XJ_YSG
         }
 
         #endregion
+
+
+
+
 
         #region 人脸库注册
         /// <summary>
@@ -223,6 +239,7 @@ namespace XJ_YSG
                                 if (i == imagePathListTemp.Count)
                                 {
                                     //进行语音播报 "人脸识别初始化成功"
+                                    SpeechVoice.speack("人脸识别初始化成功");
                                 }
 
                             }));

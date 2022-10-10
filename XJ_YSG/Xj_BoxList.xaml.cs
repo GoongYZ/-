@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,18 +20,64 @@ namespace XJ_YSG
     /// </summary>
     public partial class Xj_BoxList : Window
     {
-        public Xj_BoxList( string  sjhm)
+        DataTable tb = new DataTable();
+
+        public Xj_BoxList()
         {
             InitializeComponent();
             this.Left = 0;
             this.Top = 0;
-           
+            Bindinfo();
         }
+
+
+
+        private void Bindinfo()
+        {
+            //获取用户可以打开的柜号         
+            tb.Columns.Add("UriSource");
+            tb.Columns.Add("BH1");
+            tb.Columns.Add("BH2");
+            for (int i = 0; i < 10; i++)
+            {
+                DataRow dr = tb.NewRow();
+                dr["UriSource"] = "img/Boxlist_daifenpei.png";
+                dr["BH1"] = "01";
+                dr["BH2"] = "待分配";
+                tb.Rows.Add(dr);
+            }
+            s_1.DataContext = tb;
+        }
+
 
         private void Button_zwlr_Click(object sender, RoutedEventArgs e)
         {
             Xj_Zwlr zwlr = new Xj_Zwlr();
             zwlr.Show();
         }
+
+        private void Grid_b_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //遍历用户控件
+            var d = sender as Grid;
+            d.Focus();
+            UIElementCollection Childrens = d.Children;
+            foreach (UIElement ui in Childrens)
+            {
+                if (((Label)ui).Name == "BH")
+                {
+                    string dwm = ((Label)ui).Content.ToString();
+                    if (!string.IsNullOrEmpty(dwm))
+                    {
+                        //开启柜门                      
+                        //KeyMessage keyMessage = new KeyMessage(dwm);
+                        //keyMessage.ShowDialog();
+                    }
+                }
+            }
+        }
+
+
+        
     }
 }

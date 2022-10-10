@@ -59,7 +59,6 @@ namespace XJ_YSG
                     disTimer.Stop();
                 }
             }
-
         }
         #endregion
 
@@ -69,6 +68,7 @@ namespace XJ_YSG
         /// </summary>
         private void Button_lr_Click(object sender, RoutedEventArgs e)
         {
+            //这里需要通过人脸识别或密码开启后获取的手机号码查询出id。
             int userid = 0;
             if (userid != 0)
             {

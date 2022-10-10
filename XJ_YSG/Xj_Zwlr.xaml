@@ -11,6 +11,7 @@
             <ImageBrush ImageSource="Img\xj_zwlr.png"></ImageBrush>
         </Grid.Background>
         <Image x:Name="pictureBox_FingerImg"  HorizontalAlignment="Left" Height="320" Margin="130,90,0,0" VerticalAlignment="Top" Width="240"/>
-        <Button x:Name="tc" Width="100" Height="100"></Button>
+        <Button  Margin="31,555,311,32"  Opacity="0"/>
+        <Button  Margin="210,556,31,31"  Opacity="0"  Click="Button_lr_Click"/>
     </Grid>
 </Window>

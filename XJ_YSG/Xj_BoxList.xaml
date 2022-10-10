@@ -7,16 +7,99 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="Xj_BoxList"  Height="1024" Width="768" WindowStyle="None" ResizeMode="CanMinimize">
+    <Window.Resources>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--按钮静态时背景颜色-->
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#43A800"/>
+        <!--按钮静态时边框颜色-->
+        <SolidColorBrush x:Key="Button.Static.Border" Color="#43A800"/>
+        <!--鼠标移入时背景颜色-->
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <!--鼠标移入时边框颜色-->
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <!--鼠标按下时背景颜色-->
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <!--鼠标按下时边框颜色-->
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <!--按钮不使用时背景颜色-->
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <!--按钮不使用时边框颜色-->
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#43A800"/>
+        <!--按钮不使用时文字颜色-->
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FFF4F4F4"/>
+
+        <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" CornerRadius="10" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="Img\Boxlist.png"></ImageBrush>
         </Grid.Background>
-        
-        <Grid Width="124" Height="50" Background="AntiqueWhite" Margin="307,163,337,811">
-            <Button Style="{StaticResource MaterialDesignRaisedButton}"  materialDesign:ButtonAssist.CornerRadius="10" ToolTip="MaterialDesignRaisedButton with Round Corners" Click="Button_zwlr_Click" Margin="0,0,0,0">
-                <TextBlock FontSize="20" Text="指纹录入" />
-            </Button>
+        <Grid>
+            <Button FontSize="32" Width="240" Height="78"  Foreground="#FEFEFE" FontWeight="Black"  FontFamily="MicrosoftYaHei"  Margin="264,162,264,784" Style="{DynamicResource ButtonStyle1}" >指纹录入</Button>
         </Grid>
 
+        <ListBox x:Name="s_1"  Focusable="False" Width="740"  Height="740"   VerticalAlignment="Top" Opacity="1"  BorderThickness="0"  Background="Transparent"   ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Hidden"  BorderBrush="Transparent" ItemsSource="{Binding}" Margin="0,270,0,0" >
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="4" Rows="17"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate >
+                <DataTemplate>
+                    <Grid Height="110" Width="165" x:Name="Grid_b" Tag="{Binding Path=BH}" MouseDown="Grid_b_MouseDown" >
+                        <Grid.Background>
+                            <ImageBrush  ImageSource="{Binding Path=UriSource}"/>
+                        </Grid.Background>
+                        <Label Content="{Binding Path=BH1}"  FontFamily="Microsoft YaHei" FontSize="36" FontWeight="black"  Foreground="#333333"   Margin="30,10,0,0"/>
+                        <Label Content="{Binding Path=BH2}"  FontFamily="Microsoft YaHei" FontSize="20" FontWeight="black" Foreground="#999999"   Margin="24,65,0,0"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
+
 </Window>
