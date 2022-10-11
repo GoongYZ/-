@@ -18,8 +18,7 @@ namespace XJ_YSG
 
         #region 存放临时登记模板
         public static int m_UserId = -1;  //用户ID
-        public  static IntPtr m_hDevice = IntPtr.Zero;  //设备句柄
-        public static bool islj = false;
+        public  static IntPtr m_hDevice = IntPtr.Zero;  //设备句柄        
         public static byte[] m_pImageBuffer = new byte[640 * 480];  //指纹图像数据
         public static int m_nWidth = 0;
         public static int m_nHeight = 0;
@@ -30,6 +29,10 @@ namespace XJ_YSG
         const int MESSAGE_REGISTER_COUNT = 0x0400 + 31;
         const int MESSAGE_REGISTER_OK = 0x0400 + 41;
         const int MESSAGE_REGISTER_FAIL = 0x0400 + 42;
+
+
+        //是否继续识别
+        public static bool issbzw = true;
         #endregion
 
         #region  dll

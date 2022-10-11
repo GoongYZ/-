@@ -33,6 +33,7 @@ namespace XJ_YSG
             {
                 ChooseMultiImg();
             }
+
             if (fingerprint.ZW_Connection() == "ok")
             {
                 zwthan();
@@ -52,16 +53,15 @@ namespace XJ_YSG
         #endregion
 
 
+
         #region 开启人脸识别按钮
         private void Facekey_Click(object sender, RoutedEventArgs e)
         {
-            zwTimer.Stop();
+            ParameterModel.issbzw = false;
             Xj_Rlsb xj_Rlsb = new Xj_Rlsb();
             xj_Rlsb.ShowDialog();
         }
         #endregion
-
-
 
 
 
@@ -71,8 +71,6 @@ namespace XJ_YSG
 
         }
         #endregion
-
-
 
 
 
@@ -88,14 +86,16 @@ namespace XJ_YSG
             zwTimer.Interval = new TimeSpan(0, 0, 0, 0, 500); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
             zwTimer.Tick += new EventHandler(disTimer_Tick_canShow); //每一秒执行的方法
             zwTimer.Start();
+
         }
 
         void disTimer_Tick_canShow(object sender, EventArgs e)
         {
             int UserID = 0;
             int Index = 0;
-            int nRet = -1;     
-    
+            int nRet = -1;
+            if (ParameterModel.issbzw) //当主页跳转后停止识别
+            {
                 //1:1比对
                 //nRet = ParameterModel.ZKFPModule_Verify(ParameterModel.m_hDevice, UserID);                
                 //// 实时接收在模块指纹采集器上比对成功不否的数据到host
@@ -104,22 +104,19 @@ namespace XJ_YSG
                 nRet = ParameterModel.ZKFPModule_FreeScan(ParameterModel.m_hDevice, ref UserID, ref Index);
                 if (nRet == 0)
                 {
-                    zwTimer.Stop();
+                    ParameterModel.issbzw = false;
                     log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index, 5);
                     Xj_BoxList boxList = new Xj_BoxList();
                     boxList.Show();
-
                 }
                 else
                 {
                     string erro = fingerprint.Erroneous(nRet.ToString());
-                    log.WriteLogo("错误原因:" + erro, 1);
+                    log.WriteLogo("错误原因:" + erro, 5);
                 }
-                   
+            }                             
         }
         #endregion
-
-
 
 
 
@@ -339,17 +336,6 @@ namespace XJ_YSG
 
 
         #endregion
-
-
-
-
-
-
-
-
-
-
-
 
     }
 }

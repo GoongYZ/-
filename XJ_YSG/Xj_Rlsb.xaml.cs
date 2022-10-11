@@ -513,10 +513,13 @@ namespace XJ_YSG
             rgbVideoSource.Hide();
             EntityModel.exitVideoRGBFR = true;
             EntityModel.exitVideoRGBLiveness = true;
+
+            ParameterModel.issbzw = false;  //跳转主页后指纹要继续识别
         }
 
         private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+           
             this.Close();
         }
     }

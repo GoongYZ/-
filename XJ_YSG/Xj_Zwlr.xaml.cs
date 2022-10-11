@@ -27,10 +27,16 @@ namespace XJ_YSG
         public Xj_Zwlr()
         {
             InitializeComponent();
-            if (ParameterModel.islj == true) 
+
+            if (ParameterModel.m_hDevice != IntPtr.Zero)
             {
                 CanShow();
             }
+            else 
+            {
+                fingerprint.ZW_Connection();
+            }
+                     
         }
 
 

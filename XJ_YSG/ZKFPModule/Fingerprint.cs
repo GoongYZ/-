@@ -23,8 +23,7 @@ namespace XJ_YSG
         {           
             if (ParameterModel.m_hDevice == IntPtr.Zero)
             {
-                ParameterModel.m_hDevice = ParameterModel.ZKFPModule_Connect("protocol=USB,vendor-id=6997,product-id=289");
-                ParameterModel.islj = true;
+                ParameterModel.m_hDevice = ParameterModel.ZKFPModule_Connect("protocol=USB,vendor-id=6997,product-id=289");               
                 log.WriteLogo("指纹激活成功", 5);
                 return "ok";
             }
@@ -48,8 +47,7 @@ namespace XJ_YSG
                 if (nRet==0)
                 {
                 
-                    ParameterModel.m_hDevice = IntPtr.Zero;
-                    ParameterModel.islj = false;
+                    ParameterModel.m_hDevice = IntPtr.Zero;                  
                     return "ok";
                 }
                 else
