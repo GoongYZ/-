@@ -35,7 +35,6 @@
         <SolidColorBrush x:Key="Button.Disabled.Border" Color="#43A800"/>
         <!--按钮不使用时文字颜色-->
         <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FFF4F4F4"/>
-
         <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
             <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
             <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
@@ -79,6 +78,7 @@
         <Grid.Background>
             <ImageBrush ImageSource="Img\Boxlist.png"></ImageBrush>
         </Grid.Background>
+        <Button x:Name="btn_clos"  Opacity="0" Click="btn_clos_Click" Width="70" Height="70" Margin="635,0,0,910" > </Button>
         <Grid>
             <Button FontSize="32" Width="240" Height="78"  Foreground="#FEFEFE" FontWeight="Black"  FontFamily="MicrosoftYaHei"  Margin="264,162,264,784" Style="{DynamicResource ButtonStyle1}" >指纹录入</Button>
         </Grid>

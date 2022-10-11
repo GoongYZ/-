@@ -11,6 +11,7 @@
         <Grid.Background>
             <ImageBrush ImageSource="Img\main.png"></ImageBrush>
         </Grid.Background>
+        <Image x:Name="pictureBox_FingerImg"  HorizontalAlignment="Left" Height="200" Margin="4,3,0,0" VerticalAlignment="Top" Width="200"/>
         <Viewbox Stretch=" fill">
             <Canvas Width="768" Height="1024"  Background="Transparent">
                 <Button Content="" HorizontalAlignment="Left"  x:Name="Smkey" Click="Smkey_Click" Opacity="0"  Background="Transparent" BorderThickness="0"  Height="150" VerticalAlignment="Top" Width="515" Canvas.Left="22" Canvas.Top="854"/>

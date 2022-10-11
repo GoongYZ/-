@@ -25,6 +25,7 @@ namespace XJ_YSG
             {
                 ParameterModel.m_hDevice = ParameterModel.ZKFPModule_Connect("protocol=USB,vendor-id=6997,product-id=289");
                 ParameterModel.islj = true;
+                log.WriteLogo("指纹激活成功", 5);
                 return "ok";
             }
             else

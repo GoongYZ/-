@@ -109,26 +109,26 @@ namespace FaceBox.TheActivation
                 //初始化引擎，正常值为0，其他返回值请参考http://ai.arcsoft.com.cn/bbs/forum.php?mod=viewthread&tid=19&_dsign=dbad527e
                 retCode = EntityModel.imageEngine.ASFInitEngine(detectMode, imageDetectFaceOrientPriority, detectFaceMaxNum, combinedMask);
                 Console.WriteLine("InitEngine Result:" + retCode);
-                log.WriteLogo((retCode == 0) ? "图片引擎初始化成功!" : string.Format("图片引擎初始化失败!错误码为:{0}", retCode), 1);
+                log.WriteLogo((retCode == 0) ? "图片引擎初始化成功!" : string.Format("图片引擎初始化失败!错误码为:{0}", retCode),3);
             
 
                 //初始化视频模式下人脸检测引擎
                 DetectionMode detectModeVideo = DetectionMode.ASF_DETECT_MODE_VIDEO;
                 int combinedMaskVideo = FaceEngineMask.ASF_FACE_DETECT | FaceEngineMask.ASF_FACERECOGNITION | FaceEngineMask.ASF_FACELANDMARK;
                 retCode = EntityModel.videoEngine.ASFInitEngine(detectModeVideo, videoDetectFaceOrientPriority, detectFaceMaxNum, combinedMaskVideo);
-                log.WriteLogo((retCode == 0) ? "视频引擎初始化成功!" : string.Format("视频引擎初始化失败!错误码为:{0}", retCode), 1);
+                log.WriteLogo((retCode == 0) ? "视频引擎初始化成功!" : string.Format("视频引擎初始化失败!错误码为:{0}", retCode), 3);
              
 
                 //RGB视频专用FR引擎
                 combinedMask = FaceEngineMask.ASF_FACE_DETECT | FaceEngineMask.ASF_FACERECOGNITION | FaceEngineMask.ASF_LIVENESS | FaceEngineMask.ASF_MASKDETECT;
                 retCode = EntityModel.videoRGBImageEngine.ASFInitEngine(detectMode, videoDetectFaceOrientPriority, detectFaceMaxNum, combinedMask);
-                log.WriteLogo((retCode == 0) ? "RGB处理引擎初始化成功!" : string.Format("RGB处理引擎初始化失败!错误码为:{0}", retCode), 1);
+                log.WriteLogo((retCode == 0) ? "RGB处理引擎初始化成功!" : string.Format("RGB处理引擎初始化失败!错误码为:{0}", retCode), 3);
                 //设置活体阈值
                 EntityModel.videoRGBImageEngine.ASFSetLivenessParam(EntityModel.thresholdRgb);
                 //IR视频专用FR引擎
                 combinedMask = FaceEngineMask.ASF_FACE_DETECT | FaceEngineMask.ASF_FACERECOGNITION | FaceEngineMask.ASF_IR_LIVENESS;
                 retCode = EntityModel.videoIRImageEngine.ASFInitEngine(detectModeVideo, videoDetectFaceOrientPriority, detectFaceMaxNum, combinedMask);
-                log.WriteLogo((retCode == 0) ? "IR处理引擎初始化成功!\r\n" : string.Format("IR处理引擎初始化失败!错误码为:{0}\r\n", retCode), 1);
+                log.WriteLogo((retCode == 0) ? "IR处理引擎初始化成功!\r\n" : string.Format("IR处理引擎初始化失败!错误码为:{0}\r\n", retCode), 3);
                 //设置活体阈值
                 EntityModel.videoIRImageEngine.ASFSetLivenessParam(EntityModel.thresholdRgb, EntityModel.thresholdIr);
                 initVideo();
@@ -137,7 +137,7 @@ namespace FaceBox.TheActivation
             catch (Exception ex)
             {
                 LogUtil.LogInfo(GetType(), ex);
-                log.WriteLogo("程序初始化异常,请在App.config中修改日志配置,根据日志查找原因!", 1);
+                log.WriteLogo("程序初始化异常,请在App.config中修改日志配置,根据日志查找原因!", 3);
                 System.Environment.Exit(0);
                 return "0";
             }

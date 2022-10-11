@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Threading;
 
 namespace XJ_YSG
 {
@@ -22,14 +23,50 @@ namespace XJ_YSG
 
         Activation activation = new Activation();
         Logo log = new Logo();
+        private int countSecond = 30;
         public Xj_Rlsb()
         {
             InitializeComponent();
             this.Left = 0;
             this.Top = 0;
+            closeDjs();
             btnStartVideo_Click();
-            Thread.Sleep(1000);
+            this.Closed += Xj_Rlsb_Closed; //窗体关闭时人脸资源释放掉，否则下次无法正常显示
+           
+
         }
+
+
+        #region 倒计时
+
+        DispatcherTimer disTimer_djs = new DispatcherTimer();
+
+        private void closeDjs()
+        {
+            disTimer_djs.Interval = new TimeSpan(0, 0, 0, 1); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
+            disTimer_djs.Tick += new EventHandler(disTimer_Tick); //每一秒执行的方法
+        }
+        void disTimer_Tick(object sender, EventArgs e)
+        {
+            
+                countSecond--;
+                //判断lblSecond是否处于UI线程上
+                if (lbl_djs.Dispatcher.CheckAccess())
+                {
+                    lbl_djs.Content = countSecond.ToString();
+                }
+                else
+                {
+                    lbl_djs.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                    {
+                        lbl_djs.Content = countSecond.ToString();
+                        this.Close();
+                    }));
+                }           
+        }
+        #endregion
+
+
 
         //启用摄像头
         private void btnStartVideo_Click()
@@ -470,21 +507,17 @@ namespace XJ_YSG
             }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Xj_Rlsb_Closed(object sender, EventArgs e)
         {
             rgbVideoSource.SignalToStop();
             rgbVideoSource.Hide();
-
             EntityModel.exitVideoRGBFR = true;
             EntityModel.exitVideoRGBLiveness = true;
         }
 
-
-
-
-
-
-
-
+        private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

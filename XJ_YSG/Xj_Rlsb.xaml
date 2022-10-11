@@ -7,14 +7,15 @@
         xmlns:wfi="http://schemas.microsoft.com/netfx/2007/xaml/presentation" xmlns:aforge="clr-namespace:AForge.Controls;assembly=AForge.Controls"
         mc:Ignorable="d"
         Title="Xj_Rlsb" Height="1024" Width="768" WindowStyle="None" ResizeMode="CanMinimize">
-    <Grid>
+    <Grid RenderTransformOrigin="0.582,0.473">
         <Grid.Background>
             <ImageBrush ImageSource="Img\key_rlsb.png"></ImageBrush>
         </Grid.Background>
         <wfi:WindowsFormsHost Name="pictureHost" Margin="179,187,179,416">
             <aforge:VideoSourcePlayer  x:Name="rgbVideoSource" Paint="VideoSource_Paint" Dock="Fill"/>
         </wfi:WindowsFormsHost>
-
+        <Image Height="69.148"   Width="150.805" MouseDown="Image_MouseDown" Source="img/close.png" RenderTransformOrigin="0.513,0.111" Margin="568,29,49,926"/>
+        <Label Content="30" Width="26" Height="26"  FontSize="12" Margin="695,53,47,945" x:Name="lbl_djs" Foreground="White"/>
 
     </Grid>
 </Window>

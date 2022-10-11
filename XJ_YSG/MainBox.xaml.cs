@@ -12,6 +12,7 @@ using BLL;
 using System.Drawing;
 using XJ_YSG;
 using System.Windows.Threading;
+using System.Windows.Media.Imaging;
 
 namespace XJ_YSG
 {
@@ -29,8 +30,8 @@ namespace XJ_YSG
             this.Left = 0;
             this.Top = 0;
             if (activation.InitEngines() == "1")
-            {       
-                ChooseMultiImg();               
+            {
+                ChooseMultiImg();
             }
             if (fingerprint.ZW_Connection() == "ok")
             {
@@ -54,6 +55,7 @@ namespace XJ_YSG
         #region 开启人脸识别按钮
         private void Facekey_Click(object sender, RoutedEventArgs e)
         {
+            zwTimer.Stop();
             Xj_Rlsb xj_Rlsb = new Xj_Rlsb();
             xj_Rlsb.ShowDialog();
         }
@@ -81,9 +83,9 @@ namespace XJ_YSG
         /// <summary>
         /// 指纹识别倒计时
         /// </summary>
-        public void zwthan()
+        public  void zwthan()
         {
-            zwTimer.Interval = new TimeSpan(0, 0, 0, 0, 200); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
+            zwTimer.Interval = new TimeSpan(0, 0, 0, 0, 500); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
             zwTimer.Tick += new EventHandler(disTimer_Tick_canShow); //每一秒执行的方法
             zwTimer.Start();
         }
@@ -92,36 +94,29 @@ namespace XJ_YSG
         {
             int UserID = 0;
             int Index = 0;
-            int nRet = -1;
-            //每秒比对一次 
-            nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref ParameterModel.m_nWidth, ref ParameterModel.m_nHeight, ParameterModel.m_pImageBuffer, ref ParameterModel.m_nSize);
-            if (nRet == 0)
-            {
-                // 实时接收在模块指纹采集器上比对成功不否的数据到host
-                //( 设备句柄,返回识别到的用户ID,返回用户对应的手指索引号(0-9))
+            int nRet = -1;     
+    
+                //1:1比对
+                //nRet = ParameterModel.ZKFPModule_Verify(ParameterModel.m_hDevice, UserID);                
+                //// 实时接收在模块指纹采集器上比对成功不否的数据到host
+                ////( 设备句柄,返回识别到的用户ID,返回用户对应的手指索引号(0-9))
+                ///1:N比对                
                 nRet = ParameterModel.ZKFPModule_FreeScan(ParameterModel.m_hDevice, ref UserID, ref Index);
                 if (nRet == 0)
                 {
                     zwTimer.Stop();
-                    log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index,1);
+                    log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index, 5);
                     Xj_BoxList boxList = new Xj_BoxList();
                     boxList.Show();
-                    
+
                 }
                 else
                 {
                     string erro = fingerprint.Erroneous(nRet.ToString());
-                    log.WriteLogo("错误原因:" + erro, 5);                 
+                    log.WriteLogo("错误原因:" + erro, 1);
                 }
-            }
-            else
-            {
-                string erro = fingerprint.Erroneous(nRet.ToString());
-                log.WriteLogo("错误原因:" + erro, 5);
-                
-            }
+                   
         }
-
         #endregion
 
 
@@ -189,7 +184,8 @@ namespace XJ_YSG
                             {
                                 this.Dispatcher.Invoke(new Action(delegate
                                 {
-                                    MessageBox.Show(featureResult);
+                                    //MessageBox.Show(featureResult);
+                                    log.WriteLogo(featureResult + image, 3);
                                 }));
                                 if (image != null)
                                 {

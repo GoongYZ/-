@@ -227,7 +227,7 @@ namespace FaceBox.TheActivation
         //public static List<string,Image> imageLists = new List<string,Image>();
 
         public static Dictionary<string, string > imageLists = new Dictionary<string, string>();
-public static string sjhm = "";
+        public static string sjhm = "";
         #endregion    
     }
 }

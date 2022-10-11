@@ -59,7 +59,7 @@ namespace BLL
         /// 写入日志
         /// </summary>
         /// <param name="text">日志内容</param>
-        /// <param name="Type">0：数据信息/1:开柜门/2:人脸识别/3：二维码/4：RFID通道/5：门禁/6：工控机调用/7：视频监控/8：桌面读写器/9错误日志/10：语音播报/11:读写器</param>
+        /// <param name="Type">0：_用户日志/1:_错误日志/2:_读卡日志/3：_人脸识别/4：_rfid/5：_指纹日志</param>
         public void WriteLogo(string text, int Type)
         {
             try

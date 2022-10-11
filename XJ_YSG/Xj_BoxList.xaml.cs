@@ -25,7 +25,7 @@ namespace XJ_YSG
         public Xj_BoxList()
         {
             InitializeComponent();
-            this.Left = 50;
+            this.Left = 0;
             this.Top = 0;
             Bindinfo();
         }
@@ -77,7 +77,12 @@ namespace XJ_YSG
             }
         }
 
-
-        
+        private void btn_clos_Click(object sender, RoutedEventArgs e)
+        {
+            MainBox mainBox = new MainBox();
+            mainBox.zwthan();
+            this.Close();
+           
+        }
     }
 }

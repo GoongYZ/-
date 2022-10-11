@@ -65,7 +65,7 @@ namespace XJ_YSG
         /// 发送命令获取柜门状态
         /// </summary>
         /// <param name="gzh">格子号</param>
-        public void State_lock(string gzh )
+        public string  State_lock(string gzh )
         {
             int gz = Convert.ToInt32(gzh);          
             byte[] data = new byte[12];
@@ -84,7 +84,7 @@ namespace XJ_YSG
             data[11] = Convert.ToByte(gzbs, 16);
             string rut = "";
             port.WriteData(data, ref rut);
-            MessageBox.Show(rut);            
+            return rut;                     
         }
 
 
