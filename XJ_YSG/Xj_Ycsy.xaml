@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:XJ_YSG"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="XJ_YSG.Xj_Ycsy"
         mc:Ignorable="d"
-        Title="Xj_Ycsy"  Height="386" Width="540" WindowStyle="None" ResizeMode="CanMinimize">
+        Title="Xj_Ycsy" Height="560" Width="560" WindowStyle="None" ResizeMode="CanMinimize">
     <Window.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
@@ -288,15 +288,74 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+
+        <!--按钮静态时背景颜色-->
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#3DB1FF"/>
+        <!--按钮静态时边框颜色-->
+        <SolidColorBrush x:Key="Button.Static.Border" Color="#3DB1FF"/>
+        <!--鼠标移入时背景颜色-->
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FF3C7FB1"/>
+        <!--鼠标移入时边框颜色-->
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <!--鼠标按下时背景颜色-->
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FF3C7FB1"/>
+        <!--鼠标按下时边框颜色-->
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF3C7FB1"/>
+        <!--按钮不使用时背景颜色-->
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#3DB1FF"/>
+        <!--按钮不使用时边框颜色-->
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#3DB1FF"/>
+        <!--按钮不使用时文字颜色-->
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FFF4F4F4"/>
+        <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FontFamily" Value="MicrosoftYaHei"/>
+            <Setter Property="FontWeight" Value="Black"/>
+            <Setter Property="Foreground" Value="{StaticResource Button.Disabled.Foreground}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.Background>
-            <ImageBrush  ImageSource="/Img/xj_message.png"/>
+            <ImageBrush ImageSource="/Img/ycsy.png"/>
         </Grid.Background>
-        <!--<Button Content="❌" Foreground="White" BorderThickness="0" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Top"   Width="75"  Height="52"  x:Name="closeButton"/>-->
-        <Button  Background="Transparent" BorderThickness="0" HorizontalAlignment="Right" VerticalAlignment="Top"   Width="75"  Height="52"  x:Name="closeButton"/>
-        <ComboBox HorizontalAlignment="Left" Margin="164,98,56,236"  Width="320" Height="52" x:Name="cbox_ycsy" Style="{DynamicResource ComboBoxStyle1}"/>
-        <ComboBox HorizontalAlignment="Left" Margin="164,180,56,152"  Width="320" Height="52" x:Name="cbox_mdd" Style="{DynamicResource ComboBoxStyle1}"/>
-        <Button Content="Button" x:Name="btn_save"  Margin="197,218,194,0"  Width="149" Height="68" Opacity="0" />
+        <ComboBox HorizontalAlignment="Left" Margin="195,93,0,0" VerticalAlignment="Top" Width="314" Height="47" Style="{DynamicResource ComboBoxStyle1}"/>
+        <ComboBox HorizontalAlignment="Left" Margin="195,180,0,0" VerticalAlignment="Top" Width="314" Height="47" Style="{DynamicResource ComboBoxStyle1}"/>
+        <ComboBox HorizontalAlignment="Left" Margin="195,260,0,0" VerticalAlignment="Top" Width="150" Height="47" Style="{DynamicResource ComboBoxStyle1}"/>
+        <ComboBox HorizontalAlignment="Left" Margin="370,260,0,0" VerticalAlignment="Top" Width="150" Height="47" Style="{DynamicResource ComboBoxStyle1}"/>
+        <ComboBox HorizontalAlignment="Left" Margin="195,345,0,0" VerticalAlignment="Top" Width="314" Height="47" Style="{DynamicResource ComboBoxStyle1}"/>
+        <Button Content="确定" HorizontalAlignment="Left" Margin="205,436,0,0" VerticalAlignment="Top" Width="150" Height="64" Style="{DynamicResource ButtonStyle1}"/>
+
     </Grid>
 </Window>

@@ -215,6 +215,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Img\ycpj.png" />
+    <Resource Include="Img\ycsy.png" />
     <Content Include="lib\CustomControl.dll" />
     <Content Include="lib\DotNetSpeech.dll" />
     <Content Include="lib\RFIDReaderNetwork_SerialSDK_ForCSharp.dll" />

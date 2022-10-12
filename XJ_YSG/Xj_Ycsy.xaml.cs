@@ -1,5 +1,4 @@
-﻿using BLL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,32 +19,9 @@ namespace XJ_YSG
     /// </summary>
     public partial class Xj_Ycsy : Window
     {
-
-        //柜号
-        string gh = "";
-        LockControl Lock = new LockControl();
-        public Xj_Ycsy(string dwm )
+        public Xj_Ycsy()
         {
             InitializeComponent();
-            gh = dwm;
-            this.Left = 114;
-            this.Top = 308;
         }
-
-
-        private void btnOK_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-        private void btn_save_Click(object sender, RoutedEventArgs e)
-        {
-            Lock.Open();
-            Lock.Send(gh);
-            Lock.red_light(gh, false);
-            Lock.Close();
-            SpeechVoice.speack("柜门已打开，取后请关门");
-            Close();
-        }
-
     }
 }
