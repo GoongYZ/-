@@ -17,10 +17,11 @@ namespace BLL
     public class UHF2Service
     {
         private static RFIDServer m_rifdServer = null;
-        private static RFIDClient m_rfidClientReader = null;//rfid读卡器
+        private static RFIDClient m_rfidClientReader = null;
+        //rfid 读钥匙
         private static int _port = Convert.ToInt32(ServerBase.XMLRead("UHF2", "ListenPort"));
-        private static string ComPortName = ServerBase.XMLRead("UHF1", "ComPortName");
-        private static string BaudRate =  ServerBase.XMLRead("UHF1", "BaudRate");
+        private static string ComPortName = ServerBase.XMLRead("UHF2", "ComPortName");
+        private static string BaudRate =  ServerBase.XMLRead("UHF2", "BaudRate");
         private static string m_strWorkReaderDeviceID = string.Empty;              //工作读写器的设备序列号
         private static Reader reader = null;
         private static string m_strLostConnectDeviceID = string.Empty;

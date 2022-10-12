@@ -60,30 +60,6 @@ namespace XJ_YSG
                 return "ok";
             }
         }
-        /// <summary>
-        /// 添加指纹
-        /// </summary>
-        /// <param name="userid"></param>
-        /// <returns></returns>
-        public string Addzw(int userid)
-        {
-            // 登记用户模板(设备句柄，用户id)             
-            int nRet = ParameterModel.ZKFPModule_EnrollTemplateByImage(ParameterModel.m_hDevice, userid, ParameterModel.m_pImageBuffer, ParameterModel.m_nSize);
-            if (0 == nRet)
-            {
-                //想窗体发送消息（//初始化为零的指针，常量，用户id）                 
-                //MessageBox.Show("录入成功");
-                log.WriteLogo("录入成功", 5);
-                return "ok";
-
-            }
-            else
-            {
-                string erro = Erroneous(nRet.ToString());              
-                log.WriteLogo("录入失败!" + "错误原因:" + erro, 5);
-                return "erro";
-            }
-        }
 
 
         /// <summary>

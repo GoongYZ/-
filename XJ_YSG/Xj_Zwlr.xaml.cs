@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BLL;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -24,6 +25,16 @@ namespace XJ_YSG
     public partial class Xj_Zwlr : Window
     {
         Fingerprint fingerprint = new Fingerprint();
+       Logo log = new Logo();
+        
+        #region  指纹图像数据
+        public byte[] m_pImageBuffer = new byte[640 * 480];
+        public int m_nWidth = 0;
+        public int m_nHeight = 0;
+        public int m_nSize = 640 * 480;
+        #endregion
+
+
         public Xj_Zwlr()
         {
             InitializeComponent();
@@ -52,11 +63,11 @@ namespace XJ_YSG
         void disTimer_Tick_canShow(object sender, EventArgs e)
         {
             //每秒中向绑定一次指纹图片 ,实时采集图像，并显示       
-            int nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref ParameterModel.m_nWidth, ref ParameterModel.m_nHeight, ParameterModel.m_pImageBuffer, ref ParameterModel.m_nSize);
+            int nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref m_nWidth, ref m_nHeight, m_pImageBuffer, ref m_nSize);
             if (nRet == 0)
             {
                 MemoryStream ms = new MemoryStream();
-                BitmapFormat.GetBitmap(ParameterModel.m_pImageBuffer, ParameterModel.m_nWidth, ParameterModel.m_nHeight, ref ms);
+                BitmapFormat.GetBitmap(m_pImageBuffer, m_nWidth, m_nHeight, ref ms);
                 if (ms != null)
                 {
                     Bitmap bmp = new Bitmap(ms);
@@ -78,9 +89,29 @@ namespace XJ_YSG
             int userid = 0;
             if (userid != 0)
             {
-                fingerprint.Addzw(userid);
+                // 登记用户模板(设备句柄，用户id)             
+                int nRet = ParameterModel.ZKFPModule_EnrollTemplateByImage(ParameterModel.m_hDevice, userid, m_pImageBuffer, m_nSize);
+                if (0 == nRet)
+                {
+                    speack("录入成功");
+                    log.WriteLogo("录入成功", 5);                   
+                }
+                else
+                {
+                    string erro = fingerprint.Erroneous(nRet.ToString());
+                    log.WriteLogo("录入失败!" + "错误原因:" + erro, 5);                   
+                }
             }
         }
 
+
+
+        private void speack(string text)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SpeechVoice.speack(text);
+            }), System.Windows.Threading.DispatcherPriority.Normal);
+        }
     }
 }

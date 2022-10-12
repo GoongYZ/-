@@ -13,6 +13,7 @@ using System.Drawing;
 using XJ_YSG;
 using System.Windows.Threading;
 using System.Windows.Media.Imaging;
+using System.Linq;
 
 namespace XJ_YSG
 {
@@ -24,20 +25,36 @@ namespace XJ_YSG
         Activation activation = new Activation();
         Fingerprint fingerprint = new Fingerprint();
         Logo log = new Logo();
+
+
+        #region  指纹图像数据
+        public byte[] m_pImageBuffer = new byte[640 * 480];
+        public int m_nWidth = 0;
+        public int m_nHeight = 0;
+        public int m_nSize = 640 * 480;
+        #endregion
+
+
         public MainBox()
         {
             InitializeComponent();
             this.Left = 0;
             this.Top = 0;
+
+            //激活人脸识别
             if (activation.InitEngines() == "1")
             {
                 ChooseMultiImg();
             }
-
+            //开始指纹验证
             if (fingerprint.ZW_Connection() == "ok")
             {
                 zwthan();
             }
+            //激活RFID
+            UHFService.ConnectCOM();
+            //实时检测读卡信息
+
         }
 
 
@@ -81,7 +98,7 @@ namespace XJ_YSG
         /// <summary>
         /// 指纹识别倒计时
         /// </summary>
-        public  void zwthan()
+        public void zwthan()
         {
             zwTimer.Interval = new TimeSpan(0, 0, 0, 0, 500); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
             zwTimer.Tick += new EventHandler(disTimer_Tick_canShow); //每一秒执行的方法
@@ -96,28 +113,48 @@ namespace XJ_YSG
             int nRet = -1;
             if (ParameterModel.issbzw) //当主页跳转后停止识别
             {
-                //1:1比对
-                //nRet = ParameterModel.ZKFPModule_Verify(ParameterModel.m_hDevice, UserID);                
-                //// 实时接收在模块指纹采集器上比对成功不否的数据到host
-                ////( 设备句柄,返回识别到的用户ID,返回用户对应的手指索引号(0-9))
-                ///1:N比对                
-                nRet = ParameterModel.ZKFPModule_FreeScan(ParameterModel.m_hDevice, ref UserID, ref Index);
+                //图像数据
+                nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref m_nWidth, ref m_nHeight, m_pImageBuffer, ref m_nSize);
                 if (nRet == 0)
                 {
-                    ParameterModel.issbzw = false;
-                    log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index, 5);
-                    Xj_BoxList boxList = new Xj_BoxList();
-                    boxList.Show();
+                    //根据图像数据进行比对
+                    nRet = ParameterModel.ZKFPModule_IdentifyByImage(ParameterModel.m_hDevice, m_pImageBuffer, m_nSize, ref UserID, ref Index);
+                    //1:1比对
+                    //nRet = ParameterModel.ZKFPModule_Verify(ParameterModel.m_hDevice, UserID);                
+                    //// 实时接收在模块指纹采集器上比对成功不否的数据到host
+                    ////( 设备句柄,返回识别到的用户ID,返回用户对应的手指索引号(0-9))
+                    ///1:N比对                
+                    //nRet = ParameterModel.ZKFPModule_FreeScan(ParameterModel.m_hDevice, ref UserID, ref Index);
+                    if (nRet == 0)
+                    {
+                        //ParameterModel.ZKFPModule_Reset(ParameterModel.m_hDevice);
+                        ParameterModel.issbzw = false;
+                        log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index, 5);
+                        Xj_BoxList boxList = new Xj_BoxList();
+                        boxList.Show();
+                    }
+                    else
+                    {
+                        string erro = fingerprint.Erroneous(nRet.ToString());
+                        log.WriteLogo("错误原因:" + erro, 5);
+                    }
+
                 }
-                else
-                {
-                    string erro = fingerprint.Erroneous(nRet.ToString());
-                    log.WriteLogo("错误原因:" + erro, 5);
-                }
-            }                             
+
+            }
         }
         #endregion
 
+
+        #region 语音播报
+        private void speack(string text)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SpeechVoice.speack(text);
+            }), System.Windows.Threading.DispatcherPriority.Normal);
+        }
+        #endregion
 
 
         #region 人脸库注册
@@ -235,12 +272,12 @@ namespace XJ_YSG
                                 if (i == imagePathListTemp.Count)
                                 {
                                     //进行语音播报 "人脸识别初始化成功"
-                                    SpeechVoice.speack("人脸识别初始化成功");
+                                    speack("人脸识别初始化成功");
                                 }
 
                             }));
 
-                           
+
                         }
                     }));
                 }
@@ -336,6 +373,29 @@ namespace XJ_YSG
 
 
         #endregion
+
+
+
+        #region 还钥匙时实时检测刷卡信息
+
+        DispatcherTimer RfidTimer = new DispatcherTimer();
+        public void Rfidthan()
+        {
+            RfidTimer.Interval = new TimeSpan(0, 0, 0, 0, 500); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
+            RfidTimer.Tick += new EventHandler(RfidTimer_Tick_canShow); //每一秒执行的方法
+            RfidTimer.Start();
+        }
+
+        void RfidTimer_Tick_canShow(object sender, EventArgs e)
+        {
+            UHFService.OneCheckInvnetoryWhile2(0);
+            string st = UHFService.strEPC;
+            string s = string.Join(",", st.Split(',').Distinct().ToArray());
+
+            //this.str_epc.Text = s;
+        }
+        #endregion
+
 
     }
 }

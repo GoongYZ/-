@@ -19,10 +19,7 @@ namespace XJ_YSG
         #region 存放临时登记模板
         public static int m_UserId = -1;  //用户ID
         public  static IntPtr m_hDevice = IntPtr.Zero;  //设备句柄        
-        public static byte[] m_pImageBuffer = new byte[640 * 480];  //指纹图像数据
-        public static int m_nWidth = 0;
-        public static int m_nHeight = 0;
-        public static int m_nSize = 640 * 480;
+       
         const int MESSAGE_CAPTURED_OK = 0x0400 + 10;
         const int MESSAGE_IDENTIFY_OK = 0x0400 + 20;
         const int MESSAGE_IDENTIFY_FAIL = 0x0400 + 21;

@@ -135,6 +135,9 @@
     <Compile Include="Xj_BoxList.xaml.cs">
       <DependentUpon>Xj_BoxList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Xj_Clpj.xaml.cs">
+      <DependentUpon>Xj_Clpj.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Xj_Mima.xaml.cs">
       <DependentUpon>Xj_Mima.xaml</DependentUpon>
     </Compile>
@@ -189,6 +192,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Xj_Clpj.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Xj_Mima.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -207,6 +214,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Img\ycpj.png" />
     <Content Include="lib\CustomControl.dll" />
     <Content Include="lib\DotNetSpeech.dll" />
     <Content Include="lib\RFIDReaderNetwork_SerialSDK_ForCSharp.dll" />
