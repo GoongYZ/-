@@ -39,13 +39,11 @@ namespace XJ_YSG
             InitializeComponent();
             this.Left = 0;
             this.Top = 0;
-
             //激活人脸识别
             if (activation.InitEngines() == "1")
             {
                 ChooseMultiImg();
             }
-
             //开始指纹验证
             if (fingerprint.ZW_Connection() == "ok")
             {
@@ -54,8 +52,8 @@ namespace XJ_YSG
             //连接锁
             lockControl.Open();
             //激活RFID
-            UHFService.ConnectCOM();
-            //实时检测读卡信息
+            UHFService.ConnectCOM();            
+            LockDjs();//门箱状态
         }
 
 
@@ -402,7 +400,7 @@ namespace XJ_YSG
         /// <summary>
         /// 监控开门状态倒计时
         /// </summary>
-        public void Lockthan()
+        public void LockDjs()
         {
             ClossTimer.Interval = new TimeSpan(0, 0, 0, 0, 2000); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
             ClossTimer.Tick += new EventHandler(ClossTimer_Tick_canShow); //每一秒执行的方法
@@ -436,12 +434,7 @@ namespace XJ_YSG
                         }                       
                     }
                 }
-            }
-            else 
-            {
-                ClossTimer.Stop();
-            }
-            
+            }           
         }
         #endregion
 
