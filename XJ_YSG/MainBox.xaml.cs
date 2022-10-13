@@ -466,10 +466,7 @@ namespace XJ_YSG
                     gh_kp += "" + i + "_" + yskp + "";
                     //写入文件
                     log.WriteYsgGh(gh_kp);
-                }
-               
-
-                    
+                }      
             }
         }
         #endregion
