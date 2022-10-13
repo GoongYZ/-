@@ -1,14 +1,19 @@
 ﻿
 using BLL;
 using System;
-using System.Windows;
+using System.Collections.Generic;
 
 namespace XJ_YSG
 {
     public class LockControl
     {
         private SerialPortUtil port = new SerialPortUtil();
-       // private static string ComPortName = ServerBase.XMLRead("Lock", "COM_LOCK");
+        private static string ComPortName = ServerBase.XMLRead("Lock", "COM_LOCK");
+
+        /// <summary>
+        /// 监控箱门的数据集合
+        /// </summary>
+        public static List<string> locklis = new List<string>();
         /// <summary>
         /// 打开串口
         /// </summary>
@@ -16,13 +21,13 @@ namespace XJ_YSG
         {
             try
             {
-                port.PortName = "COM4";
+                port.PortName = ComPortName;
                 port.BaudRate = SerialPortBaudRates.BaudRate_115200;
                 port.OpenPort();
             }
             catch (Exception)
             {
-
+                
             }
         }
 

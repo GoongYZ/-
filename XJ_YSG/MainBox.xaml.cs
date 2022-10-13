@@ -25,8 +25,7 @@ namespace XJ_YSG
         Activation activation = new Activation();
         Fingerprint fingerprint = new Fingerprint();
         Logo log = new Logo();
-
-
+        LockControl lockControl = new LockControl();
         #region  指纹图像数据
         public byte[] m_pImageBuffer = new byte[640 * 480];
         public int m_nWidth = 0;
@@ -46,15 +45,17 @@ namespace XJ_YSG
             {
                 ChooseMultiImg();
             }
+
             //开始指纹验证
             if (fingerprint.ZW_Connection() == "ok")
             {
                 zwthan();
             }
+            //连接锁
+            lockControl.Open();
             //激活RFID
             UHFService.ConnectCOM();
             //实时检测读卡信息
-
         }
 
 
@@ -375,8 +376,7 @@ namespace XJ_YSG
         #endregion
 
 
-
-        #region 还钥匙时实时检测刷卡信息
+        #region 刷卡还钥匙
 
         DispatcherTimer RfidTimer = new DispatcherTimer();
         public void Rfidthan()
@@ -392,10 +392,87 @@ namespace XJ_YSG
             string st = UHFService.strEPC;
             string s = string.Join(",", st.Split(',').Distinct().ToArray());
 
-            //this.str_epc.Text = s;
+           
         }
         #endregion
 
+
+        #region 监控箱门状态
+        DispatcherTimer ClossTimer = new DispatcherTimer();
+        /// <summary>
+        /// 监控开门状态倒计时
+        /// </summary>
+        public void Lockthan()
+        {
+            ClossTimer.Interval = new TimeSpan(0, 0, 0, 0, 2000); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
+            ClossTimer.Tick += new EventHandler(ClossTimer_Tick_canShow); //每一秒执行的方法
+            ClossTimer.Start();
+
+        }
+        void ClossTimer_Tick_canShow(object sender, EventArgs e)
+        {
+            if (LockControl.locklis.Count > 0) //判断是否有柜门打开
+            {
+                foreach (string item in LockControl.locklis)
+                {
+                    string lockzt = lockControl.State_lock(item);
+                    if (lockzt == "关门")
+                    {
+                        // 读取柜子中钥匙卡片
+                        int i = 3;
+                        while (i <= 3)
+                        {
+                            UHF2Service.OneCheckInvnetoryWhile2(Convert.ToInt32(item));
+                            i++;
+                        }
+                        string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
+                        if (yskp != "")
+                        {
+                            //调接口
+
+
+                            //停止
+                            UHF2Service.strEPC = "";
+                        }                       
+                    }
+                }
+            }
+            else 
+            {
+                ClossTimer.Stop();
+            }
+            
+        }
+        #endregion
+
+
+        #region 初始化钥匙柜卡片
+        private void Csh_yskp() 
+        {
+            //先确定是否有本地文件
+            string gh_kp = "";
+            int gh = 10;  //钥匙柜规格
+            for (int i = 1; i <= gh; i++)
+            {
+                int cs = 3;  //读取次数
+                while (cs <= 3)
+                {
+                    UHF2Service.OneCheckInvnetoryWhile2(i);
+                    i++;
+                }
+                string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
+                if (yskp != "")
+                {
+                    gh_kp += "" + i + "_" + yskp + "";
+                    //写入文件
+                    log.WriteYsgGh(gh_kp);
+                }
+               
+
+                    
+            }
+        }
+        #endregion
 
     }
 }

@@ -158,5 +158,82 @@ namespace BLL
             }
             return returnStr;
         }
+
+
+
+
+        public string SetYsgGh() 
+        {
+            string Current = System.IO.Directory.GetCurrentDirectory();
+            string Path = Current + "YsgGh.txt   ";
+            if (!Directory.Exists(Path))
+            {
+                Directory.CreateDirectory(Path);
+            }
+            string FilePath = Path;
+            return FilePath;
+        }
+
+        /// <summary>
+        /// 写入柜号信息
+        /// </summary>
+        /// <param name="text">写入柜号信息</param>
+        /// <param name="Type">
+        public void WriteYsgGh(string text )
+        {
+            try
+            {
+                text = string.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now) + text;
+                string FilePath = SetYsgGh();
+                if (File.Exists(FilePath))
+                {
+                    StreamWriter sw = new StreamWriter(FilePath, true);
+                    sw.WriteLine(text);
+                    sw.Close();
+                }
+                else
+                {
+                    FileStream myFs = new FileStream(FilePath, FileMode.Create);
+                    StreamWriter mySw = new StreamWriter(myFs);
+                    mySw.WriteLine(text);
+                    mySw.Close();
+                    myFs.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+
+
+        /// <summary>
+        /// 读取柜号信息
+        /// <param name="Type">0/1/2/3：所有RFID记录/非法RFID记录/读写器链接日志/温湿度记录</param>
+        /// </summary>
+        /// <param name="Type"></param>
+        public string GetYsgGh()
+        {
+            string FilePath = SetYsgGh();
+            string returnStr = string.Empty;
+            if (File.Exists(FilePath))
+            {
+                FileStream fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read);
+                StreamReader sr = new StreamReader(fs, System.Text.Encoding.GetEncoding("gb2312"));
+                sr.BaseStream.Seek(0, SeekOrigin.Begin);
+                string str = sr.ReadLine();
+                returnStr += str + "$";
+                while (str != null)
+                {
+                    str = sr.ReadLine();
+                    returnStr += str + "$";
+                }
+                sr.Close();
+                fs.Close();
+            }
+            return returnStr;
+        }
+
     }
 }

@@ -25,7 +25,7 @@ namespace XJ_YSG
     public partial class Xj_Zwlr : Window
     {
         Fingerprint fingerprint = new Fingerprint();
-       Logo log = new Logo();
+        Logo log = new Logo();
         
         #region  指纹图像数据
         public byte[] m_pImageBuffer = new byte[640 * 480];

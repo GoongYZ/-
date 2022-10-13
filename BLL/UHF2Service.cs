@@ -28,6 +28,7 @@ namespace BLL
         private static Reader m_selectedWorkReader = null;
         private delegate void InventoryResultListViewUpdate(INVENTORY_REPORT_RESULT inventoryListViewItem);
         public static Hashtable Listm_strEPC = new Hashtable();//单次盘点集合
+        public static string strEPC = "";
         public static bool IsOneCheckInv = false;
       
         
@@ -128,6 +129,45 @@ namespace BLL
             }
             m_selectedWorkReader.m_bIsInventory = true;
         }
+
+
+        /// <summary>
+        /// 根据天线获取标签数据
+        /// </summary>
+        /// 
+        public static void OneCheckInvnetoryWhile2(int nAntnnaNumber)
+        {
+            try
+            {
+                if (!CheckReaderOnLine())
+                    return;
+                OperationResult nRetVal = OperationResult.FAIL;
+                TagReport tagReport = new TagReport();
+                nRetVal = m_selectedWorkReader.m_rfidWorkReader.Inventory(nAntnnaNumber, ref tagReport);//单次盘点 
+                if (nRetVal == OperationResult.SUCCESS)
+                {
+                    Tag tag = null;
+                    for (int i = 0; i < tagReport.m_listTags.Count; ++i)
+                    {
+                        tag = tagReport.m_listTags[i];
+                        if (!Listm_strEPC.Contains(tag.m_strEPC))
+                        {
+                            if (strEPC != "")
+                            {
+                                strEPC += ",";
+                            }
+                            strEPC += tag.m_strEPC.ToString();
+                        }
+                    }
+                }
+                m_selectedWorkReader.m_bIsInventory = true;
+            }
+            catch (Exception ex)
+            {
+                Logo.sWriteLogo(ex.Message, 11);
+            }
+        }
+
         public static void StartPerioInventory()
         {
             OperationResult nRetVal = OperationResult.FAIL;

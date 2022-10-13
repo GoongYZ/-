@@ -22,6 +22,8 @@ namespace XJ_YSG
         public Xj_Ycsy()
         {
             InitializeComponent();
-        }
+
+           
+        }      
     }
 }

@@ -25,7 +25,6 @@ namespace BLL
         private delegate void InventoryResultListViewUpdate(INVENTORY_REPORT_RESULT inventoryListViewItem);
         public static Hashtable Listm_strEPC = new Hashtable();//单次盘点集合
         public static string strEPC = "";
-        //public static Dictionary<string, string> Listm_strEPC = null;
         public static bool IsOneCheckInv = false;
         public static object LockRxdTagData = new object();
 

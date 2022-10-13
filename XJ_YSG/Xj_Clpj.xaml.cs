@@ -23,5 +23,12 @@ namespace XJ_YSG
         {
             InitializeComponent();
         }
+
+        private void clpj_Button_Click(object sender, RoutedEventArgs e)
+        {
+            LockControl lockControl = new LockControl();
+            lockControl.Send("1");
+            //打开柜门
+        }
     }
 }

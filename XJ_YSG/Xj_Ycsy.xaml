@@ -12,7 +12,7 @@
             <Setter Property="Control.Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                        <Rectangle Margin="0" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -70,7 +70,7 @@
                     <ControlTemplate TargetType="{x:Type ToggleButton}">
                         <Border x:Name="templateRoot" BorderBrush="{StaticResource ComboBox.Static.Border}" BorderThickness="{TemplateBinding BorderThickness}" Background="{StaticResource ComboBox.Static.Background}" SnapsToDevicePixels="true">
                             <Border x:Name="splitBorder" BorderBrush="Transparent" BorderThickness="1" HorizontalAlignment="Right" Margin="0" SnapsToDevicePixels="true" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
-                                <Path x:Name="arrow" Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z" Fill="{StaticResource ComboBox.Static.Glyph}" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center"/>
+                                <Path x:Name="arrow" Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z"  Fill="{StaticResource ComboBox.Static.Glyph}" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center"/>
                             </Border>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -275,11 +275,15 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="Padding" Value="6,3,5,3"/>
+            <Setter Property="Padding" Value="10,3,5,3"/>
             <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
             <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
             <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
             <Setter Property="Template" Value="{StaticResource ComboBoxTemplate}"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontFamily" Value="MicrosoftYaHei"/>
+            <Setter Property="FontWeight" Value="Black"/>
             <Style.Triggers>
                 <Trigger Property="IsEditable" Value="true">
                     <Setter Property="IsTabStop" Value="false"/>
@@ -350,11 +354,15 @@
         <Grid.Background>
             <ImageBrush ImageSource="/Img/ycsy.png"/>
         </Grid.Background>
-        <ComboBox HorizontalAlignment="Left" Margin="195,93,0,0" VerticalAlignment="Top" Width="314" Height="47" Style="{DynamicResource ComboBoxStyle1}"/>
-        <ComboBox HorizontalAlignment="Left" Margin="195,180,0,0" VerticalAlignment="Top" Width="314" Height="47" Style="{DynamicResource ComboBoxStyle1}"/>
-        <ComboBox HorizontalAlignment="Left" Margin="195,260,0,0" VerticalAlignment="Top" Width="150" Height="47" Style="{DynamicResource ComboBoxStyle1}"/>
-        <ComboBox HorizontalAlignment="Left" Margin="370,260,0,0" VerticalAlignment="Top" Width="150" Height="47" Style="{DynamicResource ComboBoxStyle1}"/>
-        <ComboBox HorizontalAlignment="Left" Margin="195,345,0,0" VerticalAlignment="Top" Width="314" Height="47" Style="{DynamicResource ComboBoxStyle1}"/>
+        <Button Opacity="0" x:Name="btn_tc" HorizontalAlignment="Left" Margin="490,-1,0,0" VerticalAlignment="Top" Width="70" Height="53"></Button>
+        <ComboBox HorizontalAlignment="Left" Margin="192,92,0,0" VerticalAlignment="Top" Width="320"   Height="52" Style="{DynamicResource ComboBoxStyle1}">
+            <ComboBoxItem IsSelected="True">出差</ComboBoxItem>
+            <ComboBoxItem>日常维保</ComboBoxItem>
+        </ComboBox>
+        <ComboBox HorizontalAlignment="Left" Margin="192,176,0,0" VerticalAlignment="Top" Width="320" Height="52" Style="{DynamicResource ComboBoxStyle1}"/>
+        <ComboBox HorizontalAlignment="Left" Margin="192,260,0,0" VerticalAlignment="Top" Width="144" Height="52" Style="{DynamicResource ComboBoxStyle1}"/>
+        <ComboBox HorizontalAlignment="Left" Margin="368,260,0,0" VerticalAlignment="Top" Width="144" Height="52" Style="{DynamicResource ComboBoxStyle1}"/>
+        <ComboBox HorizontalAlignment="Left" Margin="192,344,0,0" VerticalAlignment="Top" Width="320" Height="52" Style="{DynamicResource ComboBoxStyle1}"/>
         <Button Content="确定" HorizontalAlignment="Left" Margin="205,436,0,0" VerticalAlignment="Top" Width="150" Height="64" Style="{DynamicResource ButtonStyle1}"/>
 
     </Grid>
