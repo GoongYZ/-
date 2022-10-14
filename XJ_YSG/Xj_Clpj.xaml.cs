@@ -22,6 +22,8 @@ namespace XJ_YSG
         public Xj_Clpj()
         {
             InitializeComponent();
+            this.Left = 104;
+            this.Top = 255;
         }
 
         private void clpj_Button_Click(object sender, RoutedEventArgs e)

@@ -41,7 +41,12 @@ namespace XJ_YSG
 
             if (ParameterModel.m_hDevice != IntPtr.Zero)
             {
-                CanShow();
+                //指纹模块先复位一下
+                 int nRet= ParameterModel.ZKFPModule_Reset(ParameterModel.m_hDevice);
+                if (nRet == 0) 
+                {
+                    CanShow();
+                }             
             }
             else 
             {

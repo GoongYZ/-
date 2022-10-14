@@ -8,13 +8,12 @@ using OperationResult = RFIDReaderNetwork_SerialSDK_ForCSharp.DataStructureLayer
 namespace BLL
 {
     /// <summary>
-    /// 物必连读写器 （刷卡）
+    /// 物必连读写器
     /// </summary>
     public class UHFService
     {
-        private static RFIDServer m_rifdServer = null;
-        private static RFIDClient m_rfidClientReader = null;
-        //rfid  读信息卡
+       // private static RFIDServer m_rifdServer = null;
+        private static RFIDClient m_rfidClientReader = null;//rfid读卡器
         private static int _port = Convert.ToInt32(ServerBase.XMLRead("UHF1", "ListenPort"));
         private static string ComPortName = ServerBase.XMLRead("UHF1", "ComPortName");
         private static string BaudRate = ServerBase.XMLRead("UHF1", "BaudRate");
@@ -25,6 +24,7 @@ namespace BLL
         private delegate void InventoryResultListViewUpdate(INVENTORY_REPORT_RESULT inventoryListViewItem);
         public static Hashtable Listm_strEPC = new Hashtable();//单次盘点集合
         public static string strEPC = "";
+        //public static Dictionary<string, string> Listm_strEPC = null;
         public static bool IsOneCheckInv = false;
         public static object LockRxdTagData = new object();
 
@@ -139,6 +139,44 @@ namespace BLL
 
 
 
+
+        /// <summary>
+        /// 根据天线获取标签数据
+        /// </summary>
+        /// 
+        public static void OneCheckInvnetoryWhile3(int nAntnnaNumber)
+        {
+            try
+            {
+                if (!CheckReaderOnLine())
+                    return;
+                OperationResult nRetVal = OperationResult.FAIL;
+                TagReport tagReport = new TagReport();
+                nRetVal = m_selectedWorkReader.m_rfidWorkReader.Inventory(nAntnnaNumber, ref tagReport);//单次盘点 
+                if (nRetVal == OperationResult.SUCCESS)
+                {
+                    Tag tag = null;
+                    for (int i = 0; i < tagReport.m_listTags.Count; ++i)
+                    {
+                        tag = tagReport.m_listTags[i];
+                        if (!Listm_strEPC.Contains(tag.m_strEPC))
+                        {
+                            if (strEPC != "")
+                            {
+                                strEPC += ",";
+                            }
+                            strEPC +=  tag.m_strEPC.ToString();
+                        }
+                    }
+                }
+                m_selectedWorkReader.m_bIsInventory = true;
+            }
+            catch (Exception ex)
+            {
+                Logo.sWriteLogo(ex.Message, 11);
+            }
+        }
+
         /// <summary>
         /// 根据天线获取标签数据
         /// </summary>
@@ -164,7 +202,7 @@ namespace BLL
                             {
                                 strEPC += ",";
                             }
-                            strEPC += tag.m_strEPC.ToString();
+                            strEPC += nAntnnaNumber.ToString() + "_" + tag.m_strEPC.ToString();
                         }
                     }
                 }
@@ -175,7 +213,6 @@ namespace BLL
                 Logo.sWriteLogo(ex.Message, 11);
             }
         }
-
 
 
 
@@ -202,13 +239,10 @@ namespace BLL
             {
                 Logo.sWriteLogo("读写器" + m_rfidClientReader.m_strDeviceID + "进行了重新连接。", 11);
                 ConnectCOM();
+                return true;   
+            }
+            else
                 return true;
-            }
-            else 
-            {
-                return false;
-            }
-               
         }
 
         /// <summary>

@@ -180,6 +180,6 @@
         <RadioButton GroupName="clns" Content="差"  Margin="393,200,0,0" VerticalAlignment="Top" Style="{DynamicResource RadioButtonStyle1}"/>
 
         <Button Content="确定" Click="clpj_Button_Click"   HorizontalAlignment="Left" Margin="195,270,0,0" VerticalAlignment="Top" Width="150" Height="64" Style="{DynamicResource ButtonStyle1}"/>
-
+        <Button  Click="clpj_Button_Click"   HorizontalAlignment="Right" Opacity="0" Margin="0,0,5,0" VerticalAlignment="Top" Width="70" Height="50"/>
     </Grid>
 </Window>

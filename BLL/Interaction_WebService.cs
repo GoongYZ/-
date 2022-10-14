@@ -23,18 +23,39 @@ namespace BLL
                 _url = ServerBase.XMLRead("Database", "WebService");
 
             }
-        }
+        }  
         /// <summary>
         /// 根据取钥匙码验证
         /// </summary>
         /// <param name="mm">取钥匙码</param>
+        /// <param name="sbbm">钥匙柜编码</param>
         /// <returns></returns>
-        public Hashtable getInfoByEwm(string mm)
+        public Hashtable getInfoByEwm(string mm,string sbbm)
         {
             Hashtable p = new Hashtable();
             p.Add("mm", mm);
+            p.Add("sbbm", sbbm);
             return doCallingInterface("clgl", "checkysm", p);
         }
+
+
+
+
+        /// <summary>
+        /// 获取用户信息
+        /// </summary>
+        /// <param name="sjhm">手机号码</param>
+        /// <returns></returns>
+        public Hashtable getInfoUser(string sjhm) 
+        {
+            Hashtable p = new Hashtable();
+            p.Add("sjhm", sjhm);
+            return doCallingInterface("p01", "getuserinfo", p);
+        }
+
+
+
+
 
         /// <summary>
         /// 根据钥匙编码获取钥匙信息
@@ -57,11 +78,6 @@ namespace BLL
 
 
 
-        //public Hashtable getYcsy() 
-        //{
-
-        //}
-
 
 
         /// <summary>
@@ -77,6 +93,11 @@ namespace BLL
             p.Add("key", key);
             return doCallingInterface("clgl", "savekeycode", p);
         }
+
+
+
+
+
         /// <summary>
         /// 绑定管理员卡
         /// </summary>
@@ -89,6 +110,11 @@ namespace BLL
             p.Add("key", key);
             return doCallingInterface("clgl", "saveadmincard", p);
         }
+
+
+
+
+
         /// <summary>
         /// 判断管理员卡是否正确
         /// </summary>
@@ -104,6 +130,9 @@ namespace BLL
             rtn = (info["r"].ToString() == "true");
             return rtn;
         }
+
+
+
         /// <summary>
         /// 判断财务密码是否正确
         /// </summary>
@@ -120,6 +149,8 @@ namespace BLL
             return rtn;
         }
       
+
+
 
         /// <summary>
         /// 获取钥匙柜日志
@@ -213,6 +244,10 @@ namespace BLL
             }
             return rtn;
         }
+
+
+
+
         /// <summary>
         /// 插入日志
         /// </summary>
@@ -229,6 +264,8 @@ namespace BLL
             return doCallingInterface("clgl", "savelog", p);
         }
 
+
+
         public Hashtable setLog(string key, string ysbh, string lx,string sjhm, string ycsqdpk)
         {
             Hashtable p = new Hashtable();
@@ -239,6 +276,8 @@ namespace BLL
             p.Add("lx", lx);
             return doCallingInterface("clgl", "savelog", p);
         }
+
+
 
         /// <summary>
         /// 使用密码取钥匙时，回调接口
@@ -254,15 +293,40 @@ namespace BLL
             return doCallingInterface("clgl", "saveqys", p);
         }
 
+
         /// <summary>
-        /// 还钥匙，回调接口
+        /// 使用验证码取钥匙
         /// </summary>
         /// <param name="mm"></param>
         /// <returns></returns>
-        public Hashtable saveHys(string ysbh)
+        public Hashtable saveQysLog(string ysbh, string sbbm)
+        {
+            Hashtable p = new Hashtable();
+            p.Add("ysbh", ysbh);           
+            p.Add("sbbm", sbbm);
+            return doCallingInterface("clgl", "savehys", p);
+        }
+
+
+        /// <summary>
+        /// 还钥匙，回调接口
+        /// </summary>
+        /// <param name="ysbh">钥匙编码(对应格子号)</param>
+        /// <param name="sbbm">钥匙柜编码</param>
+        /// <param name="yscqdpk">用车申请的PK</param>
+        /// <param name="clzkpj">车辆状况评价值</param>
+        /// <param name="clwgpj">车辆外观评价值</param>
+        /// <param name="clnspj">车辆内饰评价值</param>
+        /// <returns></returns>
+        public Hashtable saveHys(string ysbh,string sbbm, string yscqdpk,string clzkpj,string clwgpj,string clnspj)
         {
             Hashtable p = new Hashtable();
             p.Add("ysbh", ysbh);
+            p.Add("sbbm", sbbm);
+            p.Add("yscqdpk", yscqdpk);
+            p.Add("clzkpj", clzkpj);
+            p.Add("clwgpj", clwgpj);
+            p.Add("clnspj", clnspj);
             return doCallingInterface("clgl", "savehys", p);
         }
 
@@ -383,6 +447,8 @@ namespace BLL
             }
             return returnXml;
         }
+
+
 
         /// <summary>
         /// 将Json转化成DataSet

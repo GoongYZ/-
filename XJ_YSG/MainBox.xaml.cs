@@ -33,12 +33,19 @@ namespace XJ_YSG
         public int m_nSize = 640 * 480;
         #endregion
 
+        #region 用户信息和钥匙柜列表
+        List<string> userlist = new List<string>();
+        Dictionary<int, List<string>> gh = new Dictionary<int, List<string>>();
+        #endregion
+
 
         public MainBox()
         {
             InitializeComponent();
             this.Left = 0;
             this.Top = 0;
+
+            UHFService.ConnectCOM();
             //激活人脸识别
             if (activation.InitEngines() == "1")
             {
@@ -51,11 +58,12 @@ namespace XJ_YSG
             }
             //连接锁
             lockControl.Open();
-            //激活RFID
-            UHFService.ConnectCOM();            
+            //激活RFID读信息卡
+            Rfidthan();
             LockDjs();//门箱状态
-        }
 
+            
+        }
 
 
 
@@ -64,7 +72,6 @@ namespace XJ_YSG
         {
             Xj_Mima xj_Mima = new Xj_Mima();
             xj_Mima.ShowDialog();
-
         }
         #endregion
 
@@ -273,10 +280,7 @@ namespace XJ_YSG
                                     //进行语音播报 "人脸识别初始化成功"
                                     speack("人脸识别初始化成功");
                                 }
-
                             }));
-
-
                         }
                     }));
                 }
@@ -386,10 +390,15 @@ namespace XJ_YSG
 
         void RfidTimer_Tick_canShow(object sender, EventArgs e)
         {
-            UHFService.OneCheckInvnetoryWhile2(0);
+            UHFService.OneCheckInvnetoryWhile3(0);
             string st = UHFService.strEPC;
             string s = string.Join(",", st.Split(',').Distinct().ToArray());
-
+            if (s != "") 
+            {
+                zwTimer.Stop();
+                Xj_Clpj xj_Clpj = new Xj_Clpj();
+                xj_Clpj.ShowDialog();
+            }
            
         }
         #endregion
@@ -442,25 +451,29 @@ namespace XJ_YSG
         #region 初始化钥匙柜卡片
         private void Csh_yskp() 
         {
-            //先确定是否有本地文件
-            string gh_kp = "";
-            int gh = 10;  //钥匙柜规格
-            for (int i = 1; i <= gh; i++)
+            string Current = System.IO.Directory.GetCurrentDirectory();
+            string Path = Current + "YsgGh.txt   ";
+            if (!Directory.Exists(Path)) //判断是否有本地文件存在
             {
-                int cs = 3;  //读取次数
-                while (cs <= 3)
+                string gh_kp = "";  //柜号_卡片                
+                int gh = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜规格
+                for (int i = 1; i <= gh; i++)
                 {
-                    UHF2Service.OneCheckInvnetoryWhile2(i);
-                    i++;
+                    int cs = 3;  //读取次数
+                    while (cs <= 3)
+                    {
+                        UHF2Service.OneCheckInvnetoryWhile2(i);
+                        i++;
+                    }
+                    string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
+                    if (yskp != "")
+                    {
+                        gh_kp += "" + i + "_" + yskp + ",";
+                        //写入文件
+                        log.WriteYsgGh(gh_kp);
+                    }
                 }
-                string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
-                if (yskp != "")
-                {
-                    gh_kp += "" + i + "_" + yskp + "";
-                    //写入文件
-                    log.WriteYsgGh(gh_kp);
-                }      
-            }
+            }           
         }
         #endregion
 
