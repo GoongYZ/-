@@ -21,9 +21,12 @@ namespace XJ_YSG
     {
         public Xj_Mima()
         {
+            InitializeComponent();
             this.Left = 0;
             this.Top = 0;
-            InitializeComponent();
+            ImageBrush b3 = new ImageBrush();
+            b3.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Img/xj_mima.png", UriKind.Absolute));
+            this.Background = b3;
         }
 
 

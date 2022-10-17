@@ -7,9 +7,7 @@
         mc:Ignorable="d"
         Title="Xj_Mima"  Height="1024" Width="768" WindowStyle="None" ResizeMode="CanMinimize">
     <StackPanel>
-        <StackPanel.Background>
-            <ImageBrush ImageSource="Img/xj_mima.png"></ImageBrush>
-        </StackPanel.Background>
+       
         <StackPanel>
             <Button Width="80" Height="50" Margin="650,20,0,0" Content="取消"  FontSize="20" Background="#2196F3" x:Name="Shut_down" Click="Shut_down_Click"></Button>
         </StackPanel>

@@ -14,24 +14,31 @@ using XJ_YSG;
 using System.Windows.Threading;
 using System.Windows.Media.Imaging;
 using System.Linq;
+using System.Windows.Media;
 
 namespace XJ_YSG
 {
     /// <summary>
     /// MainBox.xaml 的交互逻辑
     /// </summary>
+
+
     public partial class MainBox : Window
     {
         Activation activation = new Activation();
         Fingerprint fingerprint = new Fingerprint();
         Logo log = new Logo();
         LockControl lockControl = new LockControl();
+        private MainBox mainbox = null;
+
         #region  指纹图像数据
         public byte[] m_pImageBuffer = new byte[640 * 480];
         public int m_nWidth = 0;
         public int m_nHeight = 0;
         public int m_nSize = 640 * 480;
         #endregion
+
+
 
         #region 用户信息和钥匙柜列表
         List<string> userlist = new List<string>();
@@ -44,29 +51,35 @@ namespace XJ_YSG
             InitializeComponent();
             this.Left = 0;
             this.Top = 0;
-
+            ImageBrush b3 = new ImageBrush();
+            b3.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Img/main.png", UriKind.Absolute));
+            this.Background = b3;
+            if (mainbox == null)
+            {
+                mainbox = this;
+            }
             UHFService.ConnectCOM();
+            UHF2Service.ConnectCOM();
+            Csh_yskp();
             //激活人脸识别
             if (activation.InitEngines() == "1")
             {
                 ChooseMultiImg();
             }
+
             //开始指纹验证
             if (fingerprint.ZW_Connection() == "ok")
             {
                 zwthan();
             }
+
             //连接锁
             lockControl.Open();
             //激活RFID读信息卡
             Rfidthan();
-            LockDjs();//门箱状态
-
-            
+            //门箱状态
+            LockDjs();
         }
-
-
-
         #region 输入钥匙码按钮
         private void Smkey_Click(object sender, RoutedEventArgs e)
         {
@@ -197,8 +210,6 @@ namespace XJ_YSG
                                 imagePathListTemp.Add(path);
                             }
                         }
-
-
                         //人脸检测和剪裁  遍历每张图片
                         for (int i = 0; i < imagePathListTemp.Count; i++)
                         {
@@ -275,7 +286,7 @@ namespace XJ_YSG
                                 {
                                     image.Dispose();
                                 }
-                                if (i == imagePathListTemp.Count)
+                                if (isGoodImage == imagePathListTemp.Count)
                                 {
                                     //进行语音播报 "人脸识别初始化成功"
                                     speack("人脸识别初始化成功");
@@ -393,13 +404,12 @@ namespace XJ_YSG
             UHFService.OneCheckInvnetoryWhile3(0);
             string st = UHFService.strEPC;
             string s = string.Join(",", st.Split(',').Distinct().ToArray());
-            if (s != "") 
+            if (s != "")
             {
                 zwTimer.Stop();
-                Xj_Clpj xj_Clpj = new Xj_Clpj();
+                Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox);
                 xj_Clpj.ShowDialog();
             }
-           
         }
         #endregion
 
@@ -414,8 +424,8 @@ namespace XJ_YSG
             ClossTimer.Interval = new TimeSpan(0, 0, 0, 0, 2000); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
             ClossTimer.Tick += new EventHandler(ClossTimer_Tick_canShow); //每一秒执行的方法
             ClossTimer.Start();
-
         }
+
         void ClossTimer_Tick_canShow(object sender, EventArgs e)
         {
             if (LockControl.locklis.Count > 0) //判断是否有柜门打开
@@ -436,28 +446,27 @@ namespace XJ_YSG
                         if (yskp != "")
                         {
                             //调接口
-
-
                             //停止
+                            //清楚数据
                             UHF2Service.strEPC = "";
-                        }                       
+                        }
                     }
                 }
-            }           
+            }
         }
         #endregion
 
 
         #region 初始化钥匙柜卡片
-        private void Csh_yskp() 
-        {
+        private void Csh_yskp()
+        {         
             string Current = System.IO.Directory.GetCurrentDirectory();
             string Path = Current + "YsgGh.txt   ";
             if (!Directory.Exists(Path)) //判断是否有本地文件存在
             {
                 string gh_kp = "";  //柜号_卡片                
-                int gh = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜规格
-                for (int i = 1; i <= gh; i++)
+                int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜规格
+                for (int i = 1; i <= gzsl; i++)
                 {
                     int cs = 3;  //读取次数
                     while (cs <= 3)
@@ -473,7 +482,7 @@ namespace XJ_YSG
                         log.WriteYsgGh(gh_kp);
                     }
                 }
-            }           
+            }
         }
         #endregion
 

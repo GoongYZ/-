@@ -18,12 +18,20 @@ namespace XJ_YSG
     /// Xj_Clpj.xaml 的交互逻辑
     /// </summary>
     public partial class Xj_Clpj : Window
-    {
-        public Xj_Clpj()
+    {     
+        public Xj_Clpj(MainBox mainbox)
         {
             InitializeComponent();
             this.Left = 104;
             this.Top = 255;
+            
+            this.Loaded += ((s, e) => {              
+                mainbox.markLayer.Visibility = Visibility.Visible;               
+            });
+            this.Closed += ((s, e) =>
+            {
+                mainbox.markLayer.Visibility = Visibility.Hidden;
+            });
         }
 
         private void clpj_Button_Click(object sender, RoutedEventArgs e)

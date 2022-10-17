@@ -5,7 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:XJ_YSG"
         mc:Ignorable="d"
-        Title="Xj_Clpj" Height="394" Width="540" WindowStyle="None" ResizeMode="CanMinimize">
+        Title="Xj_Clpj" Height="394" Width="540" WindowStyle="None" AllowsTransparency="True"  ResizeMode="CanMinimize">
+    <Window.Style>
+        <Style TargetType="Window">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Window">
+                        <Border   CornerRadius="5,5,0,0" BorderBrush="Black" Background="#FF5A9AE0" >
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Style>
     <Window.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
@@ -162,8 +175,9 @@
 
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="Img\ycpj.png"></ImageBrush>
+            <ImageBrush   ImageSource="/Img/ycpj.png"></ImageBrush>
         </Grid.Background>
+        
         <RadioButton GroupName="clzk" Content="好"   Margin="214,90,0,0" VerticalAlignment="Top"  IsChecked="True" Style="{DynamicResource RadioButtonStyle1}"/>
         <RadioButton GroupName="clzk" Content="一般"  Margin="293,90,0,0" VerticalAlignment="Top"  Style="{DynamicResource RadioButtonStyle1}"/>
         <RadioButton GroupName="clzk" Content="差"  Margin="393,90,0,0" VerticalAlignment="Top" Style="{DynamicResource RadioButtonStyle1}"/>

@@ -32,21 +32,16 @@ namespace XJ_YSG
         public int m_nWidth = 0;
         public int m_nHeight = 0;
         public int m_nSize = 640 * 480;
+        int nRet=-1;
         #endregion
 
 
         public Xj_Zwlr()
         {
-            InitializeComponent();
-
+            InitializeComponent();            
             if (ParameterModel.m_hDevice != IntPtr.Zero)
-            {
-                //指纹模块先复位一下
-                 int nRet= ParameterModel.ZKFPModule_Reset(ParameterModel.m_hDevice);
-                if (nRet == 0) 
-                {
-                    CanShow();
-                }             
+            {           
+                 CanShow();                      
             }
             else 
             {
@@ -67,20 +62,25 @@ namespace XJ_YSG
         }
         void disTimer_Tick_canShow(object sender, EventArgs e)
         {
-            //每秒中向绑定一次指纹图片 ,实时采集图像，并显示       
-            int nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref m_nWidth, ref m_nHeight, m_pImageBuffer, ref m_nSize);
-            if (nRet == 0)
+            //模块复位
+             nRet = ParameterModel.ZKFPModule_Reset(ParameterModel.m_hDevice);
+            if (nRet == 0) 
             {
-                MemoryStream ms = new MemoryStream();
-                BitmapFormat.GetBitmap(m_pImageBuffer, m_nWidth, m_nHeight, ref ms);
-                if (ms != null)
+                //每秒中向绑定一次指纹图片 ,实时采集图像，并显示       
+                nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref m_nWidth, ref m_nHeight, m_pImageBuffer, ref m_nSize);
+                if (nRet == 0)
                 {
-                    Bitmap bmp = new Bitmap(ms);
-                    IntPtr hBitmap = bmp.GetHbitmap();
-                    this.pictureBox_FingerImg.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                    disTimer.Stop();
+                    MemoryStream ms = new MemoryStream();
+                    BitmapFormat.GetBitmap(m_pImageBuffer, m_nWidth, m_nHeight, ref ms);
+                    if (ms != null)
+                    {
+                        Bitmap bmp = new Bitmap(ms);
+                        IntPtr hBitmap = bmp.GetHbitmap();
+                        this.pictureBox_FingerImg.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                        disTimer.Stop();
+                    }
                 }
-            }
+            }            
         }
         #endregion
 
@@ -108,8 +108,6 @@ namespace XJ_YSG
                 }
             }
         }
-
-
 
         private void speack(string text)
         {

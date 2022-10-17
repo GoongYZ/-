@@ -7,6 +7,19 @@
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="XJ_YSG.Xj_Ycsy"
         mc:Ignorable="d"
         Title="Xj_Ycsy" Height="560" Width="560" WindowStyle="None" ResizeMode="CanMinimize">
+    <Window.Style>
+        <Style TargetType="Window">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Window">
+                        <Border   CornerRadius="5,5,0,0" BorderBrush="Black" Background="#FF5A9AE0" >
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Style>
     <Window.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
@@ -360,7 +373,7 @@
     </Window.Resources>
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="/Img/ycsy.png"/>
+            <ImageBrush   ImageSource="/Img/ycsy.png"></ImageBrush>
         </Grid.Background>
         <Button Opacity="0" x:Name="btn_tc" HorizontalAlignment="Left" Margin="490,-1,0,0" VerticalAlignment="Top" Width="70" Height="53"></Button>
         <ComboBox HorizontalAlignment="Left" Margin="192,92,0,0" VerticalAlignment="Top" Width="320"   Height="52" Style="{DynamicResource ComboBoxStyle1}">

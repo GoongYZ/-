@@ -19,11 +19,19 @@ namespace XJ_YSG
     /// </summary>
     public partial class Xj_Ycsy : Window
     {
-        public Xj_Ycsy()
+        public Xj_Ycsy(Xj_BoxList BoxList)
         {
             InitializeComponent();
+            this.Left = 104;
+            this.Top = 172;           
+            this.Loaded += ((s, e) => {
+                BoxList.markLayer.Visibility = Visibility.Visible;
+            });
 
-           
+            this.Closed += ((s, e) =>
+            {
+                BoxList.markLayer.Visibility = Visibility.Hidden;
+            });
         }      
     }
 }

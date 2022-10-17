@@ -12,7 +12,7 @@ using OperationResult = RFIDReaderNetwork_SerialSDK_ForCSharp.DataStructureLayer
 namespace BLL
 {
     /// <summary>
-    /// 物必连读写器
+    /// 物必连读写器钥匙卡
     /// </summary>
     public class UHF2Service
     {

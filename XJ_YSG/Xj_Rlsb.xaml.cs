@@ -11,6 +11,8 @@ using System.Drawing;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace XJ_YSG
@@ -29,6 +31,9 @@ namespace XJ_YSG
             InitializeComponent();
             this.Left = 0;
             this.Top = 0;
+            ImageBrush b3 = new ImageBrush();
+            b3.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Img/key_rlsb.png", UriKind.Absolute));
+            this.Background = b3;
             closeDjs();
             btnStartVideo_Click();
             this.Closed += Xj_Rlsb_Closed; //窗体关闭时人脸资源释放掉，否则下次无法正常显示

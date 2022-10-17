@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BLL;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -21,12 +22,19 @@ namespace XJ_YSG
     public partial class Xj_BoxList : Window
     {
         DataTable tb = new DataTable();
-
+        private Xj_BoxList BoxList = null;
         public Xj_BoxList()
         {
             InitializeComponent();
             this.Left = 0;
             this.Top = 0;
+            ImageBrush b3 = new ImageBrush();
+            b3.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Img/Boxlist.png", UriKind.Absolute));
+            this.Background = b3;
+            if (BoxList == null)
+            {
+                BoxList = this;
+            }
             Bindinfo();
         }
 
@@ -69,9 +77,9 @@ namespace XJ_YSG
                     string dwm = ((Label)ui).Content.ToString();
                     if (!string.IsNullOrEmpty(dwm))
                     {
-                        //开启柜门                      
-                        //KeyMessage keyMessage = new KeyMessage(dwm);
-                        //keyMessage.ShowDialog();
+                        //开启柜门
+                        Xj_Ycsy Ycsy = new Xj_Ycsy(BoxList);
+                        Ycsy.ShowDialog();
                     }
                 }
             }
@@ -80,8 +88,17 @@ namespace XJ_YSG
         private void btn_clos_Click(object sender, RoutedEventArgs e)
         {
             ParameterModel.issbzw = true;
-            this.Close();
-           
+            this.Close();           
         }
+
+        #region 语音播报
+        private void speack(string text)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SpeechVoice.speack(text);
+            }), System.Windows.Threading.DispatcherPriority.Normal);
+        }
+        #endregion
     }
 }
