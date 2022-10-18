@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interaction_WebService.cs" />
     <Compile Include="Logo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerBase.cs" />
@@ -93,6 +94,9 @@
     <Content Include="dll\Interop.DcdzMsCommLib.dll" />
     <Content Include="dll\Newtonsoft.Json.dll" />
     <Content Include="dll\RFIDReaderNetwork_SerialSDK_ForCSharp.dll" />
+    <Content Include="DotNetSpeech.dll" />
+    <Content Include="Interop.DcdzMsCommLib.dll" />
+    <Content Include="Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Comm\Comm.csproj">
