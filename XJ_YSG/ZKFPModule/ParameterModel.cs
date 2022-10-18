@@ -28,8 +28,7 @@ namespace XJ_YSG
         const int MESSAGE_REGISTER_FAIL = 0x0400 + 42;
 
 
-        //是否继续识别
-        public static bool issbzw = true;
+       
         #endregion
 
         #region  dll

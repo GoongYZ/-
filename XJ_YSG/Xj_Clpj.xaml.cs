@@ -36,8 +36,8 @@ namespace XJ_YSG
 
         private void clpj_Button_Click(object sender, RoutedEventArgs e)
         {
-            LockControl lockControl = new LockControl();
-            lockControl.Send("1");
+            //LockControl lockControl = new LockControl();
+            //lockControl.Send("1");
             //打开柜门
         }
     }

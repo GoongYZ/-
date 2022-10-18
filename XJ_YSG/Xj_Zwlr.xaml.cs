@@ -26,28 +26,28 @@ namespace XJ_YSG
     {
         Fingerprint fingerprint = new Fingerprint();
         Logo log = new Logo();
-        
+
         #region  指纹图像数据
         public byte[] m_pImageBuffer = new byte[640 * 480];
         public int m_nWidth = 0;
         public int m_nHeight = 0;
         public int m_nSize = 640 * 480;
-        int nRet=-1;
+        int nRet = -1;
         #endregion
 
 
         public Xj_Zwlr()
         {
-            InitializeComponent();            
+            InitializeComponent();
             if (ParameterModel.m_hDevice != IntPtr.Zero)
-            {           
-                 CanShow();                      
+            {
+                CanShow();
             }
-            else 
+            else
             {
                 fingerprint.ZW_Connection();
             }
-                     
+
         }
 
 
@@ -62,25 +62,23 @@ namespace XJ_YSG
         }
         void disTimer_Tick_canShow(object sender, EventArgs e)
         {
-            //模块复位
-             nRet = ParameterModel.ZKFPModule_Reset(ParameterModel.m_hDevice);
-            if (nRet == 0) 
+
+
+            //每秒中向绑定一次指纹图片 ,实时采集图像，并显示       
+            nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref m_nWidth, ref m_nHeight, m_pImageBuffer, ref m_nSize);
+            if (nRet == 0)
             {
-                //每秒中向绑定一次指纹图片 ,实时采集图像，并显示       
-                nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref m_nWidth, ref m_nHeight, m_pImageBuffer, ref m_nSize);
-                if (nRet == 0)
+                MemoryStream ms = new MemoryStream();
+                BitmapFormat.GetBitmap(m_pImageBuffer, m_nWidth, m_nHeight, ref ms);
+                if (ms != null)
                 {
-                    MemoryStream ms = new MemoryStream();
-                    BitmapFormat.GetBitmap(m_pImageBuffer, m_nWidth, m_nHeight, ref ms);
-                    if (ms != null)
-                    {
-                        Bitmap bmp = new Bitmap(ms);
-                        IntPtr hBitmap = bmp.GetHbitmap();
-                        this.pictureBox_FingerImg.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                        disTimer.Stop();
-                    }
+                    Bitmap bmp = new Bitmap(ms);
+                    IntPtr hBitmap = bmp.GetHbitmap();
+                    this.pictureBox_FingerImg.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    disTimer.Stop();
                 }
-            }            
+            }
+
         }
         #endregion
 
@@ -99,12 +97,12 @@ namespace XJ_YSG
                 if (0 == nRet)
                 {
                     speack("录入成功");
-                    log.WriteLogo("录入成功", 5);                   
+                    log.WriteLogo("录入成功", 5);
                 }
                 else
                 {
                     string erro = fingerprint.Erroneous(nRet.ToString());
-                    log.WriteLogo("录入失败!" + "错误原因:" + erro, 5);                   
+                    log.WriteLogo("录入失败!" + "错误原因:" + erro, 5);
                 }
             }
         }

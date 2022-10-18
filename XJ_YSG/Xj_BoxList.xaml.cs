@@ -87,7 +87,8 @@ namespace XJ_YSG
 
         private void btn_clos_Click(object sender, RoutedEventArgs e)
         {
-            ParameterModel.issbzw = true;
+            MainBox.issbzw = true;
+            MainBox.issfsk = true;
             this.Close();           
         }
 

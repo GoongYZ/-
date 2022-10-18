@@ -1,5 +1,4 @@
-﻿
-using RFIDReaderNetwork_SerialSDK_ForCSharp.DataStructureLayer;
+﻿using RFIDReaderNetwork_SerialSDK_ForCSharp.DataStructureLayer;
 using RFIDReaderNetwork_SerialSDK_ForCSharp.ExternalInterfaceLayer;
 using System;
 using System.Collections;
@@ -7,31 +6,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using OperationResult = RFIDReaderNetwork_SerialSDK_ForCSharp.DataStructureLayer.OperationResult;
 
 namespace BLL
 {
     /// <summary>
-    /// 物必连读写器钥匙卡
+    /// 物必连读写器 读取钥匙卡
     /// </summary>
     public class UHF2Service
     {
         private static RFIDServer m_rifdServer = null;
-        private static RFIDClient m_rfidClientReader = null;
-        //rfid 读钥匙
+        private static RFIDClient m_rfidClientReader = null;//rfid读卡器
         private static int _port = Convert.ToInt32(ServerBase.XMLRead("UHF2", "ListenPort"));
         private static string ComPortName = ServerBase.XMLRead("UHF2", "ComPortName");
-        private static string BaudRate =  ServerBase.XMLRead("UHF2", "BaudRate");
+        private static string BaudRate = ServerBase.XMLRead("UHF2", "BaudRate");
+        
         private static string m_strWorkReaderDeviceID = string.Empty;              //工作读写器的设备序列号
         private static Reader reader = null;
         private static string m_strLostConnectDeviceID = string.Empty;
         private static Reader m_selectedWorkReader = null;
         private delegate void InventoryResultListViewUpdate(INVENTORY_REPORT_RESULT inventoryListViewItem);
         public static Hashtable Listm_strEPC = new Hashtable();//单次盘点集合
-        public static string strEPC = "";
+        public static string  strEPC = "";//单次盘点集合
         public static bool IsOneCheckInv = false;
-      
-        
         /// <summary>
         /// COM口连接
         /// </summary>
@@ -93,16 +89,38 @@ namespace BLL
             }
         }*/
 
-
-
-
-
-
-
         /// <summary>
         /// 根据天线获取标签数据
         /// </summary>
         public static void OneCheckInvnetoryWhile(int nAntnnaNumber)
+        {
+
+            if (!CheckReaderOnLine())
+                return;
+            OperationResult nRetVal = OperationResult.FAIL;
+            TagReport tagReport = new TagReport();
+            DateTime dt1 = DateTime.Now;
+            while ((DateTime.Now - dt1).TotalMilliseconds < 3000)
+            {
+                if (!CheckReaderOnLine())
+                    break;
+                nRetVal = m_selectedWorkReader.m_rfidWorkReader.Inventory(nAntnnaNumber, ref tagReport);//单次盘点 
+                if (nRetVal == OperationResult.SUCCESS)
+                {
+                    Tag tag = null;
+                    for (int i = 0; i < tagReport.m_listTags.Count; ++i)
+                    {
+                        tag = tagReport.m_listTags[i];
+                        if (!Listm_strEPC.Contains(tag.m_strEPC))
+                            Listm_strEPC.Add(tag.m_strEPC, tag.m_strEPC);                        
+                    }
+                }
+                Thread.Sleep(10);
+            }
+            m_selectedWorkReader.m_bIsInventory = true;
+        }
+
+        public static void OneCheckInvnetoryWhile2(int nAntnnaNumber)
         {
 
             if (!CheckReaderOnLine())
@@ -129,45 +147,6 @@ namespace BLL
             }
             m_selectedWorkReader.m_bIsInventory = true;
         }
-
-
-        /// <summary>
-        /// 根据天线获取标签数据
-        /// </summary>
-        /// 
-        public static void OneCheckInvnetoryWhile2(int nAntnnaNumber)
-        {
-            try
-            {
-                if (!CheckReaderOnLine())
-                    return;
-                OperationResult nRetVal = OperationResult.FAIL;
-                TagReport tagReport = new TagReport();
-                nRetVal = m_selectedWorkReader.m_rfidWorkReader.Inventory(nAntnnaNumber, ref tagReport);//单次盘点 
-                if (nRetVal == OperationResult.SUCCESS)
-                {
-                    Tag tag = null;
-                    for (int i = 0; i < tagReport.m_listTags.Count; ++i)
-                    {
-                        tag = tagReport.m_listTags[i];
-                        if (!Listm_strEPC.Contains(tag.m_strEPC))
-                        {
-                            if (strEPC != "")
-                            {
-                                strEPC += ",";
-                            }
-                            strEPC += tag.m_strEPC.ToString();
-                        }
-                    }
-                }
-                m_selectedWorkReader.m_bIsInventory = true;
-            }
-            catch (Exception ex)
-            {
-                Logo.sWriteLogo(ex.Message, 11);
-            }
-        }
-
         public static void StartPerioInventory()
         {
             OperationResult nRetVal = OperationResult.FAIL;

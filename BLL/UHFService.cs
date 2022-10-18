@@ -2,32 +2,32 @@
 using RFIDReaderNetwork_SerialSDK_ForCSharp.ExternalInterfaceLayer;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
-using OperationResult = RFIDReaderNetwork_SerialSDK_ForCSharp.DataStructureLayer.OperationResult;
-
 namespace BLL
 {
     /// <summary>
-    /// 物必连读写器刷卡
+    /// 物必连读写器 刷卡
     /// </summary>
     public class UHFService
     {
-       // private static RFIDServer m_rifdServer = null;
+        private static RFIDServer m_rifdServer = null;
         private static RFIDClient m_rfidClientReader = null;//rfid读卡器
         private static int _port = Convert.ToInt32(ServerBase.XMLRead("UHF1", "ListenPort"));
         private static string ComPortName = ServerBase.XMLRead("UHF1", "ComPortName");
         private static string BaudRate = ServerBase.XMLRead("UHF1", "BaudRate");
+        
         private static string m_strWorkReaderDeviceID = string.Empty;              //工作读写器的设备序列号
         private static Reader reader = null;
         private static string m_strLostConnectDeviceID = string.Empty;
         private static Reader m_selectedWorkReader = null;
         private delegate void InventoryResultListViewUpdate(INVENTORY_REPORT_RESULT inventoryListViewItem);
         public static Hashtable Listm_strEPC = new Hashtable();//单次盘点集合
-        public static string strEPC = "";
-        //public static Dictionary<string, string> Listm_strEPC = null;
+        public static string strEPC = "";//单次盘点集合
         public static bool IsOneCheckInv = false;
         public static object LockRxdTagData = new object();
-
         /// <summary>
         /// COM口连接
         /// </summary>
@@ -60,7 +60,9 @@ namespace BLL
                     m_selectedWorkReader = reader;
                     m_selectedWorkReader.m_cOperateReader.m_nReaderWorkType = ReaderWorkType.COM;
                     m_selectedWorkReader.m_cOperateReader.m_strReaderIPOrCom = strReaderIPOrCom;
+
                     m_selectedWorkReader = reader;                  //把连接上的读写器设置当前工作读写器 
+
                     Logo.sWriteLogo("读写器" + m_rfidClientReader.m_strDeviceID + ",序列号为" + m_rfidClientReader.m_strDeviceID + "已连接", 11);
                 }
                 else
@@ -69,10 +71,6 @@ namespace BLL
                 }
             }
         }
-
-
-
-
         /* public static void ConnectNetWork()
          {
              OperationResult nRetVal = OperationResult.FAIL;
@@ -91,12 +89,9 @@ namespace BLL
              }
          }*/
 
-
-
         /// <summary>
         /// 根据天线获取标签数据
         /// </summary>
-        /// 
         public static void OneCheckInvnetoryWhile(int nAntnnaNumber)
         {
             try
@@ -116,14 +111,18 @@ namespace BLL
                         Tag tag = null;
                         for (int i = 0; i < tagReport.m_listTags.Count; ++i)
                         {
-                            tag = tagReport.m_listTags[i];                            
-                            if (!Listm_strEPC.Contains(tag.m_strEPC))                            
-                              Listm_strEPC.Add(tag.m_strEPC, tag.m_strEPC);
-                            if (strEPC != "") 
+                            tag = tagReport.m_listTags[i];
+                            if (!Listm_strEPC.Contains(tag.m_strEPC)) 
                             {
-                                strEPC += ",";
-                            }
-                            strEPC += nAntnnaNumber.ToString() + "_" + tag.m_strEPC.ToString();
+                                if (strEPC != "")
+                                {
+                                    strEPC += ",";
+                                }
+                                else
+                                {
+                                    strEPC += tag.m_strEPC;
+                                }
+                            }                                                            
                         }
                     }
                     Thread.Sleep(10);
@@ -135,88 +134,6 @@ namespace BLL
                 Logo.sWriteLogo(ex.Message, 11);
             }
         }
-
-
-
-
-
-        /// <summary>
-        /// 根据天线获取标签数据
-        /// </summary>
-        /// 
-        public static void OneCheckInvnetoryWhile3(int nAntnnaNumber)
-        {
-            try
-            {
-                if (!CheckReaderOnLine())
-                    return;
-                OperationResult nRetVal = OperationResult.FAIL;
-                TagReport tagReport = new TagReport();
-                nRetVal = m_selectedWorkReader.m_rfidWorkReader.Inventory(nAntnnaNumber, ref tagReport);//单次盘点 
-                if (nRetVal == OperationResult.SUCCESS)
-                {
-                    Tag tag = null;
-                    for (int i = 0; i < tagReport.m_listTags.Count; ++i)
-                    {
-                        tag = tagReport.m_listTags[i];
-                        if (!Listm_strEPC.Contains(tag.m_strEPC))
-                        {
-                            if (strEPC != "")
-                            {
-                                strEPC += ",";
-                            }
-                            strEPC +=  tag.m_strEPC.ToString();
-                        }
-                    }
-                }
-                m_selectedWorkReader.m_bIsInventory = true;
-            }
-            catch (Exception ex)
-            {
-                Logo.sWriteLogo(ex.Message, 11);
-            }
-        }
-
-        /// <summary>
-        /// 根据天线获取标签数据
-        /// </summary>
-        /// 
-        public static void OneCheckInvnetoryWhile2(int nAntnnaNumber)
-        {
-            try
-            {
-                if (!CheckReaderOnLine())
-                    return;
-                OperationResult nRetVal = OperationResult.FAIL;
-                TagReport tagReport = new TagReport();
-                nRetVal = m_selectedWorkReader.m_rfidWorkReader.Inventory(nAntnnaNumber, ref tagReport);//单次盘点 
-                if (nRetVal == OperationResult.SUCCESS)
-                {
-                    Tag tag = null;
-                    for (int i = 0; i < tagReport.m_listTags.Count; ++i)
-                    {
-                        tag = tagReport.m_listTags[i];
-                        if (!Listm_strEPC.Contains(tag.m_strEPC))
-                        {
-                            if (strEPC != "")
-                            {
-                                strEPC += ",";
-                            }
-                            strEPC += nAntnnaNumber.ToString() + "_" + tag.m_strEPC.ToString();
-                        }
-                    }
-                }
-                m_selectedWorkReader.m_bIsInventory = true;
-            }
-            catch (Exception ex)
-            {
-                Logo.sWriteLogo(ex.Message, 11);
-            }
-        }
-
-
-
-
         public static void StartPerioInventory()
         {
             OperationResult nRetVal = OperationResult.FAIL;
@@ -232,19 +149,16 @@ namespace BLL
                 OperationResult nRetVal = m_selectedWorkReader.m_rfidWorkReader.StopPeriodInventory();
             }
         }
-
         public static bool CheckReaderOnLine()
         {
             if (null == m_selectedWorkReader)
             {
-                Logo.sWriteLogo("读写器" + m_rfidClientReader.m_strDeviceID + "进行了重新连接。", 11);
                 ConnectCOM();
-                return true;   
+                return true;
             }
             else
                 return true;
         }
-
         /// <summary>
         /// 作为客户端的读写器发生错误事件处理函数
         /// </summary>
@@ -265,7 +179,6 @@ namespace BLL
                 }
             }
         }
-
         /// <summary>
         /// 作为客户端的读写器请求连接事件处理函数
         /// </summary>
@@ -292,6 +205,8 @@ namespace BLL
                         ReaderManager.g_ReaderManager.AddConnectDevice(e.m_strDeviceID, reader);
                         reader.m_cOperateReader.m_nReaderWorkType = ReaderWorkType.TCP_CLIENT;
                         reader.m_cOperateReader.m_strReaderIPOrCom = e.m_strReaderIp;
+
+
                         //同步时间
                         DateTime day = DateTime.Now;
                         int month = day.Month;
@@ -303,11 +218,15 @@ namespace BLL
                         string time;
                         time = String.Format("{0:D2}{1:D2}{2:D2}{3:D2}{4:D4}.{5:D2}", month, d, h, mm, y, s);
                         // nRetVal = reader.m_rfidWorkReader.SetCurrentTime(time);
+
                         m_selectedWorkReader = reader;
+
+
                         //if (nRetVal == OperationResult.SUCCESS)
                             //log.WriteLogo("同步时间成功...", 11);
                         //else
                             //log.WriteLogo(string.Format("同步时间失败：原因:{0}...", nRetVal.ToString()), 11);
+
                     }
                     else
                     {
@@ -340,27 +259,22 @@ namespace BLL
             }
         }
 
-
-
         #region[连续盘点事件]
         private static void m_rfidClientReader_m_OnInventoryReport(object sender, InventoryReportEventArgs e)
         {
             if (e != null)
-            {               
+            {
                 INVENTORY_REPORT_RESULT report = e.m_stInventoryResult;
-                Logo.sWriteLogo(string.Format("读写器:{0},EPC:{1},TID:{2},天线号:{3},RSSI:{4},频点:{5},盘点时刻:{6}", report.m_strDeviceID, report.m_strEPC, report.m_strTID, report.m_strAntennaNo, report.m_strRSSI, report.m_strFrequency, report.m_strTimeStamp), 11);
                 if (!string.IsNullOrEmpty(report.m_strEPC))
                 {
                     Listm_strEPC.Add(report.m_strEPC, report.m_strEPC);
                 }
                 Logo.sWriteLogo(string.Format("读写器:{0},EPC:{1},TID:{2},天线号:{3},RSSI:{4},频点:{5},盘点时刻:{6}", report.m_strDeviceID, report.m_strEPC, report.m_strTID, report.m_strAntennaNo, report.m_strRSSI, report.m_strFrequency, report.m_strTimeStamp), 11);
+
                 //统计不同读写器盘点数据
-                StatisticsInventoryData(report);
+                //StatisticsInventoryData(report);
             }
         }
-
-
-
         private static void StatisticsInventoryData(INVENTORY_REPORT_RESULT stInventoryReportResult)
         {
             Reader pInventoryDataOwnerReader = ReaderManager.g_ReaderManager.GetRFIDReaderByDeviceID(stInventoryReportResult.m_strDeviceID);

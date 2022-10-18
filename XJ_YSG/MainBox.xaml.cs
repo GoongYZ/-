@@ -30,7 +30,15 @@ namespace XJ_YSG
         Logo log = new Logo();
         LockControl lockControl = new LockControl();
         private MainBox mainbox = null;
+        //设备编码
+        private static int sbbm = Convert.ToInt32(ServerBase.XMLRead("Ysg_sbbm", "sbbm"));
 
+        //控制指纹
+        public static bool issbzw = true;
+        //控制刷卡
+        public static bool issfsk = true;
+
+        //Interaction_WebService Service = new Interaction_WebService();
         #region  指纹图像数据
         public byte[] m_pImageBuffer = new byte[640 * 480];
         public int m_nWidth = 0;
@@ -59,20 +67,18 @@ namespace XJ_YSG
                 mainbox = this;
             }
             UHFService.ConnectCOM();
-            UHF2Service.ConnectCOM();
-            Csh_yskp();
+            //UHF2Service.ConnectCOM();
+            //Csh_yskp();
             //激活人脸识别
             if (activation.InitEngines() == "1")
             {
                 ChooseMultiImg();
             }
-
             //开始指纹验证
             if (fingerprint.ZW_Connection() == "ok")
             {
                 zwthan();
             }
-
             //连接锁
             lockControl.Open();
             //激活RFID读信息卡
@@ -93,7 +99,8 @@ namespace XJ_YSG
         #region 开启人脸识别按钮
         private void Facekey_Click(object sender, RoutedEventArgs e)
         {
-            ParameterModel.issbzw = false;
+            issbzw = false;
+            issfsk = false;
             Xj_Rlsb xj_Rlsb = new Xj_Rlsb();
             xj_Rlsb.ShowDialog();
         }
@@ -130,7 +137,7 @@ namespace XJ_YSG
             int UserID = 0;
             int Index = 0;
             int nRet = -1;
-            if (ParameterModel.issbzw) //当主页跳转后停止识别
+            if (issbzw) //当主页跳转后停止识别
             {
                 //图像数据
                 nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref m_nWidth, ref m_nHeight, m_pImageBuffer, ref m_nSize);
@@ -147,7 +154,8 @@ namespace XJ_YSG
                     if (nRet == 0)
                     {
                         //ParameterModel.ZKFPModule_Reset(ParameterModel.m_hDevice);
-                        ParameterModel.issbzw = false;
+                        issbzw = false;
+                        issfsk = false;
                         log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index, 5);
                         Xj_BoxList boxList = new Xj_BoxList();
                         boxList.Show();
@@ -401,15 +409,21 @@ namespace XJ_YSG
 
         void RfidTimer_Tick_canShow(object sender, EventArgs e)
         {
-            UHFService.OneCheckInvnetoryWhile3(0);
-            string st = UHFService.strEPC;
-            string s = string.Join(",", st.Split(',').Distinct().ToArray());
-            if (s != "")
+            if (issfsk) 
             {
-                zwTimer.Stop();
-                Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox);
-                xj_Clpj.ShowDialog();
-            }
+                UHFService.OneCheckInvnetoryWhile(0);
+                string st = UHFService.strEPC;
+                string s = string.Join(",", st.Split(',').Distinct().ToArray());
+                if (s != "")
+                {
+                    string wzm = "2";
+                    //Service.getSfpj(s, wzm);                  
+                    issbzw=false;
+                    issfsk = false;                  
+                    Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox);
+                    xj_Clpj.ShowDialog();
+                }
+            }            
         }
         #endregion
 
@@ -459,7 +473,7 @@ namespace XJ_YSG
 
         #region 初始化钥匙柜卡片
         private void Csh_yskp()
-        {         
+        {
             string Current = System.IO.Directory.GetCurrentDirectory();
             string Path = Current + "YsgGh.txt   ";
             if (!Directory.Exists(Path)) //判断是否有本地文件存在
@@ -471,7 +485,7 @@ namespace XJ_YSG
                     int cs = 3;  //读取次数
                     while (cs <= 3)
                     {
-                        UHF2Service.OneCheckInvnetoryWhile2(i);
+                        UHF2Service.OneCheckInvnetoryWhile(i);
                         i++;
                     }
                     string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());

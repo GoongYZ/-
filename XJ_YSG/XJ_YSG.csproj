@@ -251,7 +251,7 @@
       <Name>ArcFaceSDK</Name>
     </ProjectReference>
     <ProjectReference Include="..\BLL\BLL.csproj">
-      <Project>{bf7845c2-1e70-4b16-8994-288002a2dda0}</Project>
+      <Project>{4da31f77-516f-4f2a-b9cf-37872a0d36c9}</Project>
       <Name>BLL</Name>
     </ProjectReference>
   </ItemGroup>

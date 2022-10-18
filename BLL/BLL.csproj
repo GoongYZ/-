@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BF7845C2-1E70-4B16-8994-288002A2DDA0}</ProjectGuid>
+    <ProjectGuid>{4DA31F77-516F-4F2A-B9CF-37872A0D36C9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BLL</RootNamespace>
@@ -30,35 +30,33 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CustomControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dll\CustomControl.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetSpeech, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\XJ_YSG\lib\DotNetSpeech.dll</HintPath>
+      <HintPath>dll\DotNetSpeech.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Interop.DcdzDriverBoardLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>dll\Interop.DcdzDriverBoardLib.dll</HintPath>
     </Reference>
-    <Reference Include="RFIDReaderNetwork_SerialSDK_ForCSharp">
-      <HintPath>..\XJ_YSG\lib\RFIDReaderNetwork_SerialSDK_ForCSharp.dll</HintPath>
+    <Reference Include="Interop.DcdzMsCommLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>dll\Interop.DcdzMsCommLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dll\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RFIDReaderNetwork_SerialSDK_ForCSharp, Version=2.0.3.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dll\RFIDReaderNetwork_SerialSDK_ForCSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,7 +68,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interaction_WebService.cs" />
     <Compile Include="Logo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerBase.cs" />
@@ -90,17 +87,18 @@
     <Compile Include="UHF\RecycleReadTagEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="dll\CustomControl.dll" />
+    <Content Include="dll\DotNetSpeech.dll" />
+    <Content Include="dll\Interop.DcdzDriverBoardLib.dll" />
+    <Content Include="dll\Interop.DcdzMsCommLib.dll" />
+    <Content Include="dll\Newtonsoft.Json.dll" />
+    <Content Include="dll\RFIDReaderNetwork_SerialSDK_ForCSharp.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Comm\Comm.csproj">
       <Project>{07b7ac5a-e4b2-44b1-8923-a4c00769bb0c}</Project>
       <Name>Comm</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Data\Data.csproj">
-      <Project>{3a5214e5-174a-4593-8b65-4bb4facfa986}</Project>
-      <Name>Data</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
