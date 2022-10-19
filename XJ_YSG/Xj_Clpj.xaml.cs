@@ -30,6 +30,8 @@ namespace XJ_YSG
             });
             this.Closed += ((s, e) =>
             {
+                MainBox.zwTimer.Start();
+                MainBox.RfidTimer.Start();
                 mainbox.markLayer.Visibility = Visibility.Hidden;
             });
         }
@@ -39,6 +41,13 @@ namespace XJ_YSG
             //LockControl lockControl = new LockControl();
             //lockControl.Send("1");
             //打开柜门
+            this.Close();
+            
+        }
+
+        private void clols_Button_Click(object sender, RoutedEventArgs e)
+        {          
+            this.Close();
         }
     }
 }

@@ -94,9 +94,6 @@
     <Content Include="dll\Interop.DcdzMsCommLib.dll" />
     <Content Include="dll\Newtonsoft.Json.dll" />
     <Content Include="dll\RFIDReaderNetwork_SerialSDK_ForCSharp.dll" />
-    <Content Include="DotNetSpeech.dll" />
-    <Content Include="Interop.DcdzMsCommLib.dll" />
-    <Content Include="Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Comm\Comm.csproj">

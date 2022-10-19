@@ -28,17 +28,12 @@ namespace XJ_YSG
         Activation activation = new Activation();
         Fingerprint fingerprint = new Fingerprint();
         Logo log = new Logo();
-        LockControl lockControl = new LockControl();
-        private MainBox mainbox = null;
-        //设备编码
-        private static int sbbm = Convert.ToInt32(ServerBase.XMLRead("Ysg_sbbm", "sbbm"));
-
-        //控制指纹
-        public static bool issbzw = true;
-        //控制刷卡
-        public static bool issfsk = true;
-
-        //Interaction_WebService Service = new Interaction_WebService();
+        LockControl lockControl = new LockControl();//锁
+        private MainBox mainbox = null;       
+        private static int sbbm = Convert.ToInt32(ServerBase.XMLRead("Ysg_sbbm", "sbbm")); //设备编码
+        public static DispatcherTimer zwTimer = new DispatcherTimer();//指纹计时器
+        public static DispatcherTimer RfidTimer = new DispatcherTimer();//刷卡计时器
+        Interaction_WebService Service = new Interaction_WebService();
         #region  指纹图像数据
         public byte[] m_pImageBuffer = new byte[640 * 480];
         public int m_nWidth = 0;
@@ -66,9 +61,10 @@ namespace XJ_YSG
             {
                 mainbox = this;
             }
-            UHFService.ConnectCOM();
-            //UHF2Service.ConnectCOM();
-            //Csh_yskp();
+            //刷卡
+            //UHFService.ConnectCOM();            
+            //读钥匙
+            UHF2Service.ConnectCOM();
             //激活人脸识别
             if (activation.InitEngines() == "1")
             {
@@ -82,9 +78,10 @@ namespace XJ_YSG
             //连接锁
             lockControl.Open();
             //激活RFID读信息卡
-            Rfidthan();
+            //Rfidthan();
             //门箱状态
             LockDjs();
+            Csh_yskp();
         }
         #region 输入钥匙码按钮
         private void Smkey_Click(object sender, RoutedEventArgs e)
@@ -99,8 +96,8 @@ namespace XJ_YSG
         #region 开启人脸识别按钮
         private void Facekey_Click(object sender, RoutedEventArgs e)
         {
-            issbzw = false;
-            issfsk = false;
+            MainBox.zwTimer.Stop();
+            MainBox.RfidTimer.Stop();
             Xj_Rlsb xj_Rlsb = new Xj_Rlsb();
             xj_Rlsb.ShowDialog();
         }
@@ -119,53 +116,40 @@ namespace XJ_YSG
 
         #region 指纹识别
 
-        DispatcherTimer zwTimer = new DispatcherTimer();
+       
 
         /// <summary>
         /// 指纹识别倒计时
         /// </summary>
         public void zwthan()
         {
-            zwTimer.Interval = new TimeSpan(0, 0, 0, 0, 500); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
+            zwTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
             zwTimer.Tick += new EventHandler(disTimer_Tick_canShow); //每一秒执行的方法
             zwTimer.Start();
-
         }
-
         void disTimer_Tick_canShow(object sender, EventArgs e)
         {
             int UserID = 0;
             int Index = 0;
             int nRet = -1;
-            if (issbzw) //当主页跳转后停止识别
+            //图像数据
+            nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref m_nWidth, ref m_nHeight, m_pImageBuffer, ref m_nSize);
+            if (nRet == 0)
             {
-                //图像数据
-                nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref m_nWidth, ref m_nHeight, m_pImageBuffer, ref m_nSize);
+                //根据图像数据进行比对
+                nRet = ParameterModel.ZKFPModule_IdentifyByImage(ParameterModel.m_hDevice, m_pImageBuffer, m_nSize, ref UserID, ref Index);           
                 if (nRet == 0)
                 {
-                    //根据图像数据进行比对
-                    nRet = ParameterModel.ZKFPModule_IdentifyByImage(ParameterModel.m_hDevice, m_pImageBuffer, m_nSize, ref UserID, ref Index);
-                    //1:1比对
-                    //nRet = ParameterModel.ZKFPModule_Verify(ParameterModel.m_hDevice, UserID);                
-                    //// 实时接收在模块指纹采集器上比对成功不否的数据到host
-                    ////( 设备句柄,返回识别到的用户ID,返回用户对应的手指索引号(0-9))
-                    ///1:N比对                
-                    //nRet = ParameterModel.ZKFPModule_FreeScan(ParameterModel.m_hDevice, ref UserID, ref Index);
-                    if (nRet == 0)
-                    {
-                        //ParameterModel.ZKFPModule_Reset(ParameterModel.m_hDevice);
-                        issbzw = false;
-                        issfsk = false;
-                        log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index, 5);
-                        Xj_BoxList boxList = new Xj_BoxList();
-                        boxList.Show();
-                    }
-                    else
-                    {
-                        string erro = fingerprint.Erroneous(nRet.ToString());
-                        log.WriteLogo("错误原因:" + erro, 5);
-                    }
-
+                    zwTimer.Stop();
+                    RfidTimer.Stop();
+                    log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index, 5);
+                    Xj_BoxList boxList = new Xj_BoxList();
+                    boxList.Show();
+                }
+                else
+                {
+                    string erro = fingerprint.Erroneous(nRet.ToString());
+                    log.WriteLogo("错误原因:" + erro, 5);
                 }
 
             }
@@ -399,7 +383,7 @@ namespace XJ_YSG
 
         #region 刷卡还钥匙
 
-        DispatcherTimer RfidTimer = new DispatcherTimer();
+       
         public void Rfidthan()
         {
             RfidTimer.Interval = new TimeSpan(0, 0, 0, 0, 500); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
@@ -409,21 +393,17 @@ namespace XJ_YSG
 
         void RfidTimer_Tick_canShow(object sender, EventArgs e)
         {
-            if (issfsk) 
+
+            UHFService.OneCheckInvnetoryWhile(0);
+            string st = UHFService.strEPC;
+            string s = string.Join(",", st.Split(',').Distinct().ToArray());
+            if (s != "")
             {
-                UHFService.OneCheckInvnetoryWhile(0);
-                string st = UHFService.strEPC;
-                string s = string.Join(",", st.Split(',').Distinct().ToArray());
-                if (s != "")
-                {
-                    string wzm = "2";
-                    //Service.getSfpj(s, wzm);                  
-                    issbzw=false;
-                    issfsk = false;                  
-                    Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox);
-                    xj_Clpj.ShowDialog();
-                }
-            }            
+                zwTimer.Stop();
+                RfidTimer.Stop();
+                Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox);
+                xj_Clpj.ShowDialog();
+            }
         }
         #endregion
 
@@ -449,13 +429,8 @@ namespace XJ_YSG
                     string lockzt = lockControl.State_lock(item);
                     if (lockzt == "关门")
                     {
-                        // 读取柜子中钥匙卡片
-                        int i = 3;
-                        while (i <= 3)
-                        {
-                            UHF2Service.OneCheckInvnetoryWhile2(Convert.ToInt32(item));
-                            i++;
-                        }
+
+                        UHF2Service.OneCheckInvnetoryWhile2(Convert.ToInt32(item));
                         string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
                         if (yskp != "")
                         {
@@ -474,29 +449,25 @@ namespace XJ_YSG
         #region 初始化钥匙柜卡片
         private void Csh_yskp()
         {
-            string Current = System.IO.Directory.GetCurrentDirectory();
-            string Path = Current + "YsgGh.txt   ";
-            if (!Directory.Exists(Path)) //判断是否有本地文件存在
+            string gh_kp = "";  //柜号_卡片                
+            int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜规格
+            for (int i = 0; i < 2; i++) //读取次数
             {
-                string gh_kp = "";  //柜号_卡片                
-                int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜规格
-                for (int i = 1; i <= gzsl; i++)
+                for (int j = 0; j < gzsl; j++)
                 {
-                    int cs = 3;  //读取次数
-                    while (cs <= 3)
-                    {
-                        UHF2Service.OneCheckInvnetoryWhile(i);
-                        i++;
-                    }
+                    UHF2Service.OneCheckInvnetoryWhile(j);
                     string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
                     if (yskp != "")
                     {
-                        gh_kp += "" + i + "_" + yskp + ",";
+                        gh_kp += "" + j + "_" + yskp;
                         //写入文件
                         log.WriteYsgGh(gh_kp);
+                        UHF2Service.strEPC = "";
                     }
                 }
             }
+            speack("智能钥匙管理柜初始成功");
+
         }
         #endregion
 

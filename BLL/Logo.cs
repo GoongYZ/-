@@ -165,13 +165,27 @@ namespace BLL
         public string SetYsgGh() 
         {
             string Current = System.IO.Directory.GetCurrentDirectory();
-            string Path = Current + "YsgGh.txt   ";
-            if (!Directory.Exists(Path))
+            string Path = Current + "/YsGh";          
+            try
             {
-                Directory.CreateDirectory(Path);
+                if (!Directory.Exists(Path))
+                {
+                    Directory.CreateDirectory(Path);
+                }
             }
-            string FilePath = Path;
+            catch (Exception ex)
+            {
+
+            }
+            string FilePath = Path + "/" + string.Format("ysgbh_kp.txt");
             return FilePath;
+            //string Path = Current + "/YsgGh.txt   ";
+            //if (!Directory.Exists(Path))
+            //{
+            //    Directory.CreateDirectory(Path);
+            //}
+            //string FilePath = Path;
+            //return FilePath;
         }
 
         /// <summary>
@@ -182,8 +196,7 @@ namespace BLL
         public void WriteYsgGh(string text )
         {
             try
-            {
-                text = string.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now) + text;
+            {               
                 string FilePath = SetYsgGh();
                 if (File.Exists(FilePath))
                 {

@@ -89,7 +89,7 @@ namespace XJ_YSG
             data[11] = Convert.ToByte(gzbs, 16);
             string rut = "";
             port.WriteData(data, ref rut);
-            return rut;                     
+            return rut;                 
         }
 
 

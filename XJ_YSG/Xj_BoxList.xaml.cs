@@ -60,7 +60,7 @@ namespace XJ_YSG
 
         private void Button_zwlr_Click(object sender, RoutedEventArgs e)
         {
-            Xj_Zwlr zwlr = new Xj_Zwlr();
+            Xj_Zwlr zwlr = new Xj_Zwlr(BoxList);
             zwlr.Show();
         }
 
@@ -87,8 +87,8 @@ namespace XJ_YSG
 
         private void btn_clos_Click(object sender, RoutedEventArgs e)
         {
-            MainBox.issbzw = true;
-            MainBox.issfsk = true;
+            MainBox.zwTimer.Start();
+            MainBox.RfidTimer.Start();
             this.Close();           
         }
 

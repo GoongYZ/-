@@ -56,6 +56,9 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -217,6 +220,7 @@
     <Resource Include="Img\ycpj.png" />
     <Resource Include="Img\ycsy.png" />
     <Resource Include="Img\jticon.png" />
+    <Resource Include="favicon.ico" />
     <Content Include="lib\CustomControl.dll" />
     <Content Include="lib\DotNetSpeech.dll" />
     <Content Include="lib\RFIDReaderNetwork_SerialSDK_ForCSharp.dll" />

@@ -518,8 +518,8 @@ namespace XJ_YSG
             rgbVideoSource.Hide();
             EntityModel.exitVideoRGBFR = true;
             EntityModel.exitVideoRGBLiveness = true;
-            MainBox.issbzw = true;  //跳转主页后指纹要继续识别
-            MainBox.issfsk = true;
+            MainBox.zwTimer.Start();
+            MainBox.RfidTimer.Start();
         }
 
         private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

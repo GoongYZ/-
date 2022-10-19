@@ -36,9 +36,19 @@ namespace XJ_YSG
         #endregion
 
 
-        public Xj_Zwlr()
+        public Xj_Zwlr(Xj_BoxList BoxList)
         {
             InitializeComponent();
+            this.Left = 134;
+            this.Top = 187;
+            this.Loaded += ((s, e) => {
+                BoxList.markLayer.Visibility = Visibility.Visible;
+            });
+
+            this.Closed += ((s, e) =>
+            {               
+                BoxList.markLayer.Visibility = Visibility.Hidden;
+            });
             if (ParameterModel.m_hDevice != IntPtr.Zero)
             {
                 CanShow();
@@ -74,8 +84,7 @@ namespace XJ_YSG
                 {
                     Bitmap bmp = new Bitmap(ms);
                     IntPtr hBitmap = bmp.GetHbitmap();
-                    this.pictureBox_FingerImg.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                    disTimer.Stop();
+                    this.pictureBox_FingerImg.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());                  
                 }
             }
 
@@ -89,7 +98,7 @@ namespace XJ_YSG
         private void Button_lr_Click(object sender, RoutedEventArgs e)
         {
             //这里需要通过人脸识别或密码开启后获取的手机号码查询出id。
-            int userid = 0;
+            int userid = 1;
             if (userid != 0)
             {
                 // 登记用户模板(设备句柄，用户id)             
@@ -98,6 +107,8 @@ namespace XJ_YSG
                 {
                     speack("录入成功");
                     log.WriteLogo("录入成功", 5);
+                    disTimer.Stop();
+                    this.Close();
                 }
                 else
                 {
@@ -107,6 +118,12 @@ namespace XJ_YSG
             }
         }
 
+        private void Button_Clos_Click(object sender, RoutedEventArgs e)
+        {
+            disTimer.Stop();
+            this.Close();
+        }
+
         private void speack(string text)
         {
             Dispatcher.BeginInvoke(new Action(() =>
@@ -114,5 +131,7 @@ namespace XJ_YSG
                 SpeechVoice.speack(text);
             }), System.Windows.Threading.DispatcherPriority.Normal);
         }
+
+       
     }
 }
