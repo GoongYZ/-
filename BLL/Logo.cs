@@ -52,6 +52,9 @@ namespace BLL
                 case 5:
                     rtn = "_指纹日志";
                     break;
+                case 6:
+                    rtn = "_门锁";
+                    break;
             }
             return rtn;
         }

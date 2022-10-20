@@ -5,6 +5,7 @@ using System.IO.Ports;
 using System.Threading;
 using System.IO;
 using System.Windows.Controls;
+using BLL;
 
 namespace XJ_YSG
 {
@@ -29,8 +30,9 @@ namespace XJ_YSG
         public event SerialErrorReceivedEventHandler Error;
 
         #region 变量属性
-        private string _portName = "COM15";//串口号，默认COM1
-        private SerialPortBaudRates _baudRate = SerialPortBaudRates.BaudRate_9600;//波特率
+        
+        private static string _portName = ServerBase.XMLRead("Lock", "COM_LOCK");
+        private SerialPortBaudRates _baudRate = SerialPortBaudRates.BaudRate_115200;//波特率
         private Parity _parity = Parity.None;//校验位
         private StopBits _stopBits = StopBits.One;//停止位
         private SerialPortDatabits _dataBits = SerialPortDatabits.EightBits;//数据位
@@ -131,8 +133,8 @@ namespace XJ_YSG
         /// </summary>
         public SerialPortUtil()
         {
-            _portName = "COM15";
-            _baudRate = SerialPortBaudRates.BaudRate_9600;
+            _portName = "COM4";
+            _baudRate = SerialPortBaudRates.BaudRate_115200;
             _parity = Parity.None;
             _dataBits = SerialPortDatabits.EightBits;
             _stopBits = StopBits.One;
@@ -146,7 +148,7 @@ namespace XJ_YSG
         public SerialPortUtil(string com)
         {
             _portName = com;
-            _baudRate = SerialPortBaudRates.BaudRate_9600;
+            _baudRate = SerialPortBaudRates.BaudRate_115200;
             _parity = Parity.None;
             _dataBits = SerialPortDatabits.EightBits;
             _stopBits = StopBits.One;

@@ -23,6 +23,7 @@ namespace XJ_YSG
     {
         DataTable tb = new DataTable();
         private Xj_BoxList BoxList = null;
+        public static  string gh = "";
         public Xj_BoxList()
         {
             InitializeComponent();
@@ -37,8 +38,7 @@ namespace XJ_YSG
             }
             Bindinfo();
         }
-
-
+      
 
         private void Bindinfo()
         {
@@ -46,12 +46,12 @@ namespace XJ_YSG
             tb.Columns.Add("UriSource");
             tb.Columns.Add("BH1");
             tb.Columns.Add("BH2");
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 9; i++)
             {
                 DataRow dr = tb.NewRow();
-                dr["UriSource"] = "img/Boxlist_daifenpei.png";
-                dr["BH1"] = "01";
-                dr["BH2"] = "待分配";
+                dr["UriSource"] = "img/Boxlist_zaiku.png";
+                dr["BH1"] = i+1;
+                dr["BH2"] = "正常";
                 tb.Rows.Add(dr);
             }
             s_1.DataContext = tb;
@@ -77,8 +77,8 @@ namespace XJ_YSG
                     string dwm = ((Label)ui).Content.ToString();
                     if (!string.IsNullOrEmpty(dwm))
                     {
-                        //开启柜门
-                        Xj_Ycsy Ycsy = new Xj_Ycsy(BoxList);
+                        //开启柜门                                          
+                        Xj_Ycsy Ycsy = new Xj_Ycsy(BoxList, dwm);                       
                         Ycsy.ShowDialog();
                     }
                 }
@@ -101,5 +101,10 @@ namespace XJ_YSG
             }), System.Windows.Threading.DispatcherPriority.Normal);
         }
         #endregion
+
+        private void s_1_ManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
+        {
+            e.Handled = true;
+        }
     }
 }

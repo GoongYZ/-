@@ -81,7 +81,7 @@
             <Button FontSize="32" Width="240" Height="78" Click="Button_zwlr_Click"  Foreground="#FEFEFE" FontWeight="Black"  FontFamily="MicrosoftYaHei"  Margin="264,162,264,784" Style="{DynamicResource ButtonStyle1}" >指纹录入</Button>
         </Grid>
 
-        <ListBox x:Name="s_1"  Focusable="False" Width="740"  Height="740"   VerticalAlignment="Top" Opacity="1"  BorderThickness="0"  Background="Transparent"   ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Hidden"  BorderBrush="Transparent" ItemsSource="{Binding}" Margin="0,270,0,0" >
+        <ListBox x:Name="s_1"  Focusable="False" Width="740"  Height="740"  ManipulationBoundaryFeedback="s_1_ManipulationBoundaryFeedback"  VerticalAlignment="Top" Opacity="1"  BorderThickness="0"  Background="Transparent"   ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Hidden"  BorderBrush="Transparent" ItemsSource="{Binding}" Margin="0,270,0,0" >
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="4" Rows="13"/>
@@ -93,8 +93,8 @@
                         <Grid.Background>
                             <ImageBrush  ImageSource="{Binding Path=UriSource}"/>
                         </Grid.Background>
-                        <Label Content="{Binding Path=BH1}"  FontFamily="Microsoft YaHei" FontSize="36" FontWeight="black"  Foreground="#333333"   Margin="30,10,0,0"/>
-                        <Label Content="{Binding Path=BH2}"  FontFamily="Microsoft YaHei" FontSize="20" FontWeight="black" Foreground="#999999"   Margin="24,65,0,0"/>
+                        <Label Content="{Binding Path=BH1}"  x:Name="BH" FontFamily="Microsoft YaHei" FontSize="36" FontWeight="black"  Foreground="#333333"   Margin="30,10,0,0"/>
+                        <Label Content="{Binding Path=BH2}"  x:Name="ZT" FontFamily="Microsoft YaHei" FontSize="20" FontWeight="black" Foreground="#999999"   Margin="24,65,0,0"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

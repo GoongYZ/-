@@ -7,23 +7,21 @@ namespace XJ_YSG
 {
     public class LockControl
     {
-        private SerialPortUtil port = new SerialPortUtil();
+        SerialPortUtil port = new SerialPortUtil();
         private static string ComPortName = ServerBase.XMLRead("Lock", "COM_LOCK");
 
-        /// <summary>
-        /// 监控箱门的数据集合
-        /// </summary>
-        public static List<string> locklis = new List<string>();
+        
         /// <summary>
         /// 打开串口
         /// </summary>
-        public void Open()
+        public  void Open()
         {
             try
             {
                 port.PortName = ComPortName;
                 port.BaudRate = SerialPortBaudRates.BaudRate_115200;
                 port.OpenPort();
+                Logo.sWriteLogo("门锁连接成功", 6);
             }
             catch (Exception)
             {
@@ -32,7 +30,7 @@ namespace XJ_YSG
         }
 
 
-        public void Close() 
+        public  void Close() 
         {
             port.ClosePort();
         }
