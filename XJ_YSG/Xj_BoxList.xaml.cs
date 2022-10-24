@@ -1,18 +1,11 @@
 ﻿using BLL;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace XJ_YSG
 {
@@ -21,6 +14,7 @@ namespace XJ_YSG
     /// </summary>
     public partial class Xj_BoxList : Window
     {
+        private static int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl")); //柜子格子数量
         DataTable tb = new DataTable();
         private Xj_BoxList BoxList = null;
         public static  string gh = "";
@@ -46,11 +40,11 @@ namespace XJ_YSG
             tb.Columns.Add("UriSource");
             tb.Columns.Add("BH1");
             tb.Columns.Add("BH2");
-            for (int i = 0; i < 9; i++)
+            for (int i = 1; i <= gzsl; i++)
             {
                 DataRow dr = tb.NewRow();
                 dr["UriSource"] = "img/Boxlist_zaiku.png";
-                dr["BH1"] = i+1;
+                dr["BH1"] = i;
                 dr["BH2"] = "正常";
                 tb.Rows.Add(dr);
             }
@@ -61,7 +55,7 @@ namespace XJ_YSG
         private void Button_zwlr_Click(object sender, RoutedEventArgs e)
         {
             Xj_Zwlr zwlr = new Xj_Zwlr(BoxList);
-            zwlr.Show();
+            zwlr.ShowDialog(); ;
         }
 
         private void Grid_b_MouseDown(object sender, MouseButtonEventArgs e)
@@ -85,12 +79,7 @@ namespace XJ_YSG
             }
         }
 
-        private void btn_clos_Click(object sender, RoutedEventArgs e)
-        {
-            MainBox.zwTimer.Start();
-            MainBox.RfidTimer.Start();
-            this.Close();           
-        }
+       
 
         #region 语音播报
         private void speack(string text)
@@ -105,6 +94,13 @@ namespace XJ_YSG
         private void s_1_ManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void btn_clos_TouchLeave(object sender, TouchEventArgs e)
+        {
+            MainBox.zwTimer.Start();
+            MainBox.RfidTimer.Start();
+            this.Close();
         }
     }
 }

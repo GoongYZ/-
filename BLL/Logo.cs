@@ -41,7 +41,7 @@ namespace BLL
                     rtn = "_错误日志";
                     break;
                 case 2:
-                    rtn = "_读卡日志";
+                    rtn = "_初始化卡片";
                     break;
                 case 3:
                     rtn = "_人脸识别";
@@ -54,6 +54,9 @@ namespace BLL
                     break;
                 case 6:
                     rtn = "_门锁";
+                    break;
+                case 7:
+                    rtn = "_刷卡";
                     break;
             }
             return rtn;

@@ -42,12 +42,12 @@ namespace XJ_YSG
             this.Left = 134;
             this.Top = 187;
             this.Loaded += ((s, e) => {
-                BoxList.markLayer.Visibility = Visibility.Visible;
+                //BoxList.markLayer.Visibility = Visibility.Visible;
             });
 
             this.Closed += ((s, e) =>
             {               
-                BoxList.markLayer.Visibility = Visibility.Hidden;
+                //BoxList.markLayer.Visibility = Visibility.Hidden;
             });
             if (ParameterModel.m_hDevice != IntPtr.Zero)
             {

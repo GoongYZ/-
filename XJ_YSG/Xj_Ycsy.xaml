@@ -375,15 +375,27 @@
         <Grid.Background>
             <ImageBrush   ImageSource="/Img/ycsy.png"></ImageBrush>
         </Grid.Background>
-        <Button Opacity="0" x:Name="btn_tc" HorizontalAlignment="Left" Margin="490,-1,0,0" VerticalAlignment="Top" Width="70" Height="53"></Button>
+        <Button Opacity="0" x:Name="btn_tc" TouchLeave="btn_tc_TouchLeave"  HorizontalAlignment="Left" Margin="490,-1,0,0" VerticalAlignment="Top" Width="70" Height="53" ></Button>
         <ComboBox HorizontalAlignment="Left" Margin="192,92,0,0" VerticalAlignment="Top" Width="320"   Height="52" Style="{DynamicResource ComboBoxStyle1}">
             <ComboBoxItem IsSelected="True">出差</ComboBoxItem>
             <ComboBoxItem>日常维保</ComboBoxItem>
         </ComboBox>
-        <ComboBox HorizontalAlignment="Left" Margin="192,176,0,0" VerticalAlignment="Top" Width="320" Height="52" Style="{DynamicResource ComboBoxStyle1}"/>
-        <ComboBox HorizontalAlignment="Left" Margin="192,260,0,0" VerticalAlignment="Top" Width="144" Height="52" Style="{DynamicResource ComboBoxStyle1}"/>
-        <ComboBox HorizontalAlignment="Left" Margin="368,260,0,0" VerticalAlignment="Top" Width="144" Height="52" Style="{DynamicResource ComboBoxStyle1}"/>
-        <ComboBox HorizontalAlignment="Left" Margin="192,344,0,0" VerticalAlignment="Top" Width="320" Height="52" Style="{DynamicResource ComboBoxStyle1}"/>
+        <ComboBox HorizontalAlignment="Left" Margin="192,176,0,0" VerticalAlignment="Top" Width="320" Height="52" Style="{DynamicResource ComboBoxStyle1}">
+            <ComboBoxItem IsSelected="True">出差</ComboBoxItem>
+            <ComboBoxItem>日常维保</ComboBoxItem>
+        </ComboBox>
+        <ComboBox HorizontalAlignment="Left" Margin="192,260,0,0" VerticalAlignment="Top" Width="144" Height="52" Style="{DynamicResource ComboBoxStyle1}">
+            <ComboBoxItem IsSelected="True">出差</ComboBoxItem>
+            <ComboBoxItem>日常维保</ComboBoxItem>
+        </ComboBox>
+        <ComboBox HorizontalAlignment="Left" Margin="368,260,0,0" VerticalAlignment="Top" Width="144" Height="52" Style="{DynamicResource ComboBoxStyle1}">
+            <ComboBoxItem IsSelected="True">出差</ComboBoxItem>
+            <ComboBoxItem>日常维保</ComboBoxItem>
+        </ComboBox>
+        <ComboBox HorizontalAlignment="Left" Margin="192,344,0,0" VerticalAlignment="Top" Width="320" Height="52" Style="{DynamicResource ComboBoxStyle1}">
+            <ComboBoxItem IsSelected="True">出差</ComboBoxItem>
+            <ComboBoxItem>日常维保</ComboBoxItem>
+        </ComboBox>
         <Button Content="确定" Click="open_Button_Click"  HorizontalAlignment="Left" Margin="205,436,0,0" VerticalAlignment="Top" Width="150" Height="64" Style="{DynamicResource ButtonStyle1}"/>
 
     </Grid>

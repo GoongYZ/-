@@ -64,7 +64,7 @@ namespace XJ_YSG
                 mainbox = this;
             }
             UHFService.ConnectCOM();   //刷卡                    
-            //UHF2Service.ConnectCOM();   //读钥匙
+            UHF2Service.ConnectCOM();   //读钥匙
             port.OpenPort();  //连接锁
             if (activation.InitEngines() == "1")
             {
@@ -73,11 +73,10 @@ namespace XJ_YSG
             if (fingerprint.ZW_Connection() == "ok")
             {
                 zwthan();   //开始指纹验证
-            }
-           
+            }          
             Rfidthan();   //实时RFID读信息卡           
             LockDjs();    //门箱状态
-            //Csh_yskp();  //初始化钥匙柜卡片
+            Csh_yskp();  //初始化钥匙柜卡片
             this.Closed += MainWindow_Closed;
         }
         #region 输入钥匙码按钮
@@ -112,9 +111,6 @@ namespace XJ_YSG
 
 
         #region 指纹识别
-
-       
-
         /// <summary>
         /// 指纹识别倒计时
         /// </summary>
@@ -378,10 +374,34 @@ namespace XJ_YSG
 
         #endregion
 
+        #region 初始化钥匙柜卡片
+        private void Csh_yskp()
+        {
+            List<int> list = new List<int>();
+            int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜规格
+            for (int i = 0; i < gzsl; i++)
+            {
+                list.Add(i);
+            }
+            Parallel.ForEach(list, new ParallelOptions() { MaxDegreeOfParallelism = 3 }, i => {
+                string gh_kp = "";  //柜号_卡片                
+                UHF2Service.OneCheckInvnetoryWhile(i);
+                string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
+                if (yskp != "")
+                {
+                    gh_kp += "" + i + "_" + yskp;
+                    //写入文件
+                    log.WriteYsgGh(gh_kp);
+                    UHF2Service.strEPC = "";
+                }
+            });
+            speack("智能钥匙管理柜初始化成功");
+        }
+        #endregion
 
         #region 刷卡还钥匙
 
-       
+
         public void Rfidthan()
         {
             RfidTimer.Interval = new TimeSpan(0, 0, 0, 0, 500); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
@@ -475,30 +495,7 @@ namespace XJ_YSG
         #endregion
 
 
-        #region 初始化钥匙柜卡片
-        private void Csh_yskp()
-        {
-            List<int> list = new List<int>();
-            int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜规格
-            for (int i = 0; i < gzsl; i++)
-            {
-                list.Add(i);
-            }
-            Parallel.ForEach(list, new ParallelOptions() { MaxDegreeOfParallelism = 3 }, i => {
-                string gh_kp = "";  //柜号_卡片                
-                UHF2Service.OneCheckInvnetoryWhile(i);
-                string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
-                if (yskp != "")
-                {
-                    gh_kp += "" + i + "_" + yskp;
-                    //写入文件
-                    log.WriteYsgGh(gh_kp);
-                    UHF2Service.strEPC = "";
-                }
-            });
-            speack("智能钥匙管理柜初始化成功");
-        }
-        #endregion
+     
 
         private void MainWindow_Closed(object sender, EventArgs e)
         {          

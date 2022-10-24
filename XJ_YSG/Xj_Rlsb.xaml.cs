@@ -50,24 +50,20 @@ namespace XJ_YSG
         {
             disTimer_djs.Interval = new TimeSpan(0, 0, 0, 1); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
             disTimer_djs.Tick += new EventHandler(disTimer_Tick); //每一秒执行的方法
+            disTimer_djs.Start();
         }
         void disTimer_Tick(object sender, EventArgs e)
         {
-            
-                countSecond--;
-                //判断lblSecond是否处于UI线程上
-                if (lbl_djs.Dispatcher.CheckAccess())
-                {
-                    lbl_djs.Content = countSecond.ToString();
-                }
-                else
-                {
-                    lbl_djs.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-                    {
-                        lbl_djs.Content = countSecond.ToString();
-                        this.Close();
-                    }));
-                }           
+
+            if (Convert.ToInt32(lbl_djs.Content) == 0)
+            {
+                this.Close();
+            }
+            else 
+            {
+                lbl_djs.Content = countSecond--;
+            }
+             
         }
         #endregion
 

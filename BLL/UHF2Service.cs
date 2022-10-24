@@ -38,7 +38,7 @@ namespace BLL
             //先判断该是否已经连接了该读写器   
             Reader reader = ReaderManager.g_ReaderManager.GetRFIDReaderByReaderCom(strReaderIPOrCom);
             if (reader != null)
-                Logo.sWriteLogo("读写器" + reader.m_rfidWorkReader.m_strDeviceID + ",序列号为" + reader.m_rfidWorkReader.m_strDeviceID + "已连接", 11);
+                Logo.sWriteLogo("读写器" + reader.m_rfidWorkReader.m_strDeviceID + ",序列号为" + reader.m_rfidWorkReader.m_strDeviceID + "已连接", 2);
             else
             {
                 m_rfidClientReader = new RFIDClient();//服务端读写器
@@ -63,11 +63,11 @@ namespace BLL
 
                     m_selectedWorkReader = reader;                  //把连接上的读写器设置当前工作读写器 
 
-                    Logo.sWriteLogo("读写器" + m_rfidClientReader.m_strDeviceID + ",序列号为" + m_rfidClientReader.m_strDeviceID + "已连接", 11);
+                    Logo.sWriteLogo("读写器" + m_rfidClientReader.m_strDeviceID + ",序列号为" + m_rfidClientReader.m_strDeviceID + "已连接", 2);
                 }
                 else
                 {
-                    Logo.sWriteLogo("读写器连接失败：原因" + nRetVal, 11);
+                    Logo.sWriteLogo("读写器连接失败：原因" + nRetVal, 2);
                 }
             }
         }
@@ -196,11 +196,11 @@ namespace BLL
                 //这里有特殊情况,有相同设备序列号的读写器连到本地服务器m_szErrorCode为0x18,SAME_DEVICE_ID=24
                 if (e.m_strErrorCode == "18")
                 {
-                    Logo.sWriteLogo("有相同设备序列号 + e.m_strDeviceID + 的读写器 + e.m_strMacError + 连接到本地服务器", 11);
+                    Logo.sWriteLogo("有相同设备序列号 + e.m_strDeviceID + 的读写器 + e.m_strMacError + 连接到本地服务器", 2);
                 }
                 else
                 {
-                    Logo.sWriteLogo("读写器 + e.m_strDeviceID + 发生错误,ErrorCode: + e.m_strErrorCode + ,MacCode: + e.m_strMacError", 11);
+                    Logo.sWriteLogo("读写器 + e.m_strDeviceID + 发生错误,ErrorCode: + e.m_strErrorCode + ,MacCode: + e.m_strMacError", 2);
                 }
             }
         }
@@ -277,7 +277,7 @@ namespace BLL
                 if (null != operateReader)
                 {
                     m_strLostConnectDeviceID = e.m_strDeviceID;
-                    Logo.sWriteLogo("读写器" + e.m_strDeviceID + "从本地服务器中断开", 11);
+                    Logo.sWriteLogo("读写器" + e.m_strDeviceID + "从本地服务器中断开", 2);
                     ReaderManager.g_ReaderManager.DisconnectDevice(e.m_strDeviceID);
                     ReaderManager.g_ReaderManager.RemoveConnectDevice(e.m_strDeviceID);
                 }
@@ -294,7 +294,7 @@ namespace BLL
                 {
                     Listm_strEPC.Add(report.m_strEPC, report.m_strEPC);
                 }
-                Logo.sWriteLogo(string.Format("读写器:{0},EPC:{1},TID:{2},天线号:{3},RSSI:{4},频点:{5},盘点时刻:{6}", report.m_strDeviceID, report.m_strEPC, report.m_strTID, report.m_strAntennaNo, report.m_strRSSI, report.m_strFrequency, report.m_strTimeStamp), 11);
+                Logo.sWriteLogo(string.Format("读写器:{0},EPC:{1},TID:{2},天线号:{3},RSSI:{4},频点:{5},盘点时刻:{6}", report.m_strDeviceID, report.m_strEPC, report.m_strTID, report.m_strAntennaNo, report.m_strRSSI, report.m_strFrequency, report.m_strTimeStamp), 2);
 
                 //统计不同读写器盘点数据
                 //StatisticsInventoryData(report);
@@ -317,7 +317,7 @@ namespace BLL
         {
             if (e != null)
             {
-                Logo.sWriteLogo(string.Format("读写器:{0}断开连接", e.m_strDeviceID), 11);
+                Logo.sWriteLogo(string.Format("读写器:{0}断开连接", e.m_strDeviceID), 2);
                 Reader operateReader = ReaderManager.g_ReaderManager.GetRFIDReaderByDeviceID(e.m_strDeviceID);
                 if (null != operateReader)
                 {

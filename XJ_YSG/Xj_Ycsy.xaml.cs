@@ -32,7 +32,7 @@ namespace XJ_YSG
                 gh = dwm;
             }
             this.Loaded += ((s, e) => {
-                BoxList.markLayer.Visibility = Visibility.Visible;
+               BoxList.markLayer.Visibility = Visibility.Visible;
             });
 
             this.Closed += ((s, e) =>
@@ -48,11 +48,10 @@ namespace XJ_YSG
             {
                 if (port.IsOpen) 
                 {
-                    Send(Xj_BoxList.gh);
+                    Send(gh);
                     MainBox.locklis.Add(gh);
                     this.Close();
-                }                           
-               
+                }                                         
             } 
         }
 
@@ -83,6 +82,12 @@ namespace XJ_YSG
             Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
             port.WriteData(data, ref rtn);
             bw = rtn;
+        }     
+     
+        private void btn_tc_TouchLeave(object sender, TouchEventArgs e)
+        {
+            Xj_BoxList.gh = "";
+            this.Close();
         }
     }
 }

@@ -74,31 +74,33 @@
         </Style>
     </Window.Resources>
     <Grid>
-       
         <Grid x:Name="markLayer" Background="Black" Panel.ZIndex="999" Opacity="0.5" Visibility="Hidden"/>
-        <Button x:Name="btn_clos"  Opacity="0" Click="btn_clos_Click" Width="70" Height="70" Margin="635,0,0,910" > </Button>
-        <Grid>
-            <Button FontSize="32" Width="240" Height="78" Click="Button_zwlr_Click"  Foreground="#FEFEFE" FontWeight="Black"  FontFamily="MicrosoftYaHei"  Margin="264,162,264,784" Style="{DynamicResource ButtonStyle1}" >指纹录入</Button>
-        </Grid>
+        <Viewbox Stretch=" fill">
+            <Canvas  Height="1024" Width="768"  Background="Transparent" >
+                <Button x:Name="btn_clos"  Opacity="0"  TouchLeave="btn_clos_TouchLeave"  Width="70" Height="70" Margin="667,25,0,0"></Button>
+                <Button FontSize="32" Width="240" Height="78" Click="Button_zwlr_Click"  Foreground="#FEFEFE" FontWeight="Black"  FontFamily="MicrosoftYaHei"  Margin="264,162,264,784" Style="{DynamicResource ButtonStyle1}" >指纹录入</Button>
+                <ListBox x:Name="s_1"  Focusable="False" Width="740"  Height="740"  ManipulationBoundaryFeedback="s_1_ManipulationBoundaryFeedback"  VerticalAlignment="Top" Opacity="1"  BorderThickness="0"  Background="Transparent"   ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Hidden"  BorderBrush="Transparent" ItemsSource="{Binding}" Margin="15,270,0,0" >
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="4" Rows="13"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate >
+                        <DataTemplate>
+                            <Grid Height="110" Width="165" x:Name="Grid_b" Tag="{Binding Path=BH}" MouseDown="Grid_b_MouseDown">
+                                <Grid.Background>
+                                    <ImageBrush  ImageSource="{Binding Path=UriSource}"/>
+                                </Grid.Background>
+                                <Label Content="{Binding Path=BH1}"  x:Name="BH" FontFamily="Microsoft YaHei" FontSize="36" FontWeight="black"  Foreground="#333333"   Margin="30,10,0,0"/>
+                                <Label Content="{Binding Path=BH2}"  x:Name="ZT" FontFamily="Microsoft YaHei" FontSize="20" FontWeight="black" Foreground="#999999"   Margin="24,65,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
 
-        <ListBox x:Name="s_1"  Focusable="False" Width="740"  Height="740"  ManipulationBoundaryFeedback="s_1_ManipulationBoundaryFeedback"  VerticalAlignment="Top" Opacity="1"  BorderThickness="0"  Background="Transparent"   ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Hidden"  BorderBrush="Transparent" ItemsSource="{Binding}" Margin="0,270,0,0" >
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Columns="4" Rows="13"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate >
-                <DataTemplate>
-                    <Grid Height="110" Width="165" x:Name="Grid_b" Tag="{Binding Path=BH}" MouseDown="Grid_b_MouseDown" >
-                        <Grid.Background>
-                            <ImageBrush  ImageSource="{Binding Path=UriSource}"/>
-                        </Grid.Background>
-                        <Label Content="{Binding Path=BH1}"  x:Name="BH" FontFamily="Microsoft YaHei" FontSize="36" FontWeight="black"  Foreground="#333333"   Margin="30,10,0,0"/>
-                        <Label Content="{Binding Path=BH2}"  x:Name="ZT" FontFamily="Microsoft YaHei" FontSize="20" FontWeight="black" Foreground="#999999"   Margin="24,65,0,0"/>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+
+            </Canvas>
+        </Viewbox>
     </Grid>
 
 </Window>

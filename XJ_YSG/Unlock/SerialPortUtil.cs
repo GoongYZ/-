@@ -192,6 +192,7 @@ namespace XJ_YSG
                 comPort.DataBits = (int)_dataBits;
                 comPort.StopBits = _stopBits;
                 comPort.Open();
+                Logo.sWriteLogo("锁连接成功", 6);
             }
             catch (Exception ex)
             {
