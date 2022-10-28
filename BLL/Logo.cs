@@ -167,7 +167,10 @@ namespace BLL
 
 
 
-
+        /// <summary>
+        /// 创建钥匙柜卡片文件
+        /// </summary>
+        /// <returns></returns>
         public string SetYsgGh() 
         {
             string Current = System.IO.Directory.GetCurrentDirectory();
@@ -185,13 +188,31 @@ namespace BLL
             }
             string FilePath = Path + "/" + string.Format("ysgbh_kp.txt");
             return FilePath;
-            //string Path = Current + "/YsgGh.txt   ";
-            //if (!Directory.Exists(Path))
-            //{
-            //    Directory.CreateDirectory(Path);
-            //}
-            //string FilePath = Path;
-            //return FilePath;
+          
+        }
+
+        /// <summary>
+        /// 创建钥匙柜卡片文件
+        /// </summary>
+        /// <returns></returns>
+        public static string sSetYsgGh()
+        {
+            string Current = System.IO.Directory.GetCurrentDirectory();
+            string Path = Current + "/YsGh";
+            try
+            {
+                if (!Directory.Exists(Path))
+                {
+                    Directory.CreateDirectory(Path);
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            string FilePath = Path + "/" + string.Format("ysgbh_kp.txt");
+            return FilePath;
+
         }
 
         /// <summary>
@@ -252,6 +273,39 @@ namespace BLL
                 fs.Close();
             }
             return returnStr;
+        }
+
+
+        /// <summary>
+        /// 写入柜号信息
+        /// </summary>
+        /// <param name="text">日志内容</param>
+        /// <param name="Type">0：数据信息/1:开柜门/2:人脸识别/3：二维码/4：RFID通道/5：门禁/6：工控机调用/7：视频监控/8：桌面读写器/9错误日志/10：语音播报/11:读写器</param>
+        public static void sWriteYsgh(string text)
+        {
+            try
+            {
+                text = string.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now) + text;
+                string FilePath = sSetYsgGh();
+                if (File.Exists(FilePath))
+                {
+                    StreamWriter sw = new StreamWriter(FilePath, true);
+                    sw.WriteLine(text);
+                    sw.Close();
+                }
+                else
+                {
+                    FileStream myFs = new FileStream(FilePath, FileMode.Create);
+                    StreamWriter mySw = new StreamWriter(myFs);
+                    mySw.WriteLine(text);
+                    mySw.Close();
+                    myFs.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
     }

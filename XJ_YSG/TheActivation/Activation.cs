@@ -47,7 +47,7 @@ namespace FaceBox.TheActivation
                         var is64CPU = Environment.Is64BitProcess;
                         if (string.IsNullOrWhiteSpace(appId) || string.IsNullOrWhiteSpace(is64CPU ? sdkKey64 : sdkKey32) || string.IsNullOrWhiteSpace(is64CPU ? activeKey64 : activeKey32))
                         {
-                            log.WriteLogo(string.Format("请在App.config配置文件中先配置APP_ID和SDKKEY{0}、ACTIVEKEY{0}!", is64CPU ? "64" : "32"), 1);
+                            log.WriteLogo(string.Format("请在App.config配置文件中先配置APP_ID和SDKKEY{0}、ACTIVEKEY{0}!", is64CPU ? "64" : "32"), 3);
                             System.Environment.Exit(0);
                         }
                         #endregion
@@ -64,12 +64,12 @@ namespace FaceBox.TheActivation
                             retCode = EntityModel.imageEngine.ASFGetActiveDeviceInfo(out deviceInfo);
                             if (retCode != 0)
                             {
-                                log.WriteLogo("获取设备信息失败，错误码:" + retCode, 1);
+                                log.WriteLogo("获取设备信息失败，错误码:" + retCode, 3);
                             }
                             else
                             {
                                 File.WriteAllText("ActiveDeviceInfo.txt", deviceInfo);
-                                log.WriteLogo("获取设备信息成功，已保存到运行根目录ActiveDeviceInfo.txt文件，请在官网执行离线激活操作，将生成的离线授权文件路径在App.config里配置后再重新运行", 1);
+                                log.WriteLogo("获取设备信息成功，已保存到运行根目录ActiveDeviceInfo.txt文件，请在官网执行离线激活操作，将生成的离线授权文件路径在App.config里配置后再重新运行", 3);
                             }
                             System.Environment.Exit(0);
                         }
@@ -79,7 +79,7 @@ namespace FaceBox.TheActivation
                     }
                     if (retCode != 0 && retCode != 90114)
                     {
-                        log.WriteLogo("激活SDK失败,错误码:" + retCode, 1);
+                        log.WriteLogo("激活SDK失败,错误码:" + retCode, 3);
                         System.Environment.Exit(0);
                     }
                 }
@@ -87,11 +87,11 @@ namespace FaceBox.TheActivation
                 {
                     if (ex.Message.Contains("无法加载 DLL"))
                     {
-                        log.WriteLogo("请将SDK相关DLL放入bin对应的x86或x64下的文件夹中!", 1);
+                        log.WriteLogo("请将SDK相关DLL放入bin对应的x86或x64下的文件夹中!", 3);
                     }
                     else
                     {
-                        log.WriteLogo("激活SDK失败,请先检查依赖环境及SDK的平台、版本是否正确!", 1);
+                        log.WriteLogo("激活SDK失败,请先检查依赖环境及SDK的平台、版本是否正确!", 3);
                     }
                     System.Environment.Exit(0);
                 }

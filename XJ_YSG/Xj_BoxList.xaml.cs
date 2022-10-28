@@ -52,11 +52,15 @@ namespace XJ_YSG
         }
 
 
+
         private void Button_zwlr_Click(object sender, RoutedEventArgs e)
         {
             Xj_Zwlr zwlr = new Xj_Zwlr(BoxList);
             zwlr.ShowDialog(); ;
         }
+
+
+
 
         private void Grid_b_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -79,8 +83,8 @@ namespace XJ_YSG
             }
         }
 
-       
-
+      
+        
         #region 语音播报
         private void speack(string text)
         {
@@ -91,10 +95,14 @@ namespace XJ_YSG
         }
         #endregion
 
+
+
         private void s_1_ManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
         {
             e.Handled = true;
         }
+
+
 
         private void btn_clos_TouchLeave(object sender, TouchEventArgs e)
         {

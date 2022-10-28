@@ -63,20 +63,27 @@ namespace XJ_YSG
             {
                 mainbox = this;
             }
-            UHFService.ConnectCOM();   //刷卡                    
+            UHFService.ConnectCOM();   //刷卡
+
             UHF2Service.ConnectCOM();   //读钥匙
+
             port.OpenPort();  //连接锁
             if (activation.InitEngines() == "1")
             {
                 ChooseMultiImg();  //激活人脸识别
-            }          
+            }
             if (fingerprint.ZW_Connection() == "ok")
             {
                 zwthan();   //开始指纹验证
-            }          
-            Rfidthan();   //实时RFID读信息卡           
-            LockDjs();    //门箱状态
-            Csh_yskp();  //初始化钥匙柜卡片
+            }
+            Rfidthan();   //实时RFID读信息卡
+            LockDjs();//门箱状态
+
+
+          
+            Action action = Csh_yskp;
+            action.BeginInvoke(null,null);  //初始化钥匙柜卡片
+
             this.Closed += MainWindow_Closed;
         }
         #region 输入钥匙码按钮
@@ -152,7 +159,7 @@ namespace XJ_YSG
 
 
         #region 语音播报
-        private void speack(string text)
+        public void speack(string text)
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -227,6 +234,8 @@ namespace XJ_YSG
                                 if (image != null)
                                 {
                                     image.Dispose();
+
+
                                 }
                                 continue;
                             }
@@ -374,30 +383,7 @@ namespace XJ_YSG
 
         #endregion
 
-        #region 初始化钥匙柜卡片
-        private void Csh_yskp()
-        {
-            List<int> list = new List<int>();
-            int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜规格
-            for (int i = 0; i < gzsl; i++)
-            {
-                list.Add(i);
-            }
-            Parallel.ForEach(list, new ParallelOptions() { MaxDegreeOfParallelism = 3 }, i => {
-                string gh_kp = "";  //柜号_卡片                
-                UHF2Service.OneCheckInvnetoryWhile(i);
-                string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
-                if (yskp != "")
-                {
-                    gh_kp += "" + i + "_" + yskp;
-                    //写入文件
-                    log.WriteYsgGh(gh_kp);
-                    UHF2Service.strEPC = "";
-                }
-            });
-            speack("智能钥匙管理柜初始化成功");
-        }
-        #endregion
+       
 
         #region 刷卡还钥匙
 
@@ -424,6 +410,8 @@ namespace XJ_YSG
             }
         }
         #endregion
+
+
 
 
         #region 监控箱门状态
@@ -453,7 +441,7 @@ namespace XJ_YSG
                         {
                             //调接口
                             //停止
-                            //清楚数据
+                            //清除数据
                             UHF2Service.strEPC = "";
                         }
                     }
@@ -494,8 +482,28 @@ namespace XJ_YSG
 
         #endregion
 
+        #region 初始化钥匙柜卡片
+        public void Csh_yskp()
+        {
+            List<int> list = new List<int>();
+            int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜规格
+            for (int i = 0; i < gzsl; i++)
+            {
+                string gh_kp = "";  //柜号_卡片                
+                UHF2Service.OneCheckInvnetoryWhile(i);
+                string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
+                if (yskp != "")
+                {
+                    gh_kp += "" + i + "_" + yskp;
+                    //写入文件                   
+                    Logo.sWriteYsgh(gh_kp);
+                    UHF2Service.strEPC = "";
+                }
+            }          
+            speack("智能钥匙管理柜初始化成功");
+        }
+        #endregion
 
-     
 
         private void MainWindow_Closed(object sender, EventArgs e)
         {          
