@@ -34,8 +34,10 @@ namespace XJ_YSG
         private static int sbbm = Convert.ToInt32(ServerBase.XMLRead("Ysg_sbbm", "sbbm")); //设备编码
         public static DispatcherTimer zwTimer = new DispatcherTimer();//指纹计时器
         public static DispatcherTimer RfidTimer = new DispatcherTimer();//刷卡计时器
+        public static DispatcherTimer ClossTimer = new DispatcherTimer();  //监控开门状态倒计时
         Interaction_WebService Service = new Interaction_WebService();
         public static List<string> locklis = new List<string>();// 监控箱门的数据集合
+       
         #region  指纹图像数据
         public byte[] m_pImageBuffer = new byte[640 * 480];
         public int m_nWidth = 0;
@@ -65,30 +67,27 @@ namespace XJ_YSG
             }
             UHFService.ConnectCOM();   //刷卡
 
-            UHF2Service.ConnectCOM();   //读钥匙
+           // UHF2Service.ConnectCOM();   //读钥匙
 
-            port.OpenPort();  //连接锁
-            if (activation.InitEngines() == "1")
-            {
-                ChooseMultiImg();  //激活人脸识别
-            }
-            if (fingerprint.ZW_Connection() == "ok")
-            {
-                zwthan();   //开始指纹验证
-            }
-            Rfidthan();   //实时RFID读信息卡
-            LockDjs();//门箱状态
+            //port.OpenPort();  //连接锁
+            //if (activation.InitEngines() == "1")
+            //{
+            //    ChooseMultiImg();  //激活人脸识别
+            //}
+            //if (fingerprint.ZW_Connection() == "ok")
+            //{
+            //    zwthan();   //开始指纹验证
+            //}
+            Rfidthan();   //实时RFID读信息卡          
+            //Csh_yskp(); //初始化钥匙柜卡片
 
-
-          
-            Action action = Csh_yskp;
-            action.BeginInvoke(null,null);  //初始化钥匙柜卡片
-
-            this.Closed += MainWindow_Closed;
+            //this.Closed += MainWindow_Closed;
         }
         #region 输入钥匙码按钮
         private void Smkey_Click(object sender, RoutedEventArgs e)
         {
+            zwTimer.Stop();
+            RfidTimer.Stop();
             Xj_Mima xj_Mima = new Xj_Mima();
             xj_Mima.ShowDialog();
         }
@@ -99,8 +98,8 @@ namespace XJ_YSG
         #region 开启人脸识别按钮
         private void Facekey_Click(object sender, RoutedEventArgs e)
         {
-            MainBox.zwTimer.Stop();
-            MainBox.RfidTimer.Stop();
+            zwTimer.Stop();
+            RfidTimer.Stop();
             Xj_Rlsb xj_Rlsb = new Xj_Rlsb();
             xj_Rlsb.ShowDialog();
         }
@@ -189,8 +188,6 @@ namespace XJ_YSG
                     string[] files = Directory.GetFiles(DVRSynchro, ".", SearchOption.AllDirectories);
                     List<string> imagePathListTemp = new List<string>();
                     var numStart = EntityModel.imagePathList.Count;
-
-
                     int isGoodImage = 0;
                     //人脸检测以及提取人脸特征
                     ThreadPool.QueueUserWorkItem(new WaitCallback(delegate
@@ -262,7 +259,6 @@ namespace XJ_YSG
                                 }
                                 continue;
                             }
-
                             //显示人脸
                             this.Dispatcher.Invoke(new Action(delegate
                             {
@@ -273,7 +269,6 @@ namespace XJ_YSG
                                     CheckImageWidthAndHeight(ref image);
                                 }
                                 EntityModel.imageLists.Add((numStart + isGoodImage).ToString(), imagePathListTemp[i]);
-
                                 log.WriteLogo(string.Format("已提取{0}号人脸特征值，[left:{1},right:{2},top:{3},bottom:{4},orient:{5},mask:{6}] ,PATH={7}", (numStart + isGoodImage), singleFaceInfo.faceRect.left, singleFaceInfo.faceRect.right, singleFaceInfo.faceRect.top, singleFaceInfo.faceRect.bottom, singleFaceInfo.faceOrient, isMask ? "mask" : "no mask", imagePathListTemp[i].ToString()), 3);
                                 EntityModel.leftImageFeatureList.Add(feature);
                                 isGoodImage++;
@@ -399,31 +394,56 @@ namespace XJ_YSG
         {
 
             UHFService.OneCheckInvnetoryWhile(0);
-            string st = UHFService.strEPC;
-            string s = string.Join(",", st.Split(',').Distinct().ToArray());
-            if (s != "")
+            string st = UHFService.strEPC;          
+            if (st != "")
             {
+
+                Getycsqdpk(st);
+
                 zwTimer.Stop();
-                RfidTimer.Stop();              
+                RfidTimer.Stop();     
+                
                 Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox);
                 xj_Clpj.ShowDialog();
             }
         }
+
+        /// <summary>
+        /// 根据钥匙编号获取用车申请单信息
+        /// </summary>
+        public string  Getycsqdpk(string kp) 
+        {
+            //读取txt文件;
+            string txt = log.GetYsgGh();
+            string sbbm = "";
+            string  gh_kp= txt.Split(',').Contains(kp).ToString();
+            //foreach (var item in txt.Split(','))  //以逗号截取遍历每一项
+            //{
+            //    if (item.Split('_')[1]==kp)  //莫一项等于
+            //    {
+            //        string wzm = item.Split('_')[0];                   
+            //        Service.getycsqdpkInfo(sbbm, wzm);                  
+            //    }
+            //}
+            return "";
+        }
+
+
+
         #endregion
 
 
 
 
         #region 监控箱门状态
-        DispatcherTimer ClossTimer = new DispatcherTimer();
+
         /// <summary>
         /// 监控开门状态倒计时
         /// </summary>
         public void LockDjs()
         {
             ClossTimer.Interval = new TimeSpan(0, 0, 0, 0, 2000); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
-            ClossTimer.Tick += new EventHandler(ClossTimer_Tick_canShow); //每一秒执行的方法
-            ClossTimer.Start();
+            ClossTimer.Tick += new EventHandler(ClossTimer_Tick_canShow); //每一秒执行的方法            
         }
         void ClossTimer_Tick_canShow(object sender, EventArgs e)
         {
@@ -445,11 +465,15 @@ namespace XJ_YSG
                             UHF2Service.strEPC = "";
                         }
                     }
-                    else 
+                    else
                     {
                         locklis.Remove(item);
                     }
                 }
+            }
+            else 
+            {
+                ClossTimer.Stop();
             }
         }
 
@@ -479,28 +503,29 @@ namespace XJ_YSG
             port.WriteData(data, ref rut);
             return rut;
         }
-
         #endregion
+
 
         #region 初始化钥匙柜卡片
         public void Csh_yskp()
         {
-            List<int> list = new List<int>();
-            int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜规格
-            for (int i = 0; i < gzsl; i++)
-            {
-                string gh_kp = "";  //柜号_卡片                
-                UHF2Service.OneCheckInvnetoryWhile(i);
-                string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
-                if (yskp != "")
-                {
-                    gh_kp += "" + i + "_" + yskp;
-                    //写入文件                   
-                    Logo.sWriteYsgh(gh_kp);
-                    UHF2Service.strEPC = "";
+            Task.Factory.StartNew(() =>
+            {              
+                string gh_kp = "";  //柜号_卡片  
+                int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜格子数量
+                for (int i = 1; i <= gzsl; i++)
+                {                               
+                    UHF2Service.OneCheckInvnetoryWhile(i-1);
+                    string yskp = UHF2Service.strEPC;
+                    if (yskp != "")
+                    {
+                        gh_kp += "" + i + "_" + yskp + ","+"\r";
+                        UHF2Service.strEPC = "";
+                    }                    
                 }
-            }          
-            speack("智能钥匙管理柜初始化成功");
+                Logo.sWriteYsgh(gh_kp);
+                speack("智能钥匙管理柜初始化成功");
+            });       
         }
         #endregion
 

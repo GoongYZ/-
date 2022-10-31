@@ -249,10 +249,8 @@ namespace BLL
 
 
         /// <summary>
-        /// 读取柜号信息
-        /// <param name="Type">0/1/2/3：所有RFID记录/非法RFID记录/读写器链接日志/温湿度记录</param>
-        /// </summary>
-        /// <param name="Type"></param>
+        /// 读取柜号信息      
+        /// </summary>  
         public string GetYsgGh()
         {
             string FilePath = SetYsgGh();
@@ -263,11 +261,11 @@ namespace BLL
                 StreamReader sr = new StreamReader(fs, System.Text.Encoding.GetEncoding("gb2312"));
                 sr.BaseStream.Seek(0, SeekOrigin.Begin);
                 string str = sr.ReadLine();
-                returnStr += str + "$";
+                returnStr += str ;
                 while (str != null)
                 {
                     str = sr.ReadLine();
-                    returnStr += str + "$";
+                    returnStr += str ;
                 }
                 sr.Close();
                 fs.Close();
@@ -284,8 +282,7 @@ namespace BLL
         public static void sWriteYsgh(string text)
         {
             try
-            {
-                text = string.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now) + text;
+            {               
                 string FilePath = sSetYsgGh();
                 if (File.Exists(FilePath))
                 {

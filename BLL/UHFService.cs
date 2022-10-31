@@ -114,14 +114,7 @@ namespace BLL
                             tag = tagReport.m_listTags[i];
                             if (!Listm_strEPC.Contains(tag.m_strEPC)) 
                             {
-                                if (strEPC != "")
-                                {
-                                    strEPC += ",";
-                                }
-                                else
-                                {
-                                    strEPC += tag.m_strEPC;
-                                }
+                                strEPC += tag.m_strEPC;
                             }                                                            
                         }
                     }

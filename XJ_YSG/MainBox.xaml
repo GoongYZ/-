@@ -12,7 +12,7 @@
         <Image x:Name="pictureBox_FingerImg"  HorizontalAlignment="Left" Height="200" Margin="4,3,0,0" VerticalAlignment="Top" Width="200"/>
         <Viewbox Stretch=" fill">
             <Canvas Width="768" Height="1024"  Background="Transparent">
-                <Button Content="" HorizontalAlignment="Left"  x:Name="Smkey" Click="Smkey_Click" Opacity="0"  Background="Transparent" BorderThickness="0"  Height="150" VerticalAlignment="Top" Width="515" Canvas.Left="22" Canvas.Top="854"/>
+                <Button Content="" HorizontalAlignment="Left"  x:Name="Smkey"  Click="Smkey_Click" Opacity="0"  Background="Transparent" BorderThickness="0"  Height="150" VerticalAlignment="Top" Width="515" Canvas.Left="22" Canvas.Top="854"/>
                 <Button Content="" HorizontalAlignment="Left"  x:Name="Facekey" Click="Facekey_Click" Background="Transparent" Opacity="0" BorderThickness="0"   Height="150" VerticalAlignment="Top" Width="180" Canvas.Left="565" Canvas.Top="854"/>
                 <materialDesign:PopupBox 
                  Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"

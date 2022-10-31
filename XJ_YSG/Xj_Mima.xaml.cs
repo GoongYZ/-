@@ -149,7 +149,9 @@ namespace XJ_YSG
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Shut_down_Click(object sender, RoutedEventArgs e)
-        {           
+        {
+            MainBox.zwTimer.Start() ;
+            MainBox.RfidTimer.Start();
             this.Close();
         }
 

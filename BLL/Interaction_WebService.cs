@@ -110,6 +110,120 @@ namespace BLL
         }
 
 
+        /// <summary>
+        /// 取钥匙
+        /// </summary>
+        /// <param name="mm"></param>
+        /// <returns></returns>
+        public bool saveQys(string sbbm, string ycsqdpk)
+        {
+            Hashtable p = new Hashtable();
+            p.Add("sbbm", sbbm);
+            p.Add("ycsqdpk", ycsqdpk);
+            string Json= doCallingInterface_String("clgl", "saveqys", p);
+            if (!String.IsNullOrEmpty(Json))
+            {
+                JObject jsonObj = JsonConvert.DeserializeObject<JObject>(Json);
+                string r = jsonObj["r"].ToString();
+                if (r.ToLower() == "true")
+                {
+                    return true;
+                }
+                else 
+                {
+                    return false;
+                }
+            }
+            else 
+            {
+                return false;
+            }
+        }
+
+
+        /// <summary>
+        /// 根据钥匙编号获取用车申请单信息
+        /// </summary>
+        /// <param name="sbbm"></param>
+        /// <param name="wzm"></param>
+        /// <returns></returns>
+        public Hashtable getycsqdpkInfo(string sbbm ,string wzm) 
+        {
+
+            Hashtable outtb = new Hashtable();
+            Hashtable p = new Hashtable();
+            p.Add("sbbm", sbbm);
+            p.Add("wzm", wzm);
+            string Json = doCallingInterface_String("clgl", "getycsqdinfo", p);
+            if (!String.IsNullOrEmpty(Json))
+            {
+                JObject jsonObj = JsonConvert.DeserializeObject<JObject>(Json);
+                string r = jsonObj["r"].ToString();
+                if (r.ToLower() == "true")
+                {
+                    if (jsonObj["data"] != null)
+                    {
+                        JObject vmodel = (JObject)jsonObj["data"];
+                        outtb.Add("DH", vmodel["DH"].ToString());
+                        outtb.Add("SFPL", vmodel["SFPL"].ToString());
+                        outtb.Add("PK", vmodel["PK"].ToString());                      
+                    }
+                }               
+            }
+            return outtb;
+        }
+
+
+        /// <summary>
+        /// 还钥匙
+        /// </summary>
+        /// <param name="mm"></param>
+        /// <returns></returns>
+        public bool saveHys(string ysbh)
+        {
+            Hashtable p = new Hashtable();
+            p.Add("ysbh", ysbh);
+            string Json = doCallingInterface_String("clgl", "savehys", p);
+            if (!String.IsNullOrEmpty(Json))
+            {
+                JObject jsonObj = JsonConvert.DeserializeObject<JObject>(Json);
+                string r = jsonObj["r"].ToString();
+                if (r.ToLower() == "true")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+        
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -192,107 +306,7 @@ namespace BLL
             return rtn;
         }
 
-        /// <summary>
-        /// 获取数据字典
-        /// </summary>
-        /// <param name="lxdm"></param>
-        /// <returns></returns>
-        //public DataSet getSjzdist(string lxdm)
-        //{
-        //    DataSet ds = new DataSet();
-        //    JavaScriptArray javascript = new JavaScriptArray();
-        //    Hashtable p = new Hashtable();
-        //    p.Add("lxdm", lxdm);
-        //    string Json = doCallingInterface_String("p01", "getsjzdlist", p);
-        //    if (!String.IsNullOrEmpty(Json))
-        //    {
-        //        JavaScriptObject jsonObj = JavaScriptConvert.DeserializeObject<JavaScriptObject>(Json);
-        //        string r = jsonObj["r"].ToString();
-        //        if (r.ToLower() == "true")
-        //        {
-        //            DataTable tb_kglzb = new DataTable();
-        //            tb_kglzb.TableName = "tb_log";
-        //            tb_kglzb.Columns.Add("PK");
-        //            tb_kglzb.Columns.Add("MC");
-        //            javascript = (JavaScriptArray)jsonObj["rows"];
-        //            for (int i = 0; i < javascript.Count; i++)
-        //            {
-        //                JavaScriptObject jsonobj = (JavaScriptObject)javascript[i];
-        //                tb_kglzb.Rows.Add(new object[] { jsonobj["PK"].ToString(), jsonobj["MC"].ToString() });
-        //            }
-        //            ds.Tables.Add(tb_kglzb);
-
-        //        }
-        //    }
-        //    return ds;
-        //}
-        /// <summary>
-        /// 获取钥匙柜日志
-        /// </summary>
-        /// <returns></returns>
-        //public DataSet getLogList()
-        //{
-        //    Hashtable p = new Hashtable();
-        //    DataSet ds = new DataSet();
-        //    JavaScriptArray javascript = new JavaScriptArray();
-        //    string Json = doCallingInterface_String("clgl", "getysgloglist", p);
-        //    if (!String.IsNullOrEmpty(Json))
-        //    {
-        //        JavaScriptObject jsonObj = JavaScriptConvert.DeserializeObject<JavaScriptObject>(Json);
-        //        string r = jsonObj["r"].ToString();
-        //        if (r.ToLower() == "true")
-        //        {
-        //            DataTable tb_kglzb = new DataTable();
-        //            tb_kglzb.TableName = "tb_log";
-        //            tb_kglzb.Columns.Add("PK");
-        //            tb_kglzb.Columns.Add("YSBH");
-        //            tb_kglzb.Columns.Add("LX");
-        //            tb_kglzb.Columns.Add("CCJSJ");
-        //            javascript = (JavaScriptArray)jsonObj["rows"];
-        //            for (int i = 0; i < javascript.Count; i++)
-        //            {
-        //                JavaScriptObject jsonobj = (JavaScriptObject)javascript[i];
-        //                tb_kglzb.Rows.Add(new object[] { jsonobj["PK"].ToString(), jsonobj["YSBH"].ToString(), jsonobj["LX"].ToString(), jsonobj["CCJSJ"].ToString()});
-        //            }
-        //            ds.Tables.Add(tb_kglzb);
-
-        //        }
-        //    }
-        //    return ds;
-        //}
-        /// <summary>
-        /// 获取钥匙柜所有钥匙
-        /// </summary>
-        /// <returns></returns>
-        //public Hashtable getYsgList(string sjhm)
-        //{
-        //    JavaScriptArray javascript = new JavaScriptArray();
-        //    Hashtable rtn = new Hashtable();
-        //    Hashtable p = new Hashtable();
-        //    p.Add("sjhm", sjhm);
-        //    string Json = doCallingInterface_String("clgl", "getysglist", p);
-        //    if (!String.IsNullOrEmpty(Json))
-        //    {
-        //        JavaScriptObject jsonObj = JavaScriptConvert.DeserializeObject<JavaScriptObject>(Json);
-        //        string r = jsonObj["r"].ToString();
-        //        if (r.ToLower() == "true")
-        //        {
-        //            DataTable tb_kglzb = new DataTable();
-        //            tb_kglzb.TableName = "tb_log";
-        //            tb_kglzb.Columns.Add("PK");
-        //            tb_kglzb.Columns.Add("YSBH");
-        //            tb_kglzb.Columns.Add("LX");
-        //            tb_kglzb.Columns.Add("CCJSJ");
-        //            javascript = (JavaScriptArray)jsonObj["rows"];
-        //            for (int i = 0; i < javascript.Count; i++)
-        //            {
-        //                JavaScriptObject jsonobj = (JavaScriptObject)javascript[i];
-        //                rtn.Add(jsonobj["YSBH"].ToString(), jsonobj["CLHP"].ToString());
-        //            }
-        //        }
-        //    }
-        //    return rtn;
-        //}
+  
 
         /// <summary>
         /// 获取日志数量
@@ -336,19 +350,7 @@ namespace BLL
             return doCallingInterface("clgl", "savelog", p);
         }
 
-        /// <summary>
-        /// 使用密码取钥匙时，回调接口
-        /// </summary>
-        /// <param name="mm"></param>
-        /// <returns></returns>
-        public Hashtable saveQys(string mm,string pcdpk,string ycsqdpk)
-        {
-            Hashtable p = new Hashtable();
-            p.Add("mm", mm);
-            p.Add("pcdpk", pcdpk);
-            p.Add("ycsqdpk", ycsqdpk);
-            return doCallingInterface("clgl", "saveqys", p);
-        }
+      
         public Hashtable savePcd(string ycsy, string mdd, string sjhm, string ysbh)
         {
             Hashtable p = new Hashtable();
@@ -360,19 +362,7 @@ namespace BLL
         }   
         
 
-        /// <summary>
-        /// 还钥匙，回调接口
-        /// </summary>
-        /// <param name="mm"></param>
-        /// <returns></returns>
-        public Hashtable saveHys(string ysbh)
-        {
-            Hashtable p = new Hashtable();
-            p.Add("ysbh", ysbh);
-            return doCallingInterface("clgl", "savehys", p);
-        }
-
-
+       
         /// <summary>
         /// 统一调用接口
         /// </summary>

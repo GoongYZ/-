@@ -19,7 +19,7 @@ namespace BLL
         private static int _port = Convert.ToInt32(ServerBase.XMLRead("UHF2", "ListenPort"));
         private static string ComPortName = ServerBase.XMLRead("UHF2", "ComPortName");
         private static string BaudRate = ServerBase.XMLRead("UHF2", "BaudRate");
-        
+        private static string Reading = ServerBase.XMLRead("RFID", "RFID_readTime");
         private static string m_strWorkReaderDeviceID = string.Empty;              //工作读写器的设备序列号
         private static Reader reader = null;
         private static string m_strLostConnectDeviceID = string.Empty;
@@ -100,7 +100,7 @@ namespace BLL
             OperationResult nRetVal = OperationResult.FAIL;
             TagReport tagReport = new TagReport();
             DateTime dt1 = DateTime.Now;
-            while ((DateTime.Now - dt1).TotalMilliseconds < 3000)
+            while ((DateTime.Now - dt1).TotalMilliseconds < Convert.ToDouble(Reading))
             {
                 if (!CheckReaderOnLine())
                     break;
@@ -114,14 +114,7 @@ namespace BLL
                         if (!Listm_strEPC.Contains(tag.m_strEPC)) {
 
                             // Listm_strEPC.Add(tag.m_strEPC, tag.m_strEPC); 
-                            if (strEPC != "")
-                            {
-                                strEPC += ",";
-                            }
-                            else
-                            {
-                                strEPC += tag.m_strEPC;
-                            }
+                            strEPC = tag.m_strEPC;
                         }
 
 
