@@ -30,8 +30,8 @@ namespace XJ_YSG
         Fingerprint fingerprint = new Fingerprint();
         Logo log = new Logo();
         SerialPortUtil port = new SerialPortUtil();
-        private MainBox mainbox = null;       
-        private static int sbbm = Convert.ToInt32(ServerBase.XMLRead("Ysg_sbbm", "sbbm")); //设备编码
+        private MainBox mainbox = null;
+        private static string sbbm = ServerBase.XMLRead("Ysg_sbbm", "sbbm").ToString(); //设备编码
         public static DispatcherTimer zwTimer = new DispatcherTimer();//指纹计时器
         public static DispatcherTimer RfidTimer = new DispatcherTimer();//刷卡计时器
         public static DispatcherTimer ClossTimer = new DispatcherTimer();  //监控开门状态倒计时
@@ -400,11 +400,7 @@ namespace XJ_YSG
 
                 Getycsqdpk(st);
 
-                zwTimer.Stop();
-                RfidTimer.Stop();     
-                
-                Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox);
-                xj_Clpj.ShowDialog();
+           
             }
         }
 
@@ -414,18 +410,23 @@ namespace XJ_YSG
         public string  Getycsqdpk(string kp) 
         {
             //读取txt文件;
-            string txt = log.GetYsgGh();
-            string sbbm = "";
-            string  gh_kp= txt.Split(',').Contains(kp).ToString();
-            //foreach (var item in txt.Split(','))  //以逗号截取遍历每一项
-            //{
-            //    if (item.Split('_')[1]==kp)  //莫一项等于
-            //    {
-            //        string wzm = item.Split('_')[0];                   
-            //        Service.getycsqdpkInfo(sbbm, wzm);                  
-            //    }
-            //}
-            return "";
+            string txt = log.GetYsgGh();          
+            txt = txt.Substring(0, txt.Length - 1);
+            var wzm = txt.Split(',').Where(t => t.Contains(kp)).FirstOrDefault().ToString().Split('_')[0];
+            //调用用车申请单接口
+            var hash = Service.getycsqdpkInfo(sbbm,wzm);
+
+
+
+
+            zwTimer.Stop();
+            RfidTimer.Stop();
+
+            Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox);
+            xj_Clpj.ShowDialog();
+            string PK = hash["PK"].ToString();
+
+            return  wzm;
         }
 
 
