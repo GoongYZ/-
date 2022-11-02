@@ -1,17 +1,7 @@
 ﻿using BLL;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace XJ_YSG
 {
@@ -22,14 +12,16 @@ namespace XJ_YSG
     {
         SerialPortUtil port = new SerialPortUtil();
         string gh = "";
-        public Xj_Clpj(MainBox mainbox,string wzm)
+       
+        public Xj_Clpj(MainBox mainbox, string wzm)
         {
             InitializeComponent();
             this.Left = 104;
             this.Top = 255;
             gh = wzm;
-            this.Loaded += ((s, e) => {              
-                mainbox.markLayer.Visibility = Visibility.Visible;               
+            this.Loaded += ((s, e) =>
+            {
+                mainbox.markLayer.Visibility = Visibility.Visible;
             });
             this.Closed += ((s, e) =>
             {
@@ -49,25 +41,24 @@ namespace XJ_YSG
                 {
                     Send(gh);
                     MainBox.locklis.Add(gh);
-                    //打开柜门              
-                    speack("柜门已打开");
-                    UHFService.strEPC = ""; //清楚刷卡信息，下次刷卡使用
+                    speack("柜门已打开");                    //打开柜门                   
+                    UHFService.strEPC = ""; //清除刷卡信息，下次刷卡使用
                 }
-                else 
+                else
                 {
-                    
+
                     this.Close();
                     speack("归还失败，请重新归还");
                 }
             }
-            else 
+            else
             {
                 this.Close();
                 speack("归还失败，请重新归还");
             }
         }
         private void clols_Button_Click(object sender, RoutedEventArgs e)
-        {          
+        {
             this.Close();
         }
 
@@ -109,5 +100,31 @@ namespace XJ_YSG
             bw = rtn;
         }
 
+        private void clzk_RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var clzk = sender as RadioButton;
+            if (clzk.IsChecked == true)
+            {
+                MainBox.hashtable.Add("clzk", clzk.Tag.ToString());
+            }
+        }
+
+        private void clwg_RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var clwg = sender as RadioButton;
+            if (clwg.IsChecked == true)
+            {
+                MainBox.hashtable.Add("clwg", clwg.Tag.ToString());
+            }
+        }
+
+        private void clns_RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var clns = sender as RadioButton;
+            if (clns.IsChecked == true)
+            {
+                MainBox.hashtable.Add("clns", clns.Tag.ToString());
+            }
+        }
     }
 }

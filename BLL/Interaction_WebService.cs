@@ -29,13 +29,13 @@ namespace BLL
         /// </summary>
         /// <param name="mm">取钥匙码</param>
         /// <returns></returns>
-        public Hashtable getInfoByEwm(string mm,string sbbm)
+        public Hashtable getInfoByEwm(string mm, string sbbm)
         {
             Hashtable outtb = new Hashtable();
             Hashtable p = new Hashtable();
             p.Add("mm", mm);
             p.Add("sbbm", sbbm);
-            string Json=doCallingInterface_String("clgl", "checkysm", p);
+            string Json = doCallingInterface_String("clgl", "checkysm", p);
             if (!String.IsNullOrEmpty(Json))
             {
                 JObject jsonObj = JsonConvert.DeserializeObject<JObject>(Json);
@@ -48,14 +48,14 @@ namespace BLL
                         outtb.Add("YSBH", vmodel["YSBH"].ToString());
                         outtb.Add("YCSQDPK", vmodel["YCSQDPK"].ToString());
                         outtb.Add("RFID", vmodel["RFID"].ToString());
-                        outtb.Add("PK", vmodel["PK"].ToString());                     
-                        outtb.Add("WZM", vmodel["WZM"].ToString());                        
+                        outtb.Add("PK", vmodel["PK"].ToString());
+                        outtb.Add("WZM", vmodel["WZM"].ToString());
                     }
                 }
-                
-            }          
+
+            }
             return outtb;
-            
+
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace BLL
         /// </summary>
         /// <param name="sjhm">手机号码</param>
         /// <returns></returns>
-        public Hashtable getUserInfo(string sjhm) 
+        public Hashtable getUserInfo(string sjhm)
         {
             Hashtable outtb = new Hashtable();
             Hashtable p = new Hashtable();
@@ -98,9 +98,9 @@ namespace BLL
         /// <param name="sjhm">手机号码</param>
         /// <param name="sbbm">设备编码</param>
         /// <returns></returns>
-        public DataTable getListBox(string sjhm,string sbbm)
+        public DataTable getListBox(string sjhm, string sbbm)
         {
-           
+
             Hashtable p = new Hashtable();
             p.Add("sjhm", sjhm);
             p.Add("sbbm", sbbm);
@@ -118,15 +118,15 @@ namespace BLL
                     tb_kglzb.Columns.Add("XZMC");
                     tb_kglzb.Columns.Add("JSYXM");
                     tb_kglzb.Columns.Add("CXMC");
-                    tb_kglzb.Columns.Add("CLHP");              
+                    tb_kglzb.Columns.Add("CLHP");
                     javascript = (JArray)jsonObj["rows"];
                     for (int i = 0; i < javascript.Count; i++)
                     {
                         JObject jsonobj = (JObject)javascript[i];
                         tb_kglzb.Rows.Add(new object[] { jsonobj["PK"].ToString(), jsonobj["XZMC"].ToString(), jsonobj["JSYXM"].ToString(), jsonobj["CLHP"].ToString() });
-                    }                  
-                }               
-            }           
+                    }
+                }
+            }
             return tb_kglzb;
         }
 
@@ -141,7 +141,7 @@ namespace BLL
             Hashtable p = new Hashtable();
             p.Add("sbbm", sbbm);
             p.Add("ycsqdpk", ycsqdpk);
-            string Json= doCallingInterface_String("clgl", "saveqys", p);
+            string Json = doCallingInterface_String("clgl", "saveqys", p);
             if (!String.IsNullOrEmpty(Json))
             {
                 JObject jsonObj = JsonConvert.DeserializeObject<JObject>(Json);
@@ -150,12 +150,12 @@ namespace BLL
                 {
                     return true;
                 }
-                else 
+                else
                 {
                     return false;
                 }
             }
-            else 
+            else
             {
                 return false;
             }
@@ -168,7 +168,7 @@ namespace BLL
         /// <param name="sbbm"></param>
         /// <param name="wzm"></param>
         /// <returns></returns>
-        public Hashtable getycsqdpkInfo(string sbbm ,string wzm) 
+        public Hashtable getycsqdpkInfo(string sbbm, string wzm)
         {
 
             Hashtable outtb = new Hashtable();
@@ -187,9 +187,9 @@ namespace BLL
                         JObject vmodel = (JObject)jsonObj["data"];
                         outtb.Add("DH", vmodel["DH"].ToString());
                         outtb.Add("SFPL", vmodel["SFPL"].ToString());
-                        outtb.Add("PK", vmodel["PK"].ToString());                      
+                        outtb.Add("PK", vmodel["PK"].ToString());
                     }
-                }               
+                }
             }
             return outtb;
         }
@@ -231,7 +231,7 @@ namespace BLL
 
         ///
 
-        public Hashtable saveYcsq() 
+        public Hashtable saveYcsq()
         {
             Hashtable p = new Hashtable();
             return null;
@@ -243,157 +243,6 @@ namespace BLL
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /// <summary>
-        /// 根据钥匙编码获取钥匙信息
-        /// </summary>
-        /// <param name="key">钥匙编码</param>
-        /// <returns></returns>
-        public Hashtable getInfoByKey(string key,string lx)
-        {
-            Hashtable p = new Hashtable();
-            if (lx == "1")
-            {
-                p.Add("key", key);
-            }
-            else
-            {
-                p.Add("ysbh", key);
-            }
-            return doCallingInterface("clgl", "getysgvmodel", p);
-        }
-        /// <summary>
-        /// 将钥匙编号与RFID绑定
-        /// </summary>
-        /// <param name="ysbh"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public Hashtable BindCode(string ysbh, string key)
-        {
-            Hashtable p = new Hashtable();
-            p.Add("ysbh", ysbh);
-            p.Add("key", key);
-            return doCallingInterface("clgl", "savekeycode", p);
-        }
-        /// <summary>
-        /// 绑定管理员卡
-        /// </summary>
-        /// <param name="ysbh"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public Hashtable BindCard(string key)
-        {
-            Hashtable p = new Hashtable();
-            p.Add("key", key);
-            return doCallingInterface("clgl", "saveadmincard", p);
-        }
-        /// <summary>
-        /// 判断管理员卡是否正确
-        /// </summary>
-        /// <param name="password"></param>
-        /// <param name="code"></param>
-        /// <returns></returns>
-        public bool CheckCard(string key)
-        {
-            bool rtn = false;
-            Hashtable p = new Hashtable();
-            p.Add("key", key);
-            Hashtable info = doCallingInterface("clgl", "checkadmincard", p);
-            rtn = (info["r"].ToString() == "true");
-            return rtn;
-        }
-        /// <summary>
-        /// 判断财务密码是否正确
-        /// </summary>
-        /// <param name="password"></param>
-        /// <param name="code"></param>
-        /// <returns></returns>
-        public bool CheckManageMM(string password)
-        {
-            bool rtn = false;
-            Hashtable p = new Hashtable();
-            p.Add("mm", password);
-            Hashtable info = doCallingInterface("clgl", "checkmanagemm", p);
-            rtn = (info["r"].ToString() == "true");
-            return rtn;
-        }
-
-  
-
-        /// <summary>
-        /// 获取日志数量
-        /// </summary>
-        /// <returns></returns>
-        public string getLogCount()
-        {
-            string rtn = "0";
-            Hashtable p = new Hashtable();
-            Hashtable info = doCallingInterface("clgl", "getlogcount", p);
-            if (info["r"].ToString() == "true")
-            {
-                rtn = info["c"].ToString();
-            }
-            return rtn;
-        }
-        /// <summary>
-        /// 插入日志
-        /// </summary>
-        /// <param name="key">钥匙编码</param>
-        /// <param name="ysbh">钥匙编号</param>
-        /// <param name="lx">1/2:取钥匙/还钥匙</param>
-        /// <returns></returns>
-        public Hashtable setLog(string key, string ysbh, string lx)
-        {
-            Hashtable p = new Hashtable();
-            p.Add("ysbh", ysbh);
-            p.Add("key", key);
-            p.Add("lx", lx);
-            return doCallingInterface("clgl", "savelog", p);
-        }
-
-        public Hashtable setLog(string key, string ysbh, string lx,string sjhm, string ycsqdpk)
-        {
-            Hashtable p = new Hashtable();
-            p.Add("ysbh", ysbh);
-            p.Add("key", key);
-            p.Add("ycsqdpk", ycsqdpk);
-            p.Add("sjhm", sjhm);
-            p.Add("lx", lx);
-            return doCallingInterface("clgl", "savelog", p);
-        }
-
-      
-        public Hashtable savePcd(string ycsy, string mdd, string sjhm, string ysbh)
-        {
-            Hashtable p = new Hashtable();
-            p.Add("ycsy", ycsy);
-            p.Add("mdd", mdd);
-            p.Add("sjhm", sjhm);
-            p.Add("ysbh", ysbh);
-            return doCallingInterface("clgl", "savepcd", p);
-        }   
-        
-
-       
         /// <summary>
         /// 统一调用接口
         /// </summary>
@@ -407,8 +256,7 @@ namespace BLL
             try
             {
                 string strURL = _url;
-                string sys_code = ServerBase.XMLRead("system", "sys_code");//柜号
-                string postData = "params.sys_info=" + sys_info + "&params.method_name=" + method_name + "&params.gh=" + sys_code;
+                string postData = "?params.sys_info=" + sys_info + "&params.method_name=" + method_name;
                 foreach (DictionaryEntry de in p)
                 {
                     string key = de.Key.ToString();
@@ -417,23 +265,16 @@ namespace BLL
                 }
                 //创建Web访问对  象
                 HttpWebRequest myRequest;
-                if (sys_info == "5")
-                {
-                    myRequest = (HttpWebRequest)WebRequest.Create(strURL);
-                    Encoding utf8 = Encoding.UTF8;
-                    byte[] data = utf8.GetBytes(postData);
-                    myRequest.Method = "POST";
-                    myRequest.ContentType = "application/x-www-form-urlencoded";
-                    myRequest.ContentLength = data.Length;
-                    Stream newStream = myRequest.GetRequestStream();
-                    //把请求数据写入请求流中
-                    newStream.Write(data, 0, data.Length);
-                    newStream.Close();
-                }
-                else
-                {
-                    myRequest = (HttpWebRequest)WebRequest.Create(strURL + "?" + postData);
-                }
+                myRequest = (HttpWebRequest)WebRequest.Create(strURL);
+                Encoding utf8 = Encoding.UTF8;
+                byte[] data = utf8.GetBytes(postData);
+                myRequest.Method = "POST";
+                myRequest.ContentType = "application/x-www-form-urlencoded";
+                myRequest.ContentLength = data.Length;
+                Stream newStream = myRequest.GetRequestStream();
+                //把请求数据写入请求流中
+                newStream.Write(data, 0, data.Length);
+                newStream.Close();
                 //通过Web访问对象获取响应内容
                 HttpWebResponse myResponse = (HttpWebResponse)myRequest.GetResponse();
                 //通过响应内容流创建StreamReader对象，因为StreamReader更高级更快
@@ -467,33 +308,25 @@ namespace BLL
             try
             {
                 string strURL = _url;
-                string sys_code = ServerBase.XMLRead("system", "sys_code");//柜号
-                string postData = "params.sys_info=" + sys_info + "&params.method_name=" + method_name + "&params.gh=" + sys_code;
+                string postData = "?params.sys_info=" + sys_info + "&params.method_name=" + method_name;
                 foreach (DictionaryEntry de in p)
                 {
                     string key = de.Key.ToString();
                     string val = de.Value.ToString();
                     postData += "&params." + key + "=" + val;
                 }
-                //创建Web访问对  象
+                //创建Web访问对象
                 HttpWebRequest myRequest;
-                if (sys_info == "5")
-                {
-                    myRequest = (HttpWebRequest)WebRequest.Create(strURL);
-                    Encoding utf8 = Encoding.UTF8;
-                    byte[] data = utf8.GetBytes(postData);
-                    myRequest.Method = "POST";
-                    myRequest.ContentType = "application/x-www-form-urlencoded";
-                    myRequest.ContentLength = data.Length;
-                    Stream newStream = myRequest.GetRequestStream();
-                    //把请求数据写入请求流中
-                    newStream.Write(data, 0, data.Length);
-                    newStream.Close();
-                }
-                else
-                {
-                    myRequest = (HttpWebRequest)WebRequest.Create(strURL + "?" + postData);
-                }
+                myRequest = (HttpWebRequest)WebRequest.Create(strURL);
+                Encoding utf8 = Encoding.UTF8;
+                byte[] data = utf8.GetBytes(postData);
+                myRequest.Method = "POST";
+                myRequest.ContentType = "application/x-www-form-urlencoded";
+                myRequest.ContentLength = data.Length;
+                Stream newStream = myRequest.GetRequestStream();
+                //把请求数据写入请求流中
+                newStream.Write(data, 0, data.Length);
+                newStream.Close();
                 //通过Web访问对象获取响应内容
                 HttpWebResponse myResponse = (HttpWebResponse)myRequest.GetResponse();
                 //通过响应内容流创建StreamReader对象，因为StreamReader更高级更快
@@ -516,7 +349,7 @@ namespace BLL
         /// <returns></returns>
         public Hashtable JsonToDataSet(string Json)
         {
-           
+
             Hashtable ht = new Hashtable();
             if (!string.IsNullOrEmpty(Json))
             {

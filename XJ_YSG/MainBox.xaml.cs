@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Linq;
 using System.Windows.Media;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace XJ_YSG
 {
@@ -39,6 +40,7 @@ namespace XJ_YSG
         public static List<string> locklis = new List<string>();// 监控箱门的数据集合1_0&1_1,柜号_取或还
         public static string HycsqdPK = "";  //还钥匙保存用车申请单pk
         public static string QycsqdPK = "";  //取钥匙保存用车申请单pk
+        public static Hashtable hashtable = new Hashtable();  //车辆评价
         #region  指纹图像数据
         public byte[] m_pImageBuffer = new byte[640 * 480];
         public int m_nWidth = 0;
@@ -384,7 +386,6 @@ namespace XJ_YSG
             RfidTimer.Tick += new EventHandler(RfidTimer_Tick_canShow); //每一秒执行的方法
             RfidTimer.Start();
         }
-
         void RfidTimer_Tick_canShow(object sender, EventArgs e)
         {
             UHFService.OneCheckInvnetoryWhile(0);
@@ -411,7 +412,7 @@ namespace XJ_YSG
             if (hash != null)
             {
                 string PK = hash["PK"].ToString(); //用车申请单pk
-                HycsqdPK = PK;  //保存用车申请单pk
+                HycsqdPK = PK;               //保存用车申请单pk
                 if (hash["SFPL"].ToString() == "1") //是否评论
                 {
                     Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox, wzm);
@@ -422,7 +423,7 @@ namespace XJ_YSG
                 {
                     Send(wzm);  //开门
                     speack("柜门已打开");
-                    locklis.Add(wzm + "_0"); //添加到箱门状态集合中
+                    locklis.Add(wzm + "_0"); //添加到箱门状态集合中  
                     UHFService.strEPC = ""; //清楚刷卡信息，下次刷卡使用
                 }
             }
@@ -432,7 +433,6 @@ namespace XJ_YSG
                 RfidTimer.Start();
             }
         }
-
 
 
 
@@ -503,11 +503,18 @@ namespace XJ_YSG
                             string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
                             if (yskp != "")   //卡片是否读到 
                             {
-                                Service.saveHys(sbbm, HycsqdPK, "0", "0", "0");      //调还钥匙接口
-                                speack("钥匙归还失败，请重新归还");
+                                if (hashtable != null)
+                                {
+                                    Service.saveHys(sbbm, HycsqdPK, hashtable["clzk"].ToString(), hashtable["clwg"].ToString(), hashtable["clns"].ToString());      //调还钥匙接口
+                                }
+                                else 
+                                {
+                                    Service.saveHys(sbbm, HycsqdPK, "0", "0", "0");      //调还钥匙接口
+                                }                           
                                 locklis.Remove(item);   //归还成功就不需要对该柜号进行监控      
                                 UHF2Service.strEPC = ""; //归还成功待下次还钥匙用                                                             
                                 HycsqdPK = ""; //清除数据,待下次还钥匙用
+                                hashtable.Clear();//归还成功后清除车辆评价数据
                             }
                         }
                         else if (isqh == "1") //1 验证码取钥匙
@@ -516,9 +523,9 @@ namespace XJ_YSG
                             if (UHF2Service.strEPC == "")   //卡片是否读到 
                             {
                                 Service.saveQys(sbbm, QycsqdPK);
+                                locklis.Remove(item);   //取走就不需要对该柜号进行监控
                                 QycsqdPK = ""; //清除数据,待下次取钥匙用
-                                locklis.Remove(item);   //取走就不需要对该柜号进行监控      
-                                UHF2Service.strEPC = ""; //取走或归还成功
+                                UHF2Service.strEPC = ""; //取走成功下次取钥匙用    
                             }
                         }
                         else //2人脸或指纹取钥匙
@@ -533,7 +540,6 @@ namespace XJ_YSG
                         }
                     }
                 }
-
             }
             else
             {
