@@ -23,6 +23,7 @@
                     </materialDesign:PopupBox.ToggleContent>
                     <StackPanel>
                         <Button  Style="{StaticResource MaterialDesignRaisedAccentButton}" Width="100" ToolTip="应急开启" x:Name="Emergency_open" Click="Emergency_open_Click">应急开启</Button>
+                        <Button  Style="{StaticResource MaterialDesignRaisedAccentButton}" Width="100" ToolTip="应急开启" x:Name="Emergency_clos" Click="Emergency_clos_Click">退出</Button>
                     </StackPanel>
                 </materialDesign:PopupBox>
             </Canvas>

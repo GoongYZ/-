@@ -1,5 +1,8 @@
-﻿using System;
+﻿using BLL;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +22,8 @@ namespace XJ_YSG
     /// </summary>
     public partial class Xj_Mima : Window
     {
+        Interaction_WebService service = new Interaction_WebService();
+        SerialPortUtil port = new SerialPortUtil();
         public Xj_Mima()
         {
             InitializeComponent();
@@ -26,6 +31,7 @@ namespace XJ_YSG
             this.Top = 0;
             ImageBrush b3 = new ImageBrush();
             b3.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Img/xj_mima.png", UriKind.Absolute));
+           
             this.Background = b3;
         }
 
@@ -78,70 +84,63 @@ namespace XJ_YSG
         private void doLogin()
         {
 
-           // Public.PublicMethods.sjhm = "19888925110";
-            //Key_BoxList key_BoxList = new Key_BoxList();
-           // key_BoxList.Show();
-            //this.Close();
+            if (mm.Content.ToString().Length == 6)
+            {
+                Hashtable tb = service.getInfoByEwm(mm.Content.ToString(), MainBox.sbbm);
+                if (tb != null)
+                {
+                    MainBox.QycsqdPK = tb["YCSQDPK"].ToString();
+                    string wzm = tb["WZM"].ToString();
+                    Send(wzm);
+                    speack("柜门已打开，取后请关门");
 
-            //if (mm.Content.ToString().Length == 6)
-            //{
-            //    //Hashtable tb = service.getInfoByEwm(mm.Content.ToString());
-            //    //if (tb.Count>0)
-            //    //{
-            //    //    Hashtable outtb = new Hashtable();
-            //    //    DataSet ds = null;//service.getGrdjzbList("", out outtb);
-            //    //    foreach (DataRow dr in ds.Tables[0].Rows)
-            //    //    {
-            //    //        string rfid = dr["RFID"].ToString();
-            //    //        string zt = dr["ZT"].ToString();
-            //    //        string boxid = dr["BOXID"].ToString();
-            //    //        string diverid = dr["DIVERID"].ToString();
-            //    //        if (rfid.Length > 0)
-            //    //        {
-            //    //            hashtable_rfid.Add(rfid, (zt == "正常" ? "0" : (zt == "出库中" ? "1" : "2")) + "&" + diverid + "_" + boxid);
-            //    //        }
-            //    //    }
+                }
+                else 
+                {
+                    speack("验证码不正确，请重新输入");
+                }
+            }
+                   
+        }
+        
 
-            //        //柜门开关
-            //        //if (elocker != null)
-            //        //{
-            //        //    isallclose = false;
-            //        //    for (int i = 0; i < Box_Count; i++)
-            //        //    {
-            //        //        for (int j = 1; j < 7; j++)
-            //        //        {
-            //        //            eloc·ker.openBox(i, j);
-            //        //            openBoxList.Add(i.ToString() + "_" + j.ToString());
-            //        //        }
-            //        //    }
-            //        //    closedoorTimer.Start();
-            //        //    speack("柜门已打开，取后请关门，谢谢！");
-            //        //    message.Content = "柜门已打开，取后请关门，谢谢！";
-            //        //    message.Visibility = Visibility.Visible;
-            //        //}
-            //        //else
-            //        //{
-            //        //    speack("柜门打开失败，请联系管理员，谢谢！");
-            //        //    message.Content = "柜门打开失败，请联系管理员，谢谢！";
-            //        //    message.Visibility = Visibility.Visible;
-            //        //}
-            //    }
-            //    else
-            //    {
-            //        //speack(msg);
-            //        //mm.Content = "";
-            //        //message.Content = msg;
-            //        //message.Visibility = Visibility.Visible;
-            //    }
-            //}
-            //else
-            //{
-            //    //speack("请输入密码");
-            //    //message.Content = "请输入密码!";
-            //    //message.Visibility = Visibility.Visible;
-            //}
+          /// <summary>
+        /// 发送命令打开柜门
+        /// </summary>
+        /// <param name="gzh">格子号</param>
+        public void Send(string gzh)
+        {
+            int gz = Convert.ToInt32(gzh);
+            string rtn = "";
+            byte[] data = new byte[12];
+            data[0] = 0xA6;
+            data[1] = 0xA8;
+            data[2] = 0x01;
+            data[3] = 0x00;
+            data[4] = 0x00;
+            data[5] = 0x0A;
+            data[6] = 0x00;
+            data[7] = 0x05;
+            data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+            data[9] = 0x00;
+            data[10] = 0x00;
+            string gzbs = (94 + gz).ToString("X2");
+            data[11] = Convert.ToByte(gzbs, 16);
+            string bw = port.ByteArrayToHexString2(data);
+            Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+            port.WriteData(data, ref rtn);
+            bw = rtn;
         }
 
+        #region 语音播报
+        public void speack(string text)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SpeechVoice.speack(text);
+            }), System.Windows.Threading.DispatcherPriority.Normal);
+        }
+        #endregion
 
         /// <summary>
         /// 取消退出按钮

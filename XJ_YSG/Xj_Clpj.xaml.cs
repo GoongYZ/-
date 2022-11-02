@@ -21,12 +21,13 @@ namespace XJ_YSG
     public partial class Xj_Clpj : Window
     {
         SerialPortUtil port = new SerialPortUtil();
-        public Xj_Clpj(MainBox mainbox)
+        string gh = "";
+        public Xj_Clpj(MainBox mainbox,string wzm)
         {
             InitializeComponent();
             this.Left = 104;
             this.Top = 255;
-            
+            gh = wzm;
             this.Loaded += ((s, e) => {              
                 mainbox.markLayer.Visibility = Visibility.Visible;               
             });
@@ -41,23 +42,44 @@ namespace XJ_YSG
 
         private void clpj_Button_Click(object sender, RoutedEventArgs e)
         {
-            if (UHFService.strEPC != "") 
+
+            if (port.IsOpen)
             {
-                LockControl lockControl = new LockControl();
-                if (port.IsOpen)                 
+                if (gh != "")
                 {
-                    Send("1");
+                    Send(gh);
+                    MainBox.locklis.Add(gh);
                     //打开柜门              
+                    speack("柜门已打开");
+                    UHFService.strEPC = ""; //清楚刷卡信息，下次刷卡使用
+                }
+                else 
+                {
+                    
                     this.Close();
-                }               
-                
-            }                            
+                    speack("归还失败，请重新归还");
+                }
+            }
+            else 
+            {
+                this.Close();
+                speack("归还失败，请重新归还");
+            }
         }
         private void clols_Button_Click(object sender, RoutedEventArgs e)
         {          
             this.Close();
         }
 
+        #region 语音播报
+        public void speack(string text)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SpeechVoice.speack(text);
+            }), System.Windows.Threading.DispatcherPriority.Normal);
+        }
+        #endregion
 
         /// <summary>
         /// 发送命令打开柜门

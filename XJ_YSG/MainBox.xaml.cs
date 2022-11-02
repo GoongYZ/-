@@ -31,22 +31,20 @@ namespace XJ_YSG
         Logo log = new Logo();
         SerialPortUtil port = new SerialPortUtil();
         private MainBox mainbox = null;
-        private static string sbbm = ServerBase.XMLRead("Ysg_sbbm", "sbbm").ToString(); //设备编码
+        public static string sbbm = ServerBase.XMLRead("Ysg_sbbm", "sbbm").ToString(); //设备编码
         public static DispatcherTimer zwTimer = new DispatcherTimer();//指纹计时器
         public static DispatcherTimer RfidTimer = new DispatcherTimer();//刷卡计时器
         public static DispatcherTimer ClossTimer = new DispatcherTimer();  //监控开门状态倒计时
         Interaction_WebService Service = new Interaction_WebService();
-        public static List<string> locklis = new List<string>();// 监控箱门的数据集合
-       
+        public static List<string> locklis = new List<string>();// 监控箱门的数据集合1_0&1_1,柜号_取或还
+        public static string HycsqdPK = "";  //还钥匙保存用车申请单pk
+        public static string QycsqdPK = "";  //取钥匙保存用车申请单pk
         #region  指纹图像数据
         public byte[] m_pImageBuffer = new byte[640 * 480];
         public int m_nWidth = 0;
         public int m_nHeight = 0;
         public int m_nSize = 640 * 480;
         #endregion
-
-
-
         #region 用户信息和钥匙柜列表
         List<string> userlist = new List<string>();
         Dictionary<int, List<string>> gh = new Dictionary<int, List<string>>();
@@ -67,21 +65,20 @@ namespace XJ_YSG
             }
             UHFService.ConnectCOM();   //刷卡
 
-           // UHF2Service.ConnectCOM();   //读钥匙
+            UHF2Service.ConnectCOM();   //读钥匙
 
-            //port.OpenPort();  //连接锁
-            //if (activation.InitEngines() == "1")
-            //{
-            //    ChooseMultiImg();  //激活人脸识别
-            //}
-            //if (fingerprint.ZW_Connection() == "ok")
-            //{
-            //    zwthan();   //开始指纹验证
-            //}
+            port.OpenPort();  //连接锁
+            if (activation.InitEngines() == "1")
+            {
+                ChooseMultiImg();  //激活人脸识别
+            }
+            if (fingerprint.ZW_Connection() == "ok")
+            {
+                zwthan();   //开始指纹验证
+            }
             Rfidthan();   //实时RFID读信息卡          
-            //Csh_yskp(); //初始化钥匙柜卡片
-
-            //this.Closed += MainWindow_Closed;
+            Csh_yskp(); //初始化钥匙柜卡片
+            this.Closed += MainWindow_Closed;
         }
         #region 输入钥匙码按钮
         private void Smkey_Click(object sender, RoutedEventArgs e)
@@ -138,7 +135,7 @@ namespace XJ_YSG
             if (nRet == 0)
             {
                 //根据图像数据进行比对
-                nRet = ParameterModel.ZKFPModule_IdentifyByImage(ParameterModel.m_hDevice, m_pImageBuffer, m_nSize, ref UserID, ref Index);           
+                nRet = ParameterModel.ZKFPModule_IdentifyByImage(ParameterModel.m_hDevice, m_pImageBuffer, m_nSize, ref UserID, ref Index);
                 if (nRet == 0)
                 {
                     zwTimer.Stop();
@@ -378,11 +375,9 @@ namespace XJ_YSG
 
         #endregion
 
-       
+
 
         #region 刷卡还钥匙
-
-
         public void Rfidthan()
         {
             RfidTimer.Interval = new TimeSpan(0, 0, 0, 0, 500); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
@@ -392,52 +387,87 @@ namespace XJ_YSG
 
         void RfidTimer_Tick_canShow(object sender, EventArgs e)
         {
-
             UHFService.OneCheckInvnetoryWhile(0);
-            string st = UHFService.strEPC;          
+            string st = UHFService.strEPC;
             if (st != "")
             {
-
                 Getycsqdpk(st);
-
-           
             }
         }
 
         /// <summary>
         /// 根据钥匙编号获取用车申请单信息
         /// </summary>
-        public string  Getycsqdpk(string kp) 
+        public void Getycsqdpk(string kp)
         {
+            zwTimer.Stop();
+            RfidTimer.Stop();
             //读取txt文件;
-            string txt = log.GetYsgGh();          
+            string txt = log.GetYsgGh();
             txt = txt.Substring(0, txt.Length - 1);
             var wzm = txt.Split(',').Where(t => t.Contains(kp)).FirstOrDefault().ToString().Split('_')[0];
             //调用用车申请单接口
-            var hash = Service.getycsqdpkInfo(sbbm,wzm);
+            var hash = Service.getycsqdpkInfo(sbbm, wzm);
+            if (hash != null)
+            {
+                string PK = hash["PK"].ToString(); //用车申请单pk
+                HycsqdPK = PK;  //保存用车申请单pk
+                if (hash["SFPL"].ToString() == "1") //是否评论
+                {
+                    Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox, wzm);
+                    xj_Clpj.ShowDialog();
 
-
-
-
-            zwTimer.Stop();
-            RfidTimer.Stop();
-
-            Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox);
-            xj_Clpj.ShowDialog();
-            string PK = hash["PK"].ToString();
-
-            return  wzm;
+                }
+                else
+                {
+                    Send(wzm);  //开门
+                    speack("柜门已打开");
+                    locklis.Add(wzm + "_0"); //添加到箱门状态集合中
+                    UHFService.strEPC = ""; //清楚刷卡信息，下次刷卡使用
+                }
+            }
+            else
+            {
+                zwTimer.Start();
+                RfidTimer.Start();
+            }
         }
 
 
 
+
+        /// <summary>
+        /// 发送命令打开柜门
+        /// </summary>
+        /// <param name="gzh">格子号</param>
+        public void Send(string gzh)
+        {
+            int gz = Convert.ToInt32(gzh);
+            string rtn = "";
+            byte[] data = new byte[12];
+            data[0] = 0xA6;
+            data[1] = 0xA8;
+            data[2] = 0x01;
+            data[3] = 0x00;
+            data[4] = 0x00;
+            data[5] = 0x0A;
+            data[6] = 0x00;
+            data[7] = 0x05;
+            data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+            data[9] = 0x00;
+            data[10] = 0x00;
+            string gzbs = (94 + gz).ToString("X2");
+            data[11] = Convert.ToByte(gzbs, 16);
+            string bw = port.ByteArrayToHexString2(data);
+            Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+            port.WriteData(data, ref rtn);
+            bw = rtn;
+        }
         #endregion
 
 
 
-
         #region 监控箱门状态
-
         /// <summary>
         /// 监控开门状态倒计时
         /// </summary>
@@ -448,41 +478,75 @@ namespace XJ_YSG
         }
         void ClossTimer_Tick_canShow(object sender, EventArgs e)
         {
+            Closedoor();
+        }
+
+        /// <summary>
+        /// 关门操作
+        /// </summary>
+        public void Closedoor()
+        {
             if (locklis.Count > 0) //判断是否有柜门打开
             {
                 foreach (string item in locklis)
                 {
-                    string lockzt = State_lock(item);
-                    //判断打开门锁集合中是否有门关上
-                    if (lockzt == "")
+                    string wzm = item.Split('_')[0];
+                    string isqh = item.Split('_')[1];
+                    string lockzt = State_lock(wzm);
+                    string zt = lockzt.Substring(19, 1);
+                    //0关门
+                    if (zt == "0")
                     {
-                        UHF2Service.OneCheckInvnetoryWhile2(Convert.ToInt32(item));
-                        string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
-                        if (yskp != "")
+                        if (isqh == "0")  //0 刷卡还钥匙   
                         {
-                            //调接口
-                            //停止
-                            //清除数据
-                            UHF2Service.strEPC = "";
+                            UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签  
+                            string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
+                            if (yskp != "")   //卡片是否读到 
+                            {
+                                Service.saveHys(sbbm, HycsqdPK, "0", "0", "0");      //调还钥匙接口
+                                speack("钥匙归还失败，请重新归还");
+                                locklis.Remove(item);   //归还成功就不需要对该柜号进行监控      
+                                UHF2Service.strEPC = ""; //归还成功待下次还钥匙用                                                             
+                                HycsqdPK = ""; //清除数据,待下次还钥匙用
+                            }
+                        }
+                        else if (isqh == "1") //1 验证码取钥匙
+                        {
+                            UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签                          
+                            if (UHF2Service.strEPC == "")   //卡片是否读到 
+                            {
+                                Service.saveQys(sbbm, QycsqdPK);
+                                QycsqdPK = ""; //清除数据,待下次取钥匙用
+                                locklis.Remove(item);   //取走就不需要对该柜号进行监控      
+                                UHF2Service.strEPC = ""; //取走或归还成功
+                            }
+                        }
+                        else //2人脸或指纹取钥匙
+                        {
+                            UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签  
+                            if (UHF2Service.strEPC == "")   //卡片是否读到 
+                            {
+                                Service.saveYcsq();     //保存用车申请单                         
+                                locklis.Remove(item);   //取走就不需要对该柜号进行监控      
+                                UHF2Service.strEPC = ""; //取走或归还成功
+                            }
                         }
                     }
-                    else
-                    {
-                        locklis.Remove(item);
-                    }
                 }
+
             }
-            else 
+            else
             {
                 ClossTimer.Stop();
             }
         }
 
 
+
         /// <summary>
         /// 发送命令获取柜门状态
         /// </summary>
-        /// <param name="gzh">格子号</param>
+        /// <param name="gzh">格子号</param>        
         public string State_lock(string gzh)
         {
             int gz = Convert.ToInt32(gzh);
@@ -504,6 +568,10 @@ namespace XJ_YSG
             port.WriteData(data, ref rut);
             return rut;
         }
+
+
+
+
         #endregion
 
 
@@ -511,36 +579,41 @@ namespace XJ_YSG
         public void Csh_yskp()
         {
             Task.Factory.StartNew(() =>
-            {              
+            {
                 string gh_kp = "";  //柜号_卡片  
                 int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜格子数量
                 for (int i = 1; i <= gzsl; i++)
-                {                               
-                    UHF2Service.OneCheckInvnetoryWhile(i-1);
+                {
+                    UHF2Service.OneCheckInvnetoryWhile(i - 1);
                     string yskp = UHF2Service.strEPC;
                     if (yskp != "")
                     {
-                        gh_kp += "" + i + "_" + yskp + ","+"\r";
+                        gh_kp += "" + i + "_" + yskp + "," + "\r";
                         UHF2Service.strEPC = "";
-                    }                    
+                    }
                 }
                 Logo.sWriteYsgh(gh_kp);
                 speack("智能钥匙管理柜初始化成功");
-            });       
+            });
         }
         #endregion
 
 
-        private void MainWindow_Closed(object sender, EventArgs e)
-        {          
-            Environment.Exit(0);
-        }
+       
 
         #region 上报钥匙柜运行状态
 
 
         #endregion
 
+        private void Emergency_clos_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
+        }
 
     }
 }

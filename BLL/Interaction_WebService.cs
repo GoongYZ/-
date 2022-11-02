@@ -31,10 +31,31 @@ namespace BLL
         /// <returns></returns>
         public Hashtable getInfoByEwm(string mm,string sbbm)
         {
+            Hashtable outtb = new Hashtable();
             Hashtable p = new Hashtable();
             p.Add("mm", mm);
             p.Add("sbbm", sbbm);
-            return doCallingInterface("clgl", "checkysm", p);
+            string Json=doCallingInterface_String("clgl", "checkysm", p);
+            if (!String.IsNullOrEmpty(Json))
+            {
+                JObject jsonObj = JsonConvert.DeserializeObject<JObject>(Json);
+                string r = jsonObj["r"].ToString();
+                if (r.ToLower() == "true")
+                {
+                    if (jsonObj["data"] != null)
+                    {
+                        JObject vmodel = (JObject)jsonObj["data"];
+                        outtb.Add("YSBH", vmodel["YSBH"].ToString());
+                        outtb.Add("YCSQDPK", vmodel["YCSQDPK"].ToString());
+                        outtb.Add("RFID", vmodel["RFID"].ToString());
+                        outtb.Add("PK", vmodel["PK"].ToString());                     
+                        outtb.Add("WZM", vmodel["WZM"].ToString());                        
+                    }
+                }
+                
+            }          
+            return outtb;
+            
         }
 
         /// <summary>
@@ -179,10 +200,14 @@ namespace BLL
         /// </summary>
         /// <param name="mm"></param>
         /// <returns></returns>
-        public bool saveHys(string ysbh)
+        public bool saveHys(string sbbm, string ycsqdpk, string clzkpj, string clwgpj, string clnspj)
         {
             Hashtable p = new Hashtable();
-            p.Add("ysbh", ysbh);
+            p.Add("sbbm", sbbm);
+            p.Add("ycsqdpk", ycsqdpk);
+            p.Add("clzkpj", clzkpj);
+            p.Add("clwgpj", clwgpj);
+            p.Add("clnspj", clnspj);
             string Json = doCallingInterface_String("clgl", "savehys", p);
             if (!String.IsNullOrEmpty(Json))
             {
@@ -204,9 +229,15 @@ namespace BLL
         }
 
 
-        
+        ///
 
-       
+        public Hashtable saveYcsq() 
+        {
+            Hashtable p = new Hashtable();
+            return null;
+        }
+
+
 
 
 
