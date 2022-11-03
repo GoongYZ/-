@@ -6,35 +6,7 @@ using System.Collections.Generic;
 namespace XJ_YSG
 {
     public class LockControl
-    {
-        SerialPortUtil port = new SerialPortUtil();
-        private static string ComPortName = ServerBase.XMLRead("Lock", "COM_LOCK");
-
-        
-        /// <summary>
-        /// 打开串口
-        /// </summary>
-        public  void Open()
-        {
-            try
-            {
-                port.PortName = ComPortName;
-                port.BaudRate = SerialPortBaudRates.BaudRate_115200;
-                port.OpenPort();
-                Logo.sWriteLogo("门锁连接成功", 6);
-            }
-            catch (Exception)
-            {
-                
-            }
-        }
-
-
-        public  void Close() 
-        {
-            port.ClosePort();
-        }
-
+    {           
         /// <summary>
         /// 发送命令打开柜门
         /// </summary>
@@ -57,9 +29,9 @@ namespace XJ_YSG
             data[10] = 0x00;
             string gzbs = (94 + gz).ToString("X2");
             data[11] = Convert.ToByte(gzbs, 16);
-            string bw = port.ByteArrayToHexString2(data);
+            string bw = MainBox.port.ByteArrayToHexString2(data);
             Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-            port.WriteData(data, ref rtn);
+            MainBox.port.WriteData(data, ref rtn);
             bw = rtn;
         }
 
@@ -86,10 +58,9 @@ namespace XJ_YSG
             string gzbs = (94 + gz).ToString("X2");
             data[11] = Convert.ToByte(gzbs, 16);
             string rut = "";
-            port.WriteData(data, ref rut);
+            MainBox.port.WriteData(data, ref rut);
             return rut;                 
         }
-
 
 
         //灭灯
@@ -114,9 +85,9 @@ namespace XJ_YSG
             data[10] = 0x00;
             string gzbs = (90 + gz).ToString("X2");
             data[11] = Convert.ToByte(gzbs, 16);
-            string bw = port.ByteArrayToHexString2(data);
+            string bw = MainBox.port.ByteArrayToHexString2(data);
             Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-            port.WriteData(data, ref rtn);
+            MainBox.port.WriteData(data, ref rtn);
             bw = rtn;
         }
 
@@ -147,9 +118,9 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (91 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw = port.ByteArrayToHexString2(data);
+                string bw = MainBox.port.ByteArrayToHexString2(data);
                 Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-                port.WriteData(data, ref rtn);
+                MainBox.port.WriteData(data, ref rtn);
                 bw = rtn;
             }
             else
@@ -171,9 +142,9 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (219 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw = port.ByteArrayToHexString2(data);
+                string bw = MainBox.port.ByteArrayToHexString2(data);
                 Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-                port.WriteData(data, ref rtn);
+                MainBox.port.WriteData(data, ref rtn);
                 bw = rtn;
             }
 
@@ -211,9 +182,9 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (94 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw = port.ByteArrayToHexString2(data);
+                string bw =MainBox.port.ByteArrayToHexString2(data);
                 Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-                port.WriteData(data, ref rtn);
+                MainBox.port.WriteData(data, ref rtn);
                 bw = rtn;
             }
             else
@@ -235,9 +206,9 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (222 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw = port.ByteArrayToHexString2(data);
+                string bw = MainBox.port.ByteArrayToHexString2(data);
                 Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-                port.WriteData(data, ref rtn);
+                MainBox.port.WriteData(data, ref rtn);
                 bw = rtn;
             }
         }
@@ -269,9 +240,9 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (92 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw = port.ByteArrayToHexString2(data);
+                string bw = MainBox.port.ByteArrayToHexString2(data);
                 Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-                port.WriteData(data, ref rtn);
+                MainBox.port.WriteData(data, ref rtn);
                 bw = rtn;
             }
             else
@@ -293,13 +264,12 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (221 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw = port.ByteArrayToHexString2(data);
+                string bw = MainBox.port.ByteArrayToHexString2(data);
                 Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-                port.WriteData(data, ref rtn);
+                MainBox.port.WriteData(data, ref rtn);
                 bw = rtn;
             }
         }
-
 
 
         /// <summary>
@@ -328,9 +298,9 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (97 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw = port.ByteArrayToHexString2(data);
+                string bw = MainBox.port.ByteArrayToHexString2(data);
                 Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-                port.WriteData(data, ref rtn);
+                MainBox.port.WriteData(data, ref rtn);
                 bw = rtn;
             }
             else
@@ -352,14 +322,12 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (225 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw = port.ByteArrayToHexString2(data);
+                string bw = MainBox.port.ByteArrayToHexString2(data);
                 Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-                port.WriteData(data, ref rtn);
+                MainBox.port.WriteData(data, ref rtn);
                 bw = rtn;
             }
         }
-
-
 
 
         /// <summary>
@@ -388,9 +356,9 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (96 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw = port.ByteArrayToHexString2(data);
+                string bw = MainBox.port.ByteArrayToHexString2(data);
                 Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-                port.WriteData(data, ref rtn);
+                MainBox.port.WriteData(data, ref rtn);
                 bw = rtn;
             }
             else
@@ -412,9 +380,9 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (224 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw = port.ByteArrayToHexString2(data);
+                string bw = MainBox.port.ByteArrayToHexString2(data);
                 Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-                port.WriteData(data, ref rtn);
+                MainBox.port.WriteData(data, ref rtn);
                 bw = rtn;
             }
         }

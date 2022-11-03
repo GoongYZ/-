@@ -295,10 +295,18 @@ namespace BLL
             return hb;
         }
 
+      
+
+
+
+
+
+
         /// <summary>
-        /// 统一调用接口
+        /// 统一调用接口2
         /// </summary>
         /// <param name="sys_info"></param>
+        /// <param name="method_name"></param>
         /// <param name="p">其他参数集合</param>
         /// <returns></returns>
         public string doCallingInterface_String(string sys_info, string method_name, Hashtable p)
@@ -308,25 +316,16 @@ namespace BLL
             try
             {
                 string strURL = _url;
-                string postData = "?params.sys_info=" + sys_info + "&params.method_name=" + method_name;
+                string postData = "params.sys_info=" + sys_info + "&params.method_name=" + method_name;
                 foreach (DictionaryEntry de in p)
                 {
                     string key = de.Key.ToString();
                     string val = de.Value.ToString();
-                    postData += "&params." + key + "=" + val;
-                }
-                //创建Web访问对象
-                HttpWebRequest myRequest;
-                myRequest = (HttpWebRequest)WebRequest.Create(strURL);
-                Encoding utf8 = Encoding.UTF8;
-                byte[] data = utf8.GetBytes(postData);
-                myRequest.Method = "POST";
-                myRequest.ContentType = "application/x-www-form-urlencoded";
-                myRequest.ContentLength = data.Length;
-                Stream newStream = myRequest.GetRequestStream();
-                //把请求数据写入请求流中
-                newStream.Write(data, 0, data.Length);
-                newStream.Close();
+                    postData += "&" + key + "=" + val;
+                }               
+                //log.WriteLogo(strURL + "?" + postData, 0);
+                HttpWebRequest myRequest = WebRequest.CreateHttp(strURL + "?" + postData);
+                myRequest.Proxy = null;
                 //通过Web访问对象获取响应内容
                 HttpWebResponse myResponse = (HttpWebResponse)myRequest.GetResponse();
                 //通过响应内容流创建StreamReader对象，因为StreamReader更高级更快
@@ -334,13 +333,27 @@ namespace BLL
                 //string returnXml = HttpUtility.UrlDecode(reader.ReadToEnd());//如果有编码问题就用这个方法
                 returnXml = reader.ReadToEnd();//利用StreamReader就可以从响应内容从头读到尾
                 reader.Close();
-                myResponse.Close();
+                if (myResponse != null)
+                {
+                    myResponse.Close();
+                }
+                if (myRequest != null)
+                {
+                    myRequest.Abort();
+                }
             }
             catch (Exception e)
             {
+                returnXml = "";              
             }
             return returnXml;
         }
+
+
+
+
+
+
 
         /// <summary>
         /// 将Json转化成DataSet

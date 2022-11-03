@@ -34,8 +34,8 @@ namespace XJ_YSG
         private static string _portName = ServerBase.XMLRead("Lock", "COM_LOCK");
         private SerialPortBaudRates _baudRate = SerialPortBaudRates.BaudRate_115200;//波特率
         private Parity _parity = Parity.None;//校验位
-        private StopBits _stopBits = StopBits.One;//停止位
         private SerialPortDatabits _dataBits = SerialPortDatabits.EightBits;//数据位
+        private StopBits _stopBits = StopBits.One;//停止位
 
         private SerialPort comPort = new SerialPort();
 

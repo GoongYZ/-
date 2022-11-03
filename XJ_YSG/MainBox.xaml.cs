@@ -30,7 +30,8 @@ namespace XJ_YSG
         Activation activation = new Activation();
         Fingerprint fingerprint = new Fingerprint();
         Logo log = new Logo();
-        SerialPortUtil port = new SerialPortUtil();
+        LockControl LockControl = new LockControl();
+        public static SerialPortUtil port = new SerialPortUtil();
         private MainBox mainbox = null;
         public static string sbbm = ServerBase.XMLRead("Ysg_sbbm", "sbbm").ToString(); //设备编码
         public static DispatcherTimer zwTimer = new DispatcherTimer();//指纹计时器
@@ -66,10 +67,10 @@ namespace XJ_YSG
                 mainbox = this;
             }
             UHFService.ConnectCOM();   //刷卡
-
             UHF2Service.ConnectCOM();   //读钥匙
-
             port.OpenPort();  //连接锁
+
+            
             if (activation.InitEngines() == "1")
             {
                 ChooseMultiImg();  //激活人脸识别
@@ -78,6 +79,7 @@ namespace XJ_YSG
             {
                 zwthan();   //开始指纹验证
             }
+            LockDjs();
             Rfidthan();   //实时RFID读信息卡          
             Csh_yskp(); //初始化钥匙柜卡片
             this.Closed += MainWindow_Closed;
@@ -433,36 +435,6 @@ namespace XJ_YSG
                 RfidTimer.Start();
             }
         }
-
-
-
-        /// <summary>
-        /// 发送命令打开柜门
-        /// </summary>
-        /// <param name="gzh">格子号</param>
-        public void Send(string gzh)
-        {
-            int gz = Convert.ToInt32(gzh);
-            string rtn = "";
-            byte[] data = new byte[12];
-            data[0] = 0xA6;
-            data[1] = 0xA8;
-            data[2] = 0x01;
-            data[3] = 0x00;
-            data[4] = 0x00;
-            data[5] = 0x0A;
-            data[6] = 0x00;
-            data[7] = 0x05;
-            data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
-            data[9] = 0x00;
-            data[10] = 0x00;
-            string gzbs = (94 + gz).ToString("X2");
-            data[11] = Convert.ToByte(gzbs, 16);
-            string bw = port.ByteArrayToHexString2(data);
-            Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-            port.WriteData(data, ref rtn);
-            bw = rtn;
-        }
         #endregion
 
 
@@ -474,108 +446,80 @@ namespace XJ_YSG
         public void LockDjs()
         {
             ClossTimer.Interval = new TimeSpan(0, 0, 0, 0, 2000); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
-            ClossTimer.Tick += new EventHandler(ClossTimer_Tick_canShow); //每一秒执行的方法            
+            ClossTimer.Tick += new EventHandler(ClossTimer_Tick_canShow); //每一秒执行的方法
+            ClossTimer.Start();
         }
         void ClossTimer_Tick_canShow(object sender, EventArgs e)
         {
-            Closedoor();
+            if (locklis.Count > 0) //判断是否有柜门打开
+            {
+                Closedoor();
+            }
         }
 
         /// <summary>
         /// 关门操作
         /// </summary>
-        public void Closedoor()
-        {
-            if (locklis.Count > 0) //判断是否有柜门打开
+        public  void Closedoor()
+        {          
+            foreach (string item in locklis)
             {
-                foreach (string item in locklis)
+                string wzm = item.Split('_')[0];
+                string isqh = item.Split('_')[1];
+                string lockzt = LockControl.State_lock(wzm);
+                string zt = lockzt.Substring(19, 1);
+                //0关门
+                if (zt == "0")
                 {
-                    string wzm = item.Split('_')[0];
-                    string isqh = item.Split('_')[1];
-                    string lockzt = State_lock(wzm);
-                    string zt = lockzt.Substring(19, 1);
-                    //0关门
-                    if (zt == "0")
+                    MessageBox.Show("关门了");
+                    if (isqh == "0")  //0 刷卡还钥匙   
                     {
-                        if (isqh == "0")  //0 刷卡还钥匙   
+                        UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签  
+                        string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
+                        if (yskp != "")   //卡片是否读到 
                         {
-                            UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签  
-                            string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
-                            if (yskp != "")   //卡片是否读到 
+                            if (hashtable != null||hashtable.Count>0)
                             {
-                                if (hashtable != null)
-                                {
-                                    Service.saveHys(sbbm, HycsqdPK, hashtable["clzk"].ToString(), hashtable["clwg"].ToString(), hashtable["clns"].ToString());      //调还钥匙接口
-                                }
-                                else 
-                                {
-                                    Service.saveHys(sbbm, HycsqdPK, "0", "0", "0");      //调还钥匙接口
-                                }                           
-                                locklis.Remove(item);   //归还成功就不需要对该柜号进行监控      
-                                UHF2Service.strEPC = ""; //归还成功待下次还钥匙用                                                             
-                                HycsqdPK = ""; //清除数据,待下次还钥匙用
-                                hashtable.Clear();//归还成功后清除车辆评价数据
+                                Service.saveHys(sbbm, HycsqdPK, hashtable["clzk"].ToString(), hashtable["clwg"].ToString(), hashtable["clns"].ToString());      //调还钥匙接口
                             }
-                        }
-                        else if (isqh == "1") //1 验证码取钥匙
-                        {
-                            UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签                          
-                            if (UHF2Service.strEPC == "")   //卡片是否读到 
+                            else
                             {
-                                Service.saveQys(sbbm, QycsqdPK);
+                                Service.saveHys(sbbm, HycsqdPK, "0", "0", "0");      //调还钥匙接口
+                            }
+                            locklis.Remove(item);   //归还成功就不需要对该柜号进行监控      
+                            UHF2Service.strEPC = ""; //归还成功待下次还钥匙用                                                             
+                            HycsqdPK = ""; //清除数据,待下次还钥匙用
+                            hashtable.Clear();//归还成功后清除车辆评价数据
+                        }
+                    }
+                    else if (isqh == "1") //1 验证码取钥匙
+                    {
+                        MessageBox.Show("我钥匙取走了");
+                        UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签                          
+                        if (UHF2Service.strEPC == "")   //卡片是否读到 
+                        {
+                           bool  issuccec=  Service.saveQys(sbbm, QycsqdPK);
+                            if (issuccec)
+                            {
                                 locklis.Remove(item);   //取走就不需要对该柜号进行监控
                                 QycsqdPK = ""; //清除数据,待下次取钥匙用
                                 UHF2Service.strEPC = ""; //取走成功下次取钥匙用    
-                            }
+                            }                                             
                         }
-                        else //2人脸或指纹取钥匙
+                    }
+                    else //2人脸或指纹取钥匙
+                    {
+                        UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签  
+                        if (UHF2Service.strEPC == "")   //卡片是否读到 
                         {
-                            UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签  
-                            if (UHF2Service.strEPC == "")   //卡片是否读到 
-                            {
-                                Service.saveYcsq();     //保存用车申请单                         
-                                locklis.Remove(item);   //取走就不需要对该柜号进行监控      
-                                UHF2Service.strEPC = ""; //取走或归还成功
-                            }
+                           Service.saveYcsq();     //保存用车申请单                         
+                            locklis.Remove(item);   //取走就不需要对该柜号进行监控      
+                            UHF2Service.strEPC = ""; //取走或归还成功
                         }
                     }
                 }
             }
-            else
-            {
-                ClossTimer.Stop();
-            }
         }
-
-
-
-        /// <summary>
-        /// 发送命令获取柜门状态
-        /// </summary>
-        /// <param name="gzh">格子号</param>        
-        public string State_lock(string gzh)
-        {
-            int gz = Convert.ToInt32(gzh);
-            byte[] data = new byte[12];
-            data[0] = 0xA6;
-            data[1] = 0xA8;
-            data[2] = 0x01;
-            data[3] = 0x00;
-            data[4] = 0x00;
-            data[5] = 0x0A;
-            data[6] = 0x00;
-            data[7] = 0x05;
-            data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
-            data[9] = 0x00;
-            data[10] = 0x00;
-            string gzbs = (94 + gz).ToString("X2");
-            data[11] = Convert.ToByte(gzbs, 16);
-            string rut = "";
-            port.WriteData(data, ref rut);
-            return rut;
-        }
-
-
 
 
         #endregion
@@ -620,6 +564,390 @@ namespace XJ_YSG
         {
             Environment.Exit(0);
         }
+
+
+        #region  锁
+
+        /// <summary>
+        /// 发送命令打开柜门
+        /// </summary>
+        /// <param name="gzh">格子号</param>
+        public static void Send(string gzh)
+        {
+            int gz = Convert.ToInt32(gzh);
+            string rtn = "";
+            byte[] data = new byte[12];
+            data[0] = 0xA6;
+            data[1] = 0xA8;
+            data[2] = 0x01;
+            data[3] = 0x00;
+            data[4] = 0x00;
+            data[5] = 0x0A;
+            data[6] = 0x00;
+            data[7] = 0x05;
+            data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+            data[9] = 0x00;
+            data[10] = 0x00;
+            string gzbs = (94 + gz).ToString("X2");
+            data[11] = Convert.ToByte(gzbs, 16);
+            string bw = port.ByteArrayToHexString2(data);
+            Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+            port.WriteData(data, ref rtn);
+            bw = rtn;
+        }
+
+
+        /// <summary>
+        /// 发送命令获取柜门状态
+        /// </summary>
+        /// <param name="gzh">格子号</param>
+        public static string State_lock(string gzh)
+        {
+            int gz = Convert.ToInt32(gzh);
+            byte[] data = new byte[12];
+            data[0] = 0xA6;
+            data[1] = 0xA8;
+            data[2] = 0x01;
+            data[3] = 0x00;
+            data[4] = 0x00;
+            data[5] = 0x0A;
+            data[6] = 0x00;
+            data[7] = 0x05;
+            data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+            data[9] = 0x00;
+            data[10] = 0x00;
+            string gzbs = (94 + gz).ToString("X2");
+            data[11] = Convert.ToByte(gzbs, 16);
+            string rut = "";
+           port.WriteData(data, ref rut);
+            return rut;
+        }
+
+
+        //灭灯
+        public static void Destroy(string gzh)
+        {
+            //string str1 = "A6 A8 01 00 00 0A 00 01 01 00 00 5B";
+            //port.WriteData_HEX(str1);
+            //获取格子号
+            int gz = Convert.ToInt32(gzh);
+            string rtn = "";
+            byte[] data = new byte[12];
+            data[0] = 0xA6;
+            data[1] = 0xA8;
+            data[2] = 0x01;
+            data[3] = 0x00;
+            data[4] = 0x00;
+            data[5] = 0x0A;
+            data[6] = 0x00;
+            data[7] = 0x01;
+            data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+            data[9] = 0x00;
+            data[10] = 0x00;
+            string gzbs = (90 + gz).ToString("X2");
+            data[11] = Convert.ToByte(gzbs, 16);
+            string bw = port.ByteArrayToHexString2(data);
+            Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+           port.WriteData(data, ref rtn);
+            bw = rtn;
+        }
+
+        /// <summary>
+        /// 红灯
+        /// </summary>
+        /// <param name="gzh">格子号</param>
+        /// <param name="Flashing">是否闪烁</param>
+
+        public static void red_light(string gzh, bool Flashing)
+        {
+            if (Flashing != true)
+            {
+                //string str = "A6 A8 01 00 00 0A 00 01 01 01 00 5C=92";
+                int gz = Convert.ToInt32(gzh);
+                string rtn = "";
+                byte[] data = new byte[12];
+                data[0] = 0xA6;
+                data[1] = 0xA8;
+                data[2] = 0x01;
+                data[3] = 0x00;
+                data[4] = 0x00;
+                data[5] = 0x0A;
+                data[6] = 0x00;
+                data[7] = 0x01;
+                data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+                data[9] = 0x01;
+                data[10] = 0x00;
+                string gzbs = (91 + gz).ToString("X2");
+                data[11] = Convert.ToByte(gzbs, 16);
+                string bw = port.ByteArrayToHexString2(data);
+                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+               port.WriteData(data, ref rtn);
+                bw = rtn;
+            }
+            else
+            {
+                //string str = "A6 A8 01 00 00 0A 00 01 01 81 00 DC";
+                int gz = Convert.ToInt32(gzh);
+                string rtn = "";
+                byte[] data = new byte[12];
+                data[0] = 0xA6;
+                data[1] = 0xA8;
+                data[2] = 0x01;
+                data[3] = 0x00;
+                data[4] = 0x00;
+                data[5] = 0x0A;
+                data[6] = 0x00;
+                data[7] = 0x01;
+                data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+                data[9] = 0x81;
+                data[10] = 0x00;
+                string gzbs = (219 + gz).ToString("X2");
+                data[11] = Convert.ToByte(gzbs, 16);
+                string bw =port.ByteArrayToHexString2(data);
+                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+               port.WriteData(data, ref rtn);
+                bw = rtn;
+            }
+
+        }
+
+
+        /// <summary>
+        /// 绿灯
+        /// </summary>
+        /// <param name="gzh">格子号</param>
+        /// <param name="Flashing">是否闪烁</param>
+        public static void green_light(string gzh, bool Flashing)
+        {
+            if (Flashing != true)
+            {
+                //string str = "A6 A8 01
+                //
+                //00 00 0A 00
+                //01 01 04 00
+                //5F";
+                int gz = Convert.ToInt32(gzh);
+                string rtn = "";
+                byte[] data = new byte[12];
+                data[0] = 0xA6;
+                data[1] = 0xA8;
+                data[2] = 0x01;
+
+                data[3] = 0x00;
+                data[4] = 0x00;
+                data[5] = 0x0A;
+                data[6] = 0x00;
+                data[7] = 0x01;
+                data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+                data[9] = 0x04;
+                data[10] = 0x00;
+                string gzbs = (94 + gz).ToString("X2");
+                data[11] = Convert.ToByte(gzbs, 16);
+                string bw = port.ByteArrayToHexString2(data);
+                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+               port.WriteData(data, ref rtn);
+                bw = rtn;
+            }
+            else
+            {
+                //string str = "A6 A8 01 00 00 0A 00 01 01 84 00 DF";
+                int gz = Convert.ToInt32(gzh);
+                string rtn = "";
+                byte[] data = new byte[12];
+                data[0] = 0xA6;
+                data[1] = 0xA8;
+                data[2] = 0x01;
+                data[3] = 0x00;
+                data[4] = 0x00;
+                data[5] = 0x0A;
+                data[6] = 0x00;
+                data[7] = 0x01;
+                data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+                data[9] = 0x84;
+                data[10] = 0x00;
+                string gzbs = (222 + gz).ToString("X2");
+                data[11] = Convert.ToByte(gzbs, 16);
+                string bw = port.ByteArrayToHexString2(data);
+                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+               port.WriteData(data, ref rtn);
+                bw = rtn;
+            }
+        }
+
+
+        /// <summary>
+        /// 蓝灯
+        /// </summary>
+        /// <param name="gzh"></param>
+        /// <param name="Flashing"></param>
+        public static void Blue_light(string gzh, bool Flashing)
+        {
+            if (Flashing != true)
+            {
+                //string str = "A6 A8 01 00 00 0A 00 01 01 02 00 5D"；
+                int gz = Convert.ToInt32(gzh);
+                string rtn = "";
+                byte[] data = new byte[12];
+                data[0] = 0xA6;
+                data[1] = 0xA8;
+                data[2] = 0x01;
+                data[3] = 0x00;
+                data[4] = 0x00;
+                data[5] = 0x0A;
+                data[6] = 0x00;
+                data[7] = 0x01;
+                data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+                data[9] = 0x02;
+                data[10] = 0x00;
+                string gzbs = (92 + gz).ToString("X2");
+                data[11] = Convert.ToByte(gzbs, 16);
+                string bw =port.ByteArrayToHexString2(data);
+                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+                port.WriteData(data, ref rtn);
+                bw = rtn;
+            }
+            else
+            {
+                //string str = "A6 A8 01 00 00 0A 00 01 01 82 00 DD";
+                int gz = Convert.ToInt32(gzh);
+                string rtn = "";
+                byte[] data = new byte[12];
+                data[0] = 0xA6;
+                data[1] = 0xA8;
+                data[2] = 0x01;
+                data[3] = 0x00;
+                data[4] = 0x00;
+                data[5] = 0x0A;
+                data[6] = 0x00;
+                data[7] = 0x01;
+                data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+                data[9] = 0x82;
+                data[10] = 0x00;
+                string gzbs = (221 + gz).ToString("X2");
+                data[11] = Convert.ToByte(gzbs, 16);
+                string bw =port.ByteArrayToHexString2(data);
+                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+                port.WriteData(data, ref rtn);
+                bw = rtn;
+            }
+        }
+
+
+        /// <summary>
+        /// 白灯
+        /// </summary>
+        /// <param name="gzh"></param>
+        /// <param name="Flashing"></param>
+        public static void White_light(string gzh, bool Flashing)
+        {
+            if (Flashing != true)
+            {
+                //string str = "A6 A8 01 00 00 0A 00 01 01 07 00 62"；
+                int gz = Convert.ToInt32(gzh);
+                string rtn = "";
+                byte[] data = new byte[12];
+                data[0] = 0xA6;
+                data[1] = 0xA8;
+                data[2] = 0x01;
+                data[3] = 0x00;
+                data[4] = 0x00;
+                data[5] = 0x0A;
+                data[6] = 0x00;
+                data[7] = 0x01;
+                data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+                data[9] = 0x07;
+                data[10] = 0x00;
+                string gzbs = (97 + gz).ToString("X2");
+                data[11] = Convert.ToByte(gzbs, 16);
+                string bw = port.ByteArrayToHexString2(data);
+                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+               port.WriteData(data, ref rtn);
+                bw = rtn;
+            }
+            else
+            {
+                //string str = "A6 A8 01 00 00 0A 00 01 01 87 00 E2";
+                int gz = Convert.ToInt32(gzh);
+                string rtn = "";
+                byte[] data = new byte[12];
+                data[0] = 0xA6;
+                data[1] = 0xA8;
+                data[2] = 0x01;
+                data[3] = 0x00;
+                data[4] = 0x00;
+                data[5] = 0x0A;
+                data[6] = 0x00;
+                data[7] = 0x01;
+                data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+                data[9] = 0x87;
+                data[10] = 0x00;
+                string gzbs = (225 + gz).ToString("X2");
+                data[11] = Convert.ToByte(gzbs, 16);
+                string bw = port.ByteArrayToHexString2(data);
+                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+                port.WriteData(data, ref rtn);
+                bw = rtn;
+            }
+        }
+
+
+        /// <summary>
+        /// 冰蓝
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public static void Ice_Blue(string gzh, bool Flashing)
+        {
+            if (Flashing != true)
+            {
+                //string str = "A6 A8 01 00 00 0A 00 01 01 06 00 61"；
+                int gz = Convert.ToInt32(gzh);
+                string rtn = "";
+                byte[] data = new byte[12];
+                data[0] = 0xA6;
+                data[1] = 0xA8;
+                data[2] = 0x01;
+                data[3] = 0x00;
+                data[4] = 0x00;
+                data[5] = 0x0A;
+                data[6] = 0x00;
+                data[7] = 0x01;
+                data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+                data[9] = 0x06;
+                data[10] = 0x00;
+                string gzbs = (96 + gz).ToString("X2");
+                data[11] = Convert.ToByte(gzbs, 16);
+                string bw = port.ByteArrayToHexString2(data);
+                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+                port.WriteData(data, ref rtn);
+                bw = rtn;
+            }
+            else
+            {
+                //string str = "A6 A8 01 00 00 0A 00 01 01 86 00 E1";
+                int gz = Convert.ToInt32(gzh);
+                string rtn = "";
+                byte[] data = new byte[12];
+                data[0] = 0xA6;
+                data[1] = 0xA8;
+                data[2] = 0x01;
+                data[3] = 0x00;
+                data[4] = 0x00;
+                data[5] = 0x0A;
+                data[6] = 0x00;
+                data[7] = 0x01;
+                data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
+                data[9] = 0x86;
+                data[10] = 0x00;
+                string gzbs = (224 + gz).ToString("X2");
+                data[11] = Convert.ToByte(gzbs, 16);
+                string bw =port.ByteArrayToHexString2(data);
+                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+                port.WriteData(data, ref rtn);
+                bw = rtn;
+            }
+        }
+        #endregion 
 
     }
 }
