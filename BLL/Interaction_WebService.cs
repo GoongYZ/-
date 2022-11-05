@@ -321,7 +321,7 @@ namespace BLL
                 {
                     string key = de.Key.ToString();
                     string val = de.Value.ToString();
-                    postData += "&" + key + "=" + val;
+                    postData += "&" + "params."+key + "=" + val;
                 }               
                 //log.WriteLogo(strURL + "?" + postData, 0);
                 HttpWebRequest myRequest = WebRequest.CreateHttp(strURL + "?" + postData);

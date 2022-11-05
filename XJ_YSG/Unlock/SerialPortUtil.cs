@@ -185,7 +185,6 @@ namespace XJ_YSG
             try
             {
                 if (comPort.IsOpen) comPort.Close();
-
                 comPort.PortName = _portName;
                 comPort.BaudRate = (int)_baudRate;
                 comPort.Parity = _parity;
@@ -196,6 +195,7 @@ namespace XJ_YSG
             }
             catch (Exception ex)
             {
+                Logo.sWriteLogo("锁连接失败", 6);
             }
         }
 

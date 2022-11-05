@@ -30,7 +30,6 @@ namespace XJ_YSG
         Activation activation = new Activation();
         Fingerprint fingerprint = new Fingerprint();
         Logo log = new Logo();
-        LockControl LockControl = new LockControl();
         public static SerialPortUtil port = new SerialPortUtil();
         private MainBox mainbox = null;
         public static string sbbm = ServerBase.XMLRead("Ysg_sbbm", "sbbm").ToString(); //设备编码
@@ -41,7 +40,9 @@ namespace XJ_YSG
         public static List<string> locklis = new List<string>();// 监控箱门的数据集合1_0&1_1,柜号_取或还
         public static string HycsqdPK = "";  //还钥匙保存用车申请单pk
         public static string QycsqdPK = "";  //取钥匙保存用车申请单pk
-        public static Hashtable hashtable = new Hashtable();  //车辆评价
+        public static string  clzk="0";  //车辆状况
+        public static string  clwg = "0";  //车辆外观
+        public static string  clns = "0";  //车辆内饰
         #region  指纹图像数据
         public byte[] m_pImageBuffer = new byte[640 * 480];
         public int m_nWidth = 0;
@@ -66,11 +67,9 @@ namespace XJ_YSG
             {
                 mainbox = this;
             }
+            port.OpenPort();  //连接锁          
             UHFService.ConnectCOM();   //刷卡
             UHF2Service.ConnectCOM();   //读钥匙
-            port.OpenPort();  //连接锁
-
-            
             if (activation.InitEngines() == "1")
             {
                 ChooseMultiImg();  //激活人脸识别
@@ -391,10 +390,15 @@ namespace XJ_YSG
         void RfidTimer_Tick_canShow(object sender, EventArgs e)
         {
             UHFService.OneCheckInvnetoryWhile(0);
-            string st = UHFService.strEPC;
-            if (st != "")
+            string kplist = UHFService.strEPC;
+            if (kplist != "")
             {
-                Getycsqdpk(st);
+                string kp = kplist.Substring(0, kplist.Length - 1);
+                 kp= string.Join(",", kp.Split(',').Distinct().ToArray());
+                zwTimer.Stop();
+                RfidTimer.Stop();
+                speack("刷卡成功");
+                Getycsqdpk(kp);
             }
         }
 
@@ -402,16 +406,14 @@ namespace XJ_YSG
         /// 根据钥匙编号获取用车申请单信息
         /// </summary>
         public void Getycsqdpk(string kp)
-        {
-            zwTimer.Stop();
-            RfidTimer.Stop();
+        {        
             //读取txt文件;
             string txt = log.GetYsgGh();
             txt = txt.Substring(0, txt.Length - 1);
             var wzm = txt.Split(',').Where(t => t.Contains(kp)).FirstOrDefault().ToString().Split('_')[0];
             //调用用车申请单接口
             var hash = Service.getycsqdpkInfo(sbbm, wzm);
-            if (hash != null)
+            if (hash != null&&hash.Count>0)
             {
                 string PK = hash["PK"].ToString(); //用车申请单pk
                 HycsqdPK = PK;               //保存用车申请单pk
@@ -421,13 +423,12 @@ namespace XJ_YSG
                     xj_Clpj.ShowDialog();
 
                 }
-                else
-                {
-                    Send(wzm);  //开门
-                    speack("柜门已打开");
-                    locklis.Add(wzm + "_0"); //添加到箱门状态集合中  
-                    UHFService.strEPC = ""; //清楚刷卡信息，下次刷卡使用
-                }
+                Send(wzm);  //开门
+                red_light(wzm, true);
+                speack("柜门已打开");
+                locklis.Add(wzm + "_0"); //添加到箱门状态集合中  
+                UHFService.strEPC = ""; //清楚刷卡信息，下次刷卡使用
+
             }
             else
             {
@@ -445,7 +446,7 @@ namespace XJ_YSG
         /// </summary>
         public void LockDjs()
         {
-            ClossTimer.Interval = new TimeSpan(0, 0, 0, 0, 2000); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
+            ClossTimer.Interval = new TimeSpan(0, 0, 0, 0, 3000); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
             ClossTimer.Tick += new EventHandler(ClossTimer_Tick_canShow); //每一秒执行的方法
             ClossTimer.Start();
         }
@@ -460,69 +461,84 @@ namespace XJ_YSG
         /// <summary>
         /// 关门操作
         /// </summary>
-        public  void Closedoor()
-        {          
+        public void Closedoor()
+        {
             foreach (string item in locklis)
             {
                 string wzm = item.Split('_')[0];
                 string isqh = item.Split('_')[1];
-                string lockzt = LockControl.State_lock(wzm);
-                string zt = lockzt.Substring(19, 1);
-                //0关门
-                if (zt == "0")
+                string lockzt = State_lock(wzm);
+                int zt = Convert.ToInt32(lockzt.Substring(19, 1));
+                //状态 1 表示开的状态，状态 0 表示关的状态。
+                if (zt == 0)
                 {
-                    MessageBox.Show("关门了");
-                    if (isqh == "0")  //0 刷卡还钥匙   
+                    if (isqh == "0")
                     {
-                        UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签  
-                        string yskp = string.Join(",", UHF2Service.strEPC.Split(',').Distinct().ToArray());
-                        if (yskp != "")   //卡片是否读到 
-                        {
-                            if (hashtable != null||hashtable.Count>0)
-                            {
-                                Service.saveHys(sbbm, HycsqdPK, hashtable["clzk"].ToString(), hashtable["clwg"].ToString(), hashtable["clns"].ToString());      //调还钥匙接口
-                            }
-                            else
-                            {
-                                Service.saveHys(sbbm, HycsqdPK, "0", "0", "0");      //调还钥匙接口
-                            }
-                            locklis.Remove(item);   //归还成功就不需要对该柜号进行监控      
-                            UHF2Service.strEPC = ""; //归还成功待下次还钥匙用                                                             
-                            HycsqdPK = ""; //清除数据,待下次还钥匙用
-                            hashtable.Clear();//归还成功后清除车辆评价数据
+                        UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签                      
+                        if (UHF2Service.strEPC != "")   //卡片是否读到 
+                        {                          
+                            Service.saveHys(sbbm, HycsqdPK, clzk, clwg,clns);      //调还钥匙接口                           
+                            Blue_light(wzm, false);                          
                         }
+                        else 
+                        {
+                            red_light(wzm, false);
+                        }
+                        locklis.Remove(item);   //归还成功就不需要对该柜号进行监控                                                                                        
+                        HycsqdPK = ""; //清除数据,待下次还钥匙用
+                        clzk = "";clwg = "";clns = "";//归还成功后清除车辆评价数据
+                        UHF2Service.strEPC = ""; //归还成功待下次还钥匙用      
+                        zwTimer.Start();
+                        RfidTimer.Start();
+                        speack("归还成功");
+                        return;
                     }
-                    else if (isqh == "1") //1 验证码取钥匙
+                    else if (isqh == "1")
                     {
-                        MessageBox.Show("我钥匙取走了");
                         UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签                          
                         if (UHF2Service.strEPC == "")   //卡片是否读到 
                         {
-                           bool  issuccec=  Service.saveQys(sbbm, QycsqdPK);
-                            if (issuccec)
-                            {
-                                locklis.Remove(item);   //取走就不需要对该柜号进行监控
-                                QycsqdPK = ""; //清除数据,待下次取钥匙用
-                                UHF2Service.strEPC = ""; //取走成功下次取钥匙用    
-                            }                                             
+                            Service.saveQys(sbbm, QycsqdPK);
+                            red_light(wzm, false);                         
                         }
+                        else 
+                        {
+                            Blue_light(wzm, false);
+                        }
+                        locklis.Remove(item);   //取走就不需要对该柜号进行监控
+                        QycsqdPK = ""; //清除数据,待下次取钥匙用
+                        zwTimer.Start();
+                        RfidTimer.Start();                                               
+                        return;
                     }
-                    else //2人脸或指纹取钥匙
+                    else 
                     {
                         UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签  
                         if (UHF2Service.strEPC == "")   //卡片是否读到 
-                        {
-                           Service.saveYcsq();     //保存用车申请单                         
-                            locklis.Remove(item);   //取走就不需要对该柜号进行监控      
-                            UHF2Service.strEPC = ""; //取走或归还成功
+                        { 
+                            red_light(wzm, false);
+                            Service.saveYcsq();     //保存用车申请单                         
+                            MessageBox.Show("人脸或指纹钥匙走了");
                         }
-                    }
+                        else 
+                        {
+                            Blue_light(wzm, false);
+                        }
+                        zwTimer.Start();
+                        RfidTimer.Start();
+                        locklis.Remove(item);   //取走就不需要对该柜号进行监控
+                      
+                        return;
+                    }                   
                 }
             }
         }
-
-
         #endregion
+
+
+
+
+
 
 
         #region 初始化钥匙柜卡片
@@ -541,6 +557,7 @@ namespace XJ_YSG
                         gh_kp += "" + i + "_" + yskp + "," + "\r";
                         UHF2Service.strEPC = "";
                     }
+                    Blue_light(i.ToString(), false) ;
                 }
                 Logo.sWriteYsgh(gh_kp);
                 speack("智能钥匙管理柜初始化成功");
@@ -549,25 +566,9 @@ namespace XJ_YSG
         #endregion
 
 
-       
-
-        #region 上报钥匙柜运行状态
 
 
-        #endregion
-
-        private void Emergency_clos_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-        private void MainWindow_Closed(object sender, EventArgs e)
-        {
-            Environment.Exit(0);
-        }
-
-
-        #region  锁
-
+        #region 锁
         /// <summary>
         /// 发送命令打开柜门
         /// </summary>
@@ -591,7 +592,7 @@ namespace XJ_YSG
             string gzbs = (94 + gz).ToString("X2");
             data[11] = Convert.ToByte(gzbs, 16);
             string bw = port.ByteArrayToHexString2(data);
-            Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+            Logo.sWriteLogo("发送报文：" + bw.ToString(), 6);
             port.WriteData(data, ref rtn);
             bw = rtn;
         }
@@ -603,24 +604,24 @@ namespace XJ_YSG
         /// <param name="gzh">格子号</param>
         public static string State_lock(string gzh)
         {
+            //A6 A8 01 00 00 08 00 09 01 60  
             int gz = Convert.ToInt32(gzh);
-            byte[] data = new byte[12];
+            string rtn = "";
+            byte[] data = new byte[10];
             data[0] = 0xA6;
             data[1] = 0xA8;
             data[2] = 0x01;
             data[3] = 0x00;
             data[4] = 0x00;
-            data[5] = 0x0A;
+            data[5] = 0x08;
             data[6] = 0x00;
-            data[7] = 0x05;
-            data[8] = Convert.ToByte(gz.ToString("X2"), 16);   //格子号
-            data[9] = 0x00;
-            data[10] = 0x00;
-            string gzbs = (94 + gz).ToString("X2");
-            data[11] = Convert.ToByte(gzbs, 16);
-            string rut = "";
-           port.WriteData(data, ref rut);
-            return rut;
+            data[7] = 0x09;
+            data[8] = Convert.ToByte(gz.ToString("X2"), 16);  //柜号
+            int total = 96 + gz;
+            data[9] = Convert.ToByte(total.ToString("X"), 16);
+            string bw = port.ByteArrayToHexString2(data);
+            port.WriteData(data, ref rtn);
+            return rtn;
         }
 
 
@@ -647,8 +648,8 @@ namespace XJ_YSG
             string gzbs = (90 + gz).ToString("X2");
             data[11] = Convert.ToByte(gzbs, 16);
             string bw = port.ByteArrayToHexString2(data);
-            Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-           port.WriteData(data, ref rtn);
+           Logo.sWriteLogo("发送报文：" + bw.ToString(), 6);
+            port.WriteData(data, ref rtn);
             bw = rtn;
         }
 
@@ -658,7 +659,7 @@ namespace XJ_YSG
         /// <param name="gzh">格子号</param>
         /// <param name="Flashing">是否闪烁</param>
 
-        public static void red_light(string gzh, bool Flashing)
+        public static  void red_light(string gzh, bool Flashing)
         {
             if (Flashing != true)
             {
@@ -680,8 +681,8 @@ namespace XJ_YSG
                 string gzbs = (91 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
                 string bw = port.ByteArrayToHexString2(data);
-                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-               port.WriteData(data, ref rtn);
+               Logo.sWriteLogo("发送报文：" + bw.ToString(), 6);
+                port.WriteData(data, ref rtn);
                 bw = rtn;
             }
             else
@@ -703,9 +704,9 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (219 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw =port.ByteArrayToHexString2(data);
-                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-               port.WriteData(data, ref rtn);
+                string bw = port.ByteArrayToHexString2(data);
+               Logo.sWriteLogo("发送报文：" + bw.ToString(), 6);
+                port.WriteData(data, ref rtn);
                 bw = rtn;
             }
 
@@ -732,7 +733,6 @@ namespace XJ_YSG
                 data[0] = 0xA6;
                 data[1] = 0xA8;
                 data[2] = 0x01;
-
                 data[3] = 0x00;
                 data[4] = 0x00;
                 data[5] = 0x0A;
@@ -744,8 +744,8 @@ namespace XJ_YSG
                 string gzbs = (94 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
                 string bw = port.ByteArrayToHexString2(data);
-                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-               port.WriteData(data, ref rtn);
+                Logo.sWriteLogo("发送报文：" + bw.ToString(), 6);
+                port.WriteData(data, ref rtn);
                 bw = rtn;
             }
             else
@@ -768,8 +768,8 @@ namespace XJ_YSG
                 string gzbs = (222 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
                 string bw = port.ByteArrayToHexString2(data);
-                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-               port.WriteData(data, ref rtn);
+               Logo.sWriteLogo("发送报文：" + bw.ToString(), 6);
+                port.WriteData(data, ref rtn);
                 bw = rtn;
             }
         }
@@ -801,8 +801,8 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (92 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw =port.ByteArrayToHexString2(data);
-                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+                string bw = port.ByteArrayToHexString2(data);
+               Logo.sWriteLogo("发送报文：" + bw.ToString(), 6);
                 port.WriteData(data, ref rtn);
                 bw = rtn;
             }
@@ -825,8 +825,8 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (221 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw =port.ByteArrayToHexString2(data);
-                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+                string bw = port.ByteArrayToHexString2(data);
+               Logo.sWriteLogo("发送报文：" + bw.ToString(), 6);
                 port.WriteData(data, ref rtn);
                 bw = rtn;
             }
@@ -860,8 +860,8 @@ namespace XJ_YSG
                 string gzbs = (97 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
                 string bw = port.ByteArrayToHexString2(data);
-                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
-               port.WriteData(data, ref rtn);
+               Logo.sWriteLogo("发送报文：" + bw.ToString(), 6);
+                port.WriteData(data, ref rtn);
                 bw = rtn;
             }
             else
@@ -884,7 +884,7 @@ namespace XJ_YSG
                 string gzbs = (225 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
                 string bw = port.ByteArrayToHexString2(data);
-                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+               Logo.sWriteLogo("发送报文：" + bw.ToString(), 6);
                 port.WriteData(data, ref rtn);
                 bw = rtn;
             }
@@ -918,7 +918,7 @@ namespace XJ_YSG
                 string gzbs = (96 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
                 string bw = port.ByteArrayToHexString2(data);
-                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+               Logo.sWriteLogo("发送报文：" + bw.ToString(), 6);
                 port.WriteData(data, ref rtn);
                 bw = rtn;
             }
@@ -941,13 +941,31 @@ namespace XJ_YSG
                 data[10] = 0x00;
                 string gzbs = (224 + gz).ToString("X2");
                 data[11] = Convert.ToByte(gzbs, 16);
-                string bw =port.ByteArrayToHexString2(data);
-                Logo.sWriteLogo("发送报文：" + bw.ToString(), 4);
+                string bw = port.ByteArrayToHexString2(data);
+               Logo.sWriteLogo("发送报文：" + bw.ToString(), 6);
                 port.WriteData(data, ref rtn);
                 bw = rtn;
             }
         }
-        #endregion 
+        #endregion
+
+
+        #region 上报钥匙柜运行状态
+
+
+        #endregion
+
+        private void Emergency_clos_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
+
+
 
     }
 }

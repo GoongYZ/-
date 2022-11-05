@@ -22,15 +22,14 @@ namespace XJ_YSG
     /// </summary>
     public partial class Xj_Mima : Window
     {
-        Interaction_WebService service = new Interaction_WebService();       
+        Interaction_WebService service = new Interaction_WebService();      
         public Xj_Mima()
         {
             InitializeComponent();
             this.Left = 0;
             this.Top = 0;
             ImageBrush b3 = new ImageBrush();
-            b3.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Img/xj_mima.png", UriKind.Absolute));
-           
+            b3.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Img/xj_mima.png", UriKind.Absolute));          
             this.Background = b3;
         }
 
@@ -86,20 +85,14 @@ namespace XJ_YSG
             if (mm.Content.ToString().Length == 6)
             {
                 Hashtable tb = service.getInfoByEwm(mm.Content.ToString(), MainBox.sbbm);               
-                if (tb != null||tb.Count>0)
+                if (tb != null&&tb.Count>0)
                 {
                     string wzm = tb["WZM"].ToString();
-                    MainBox.QycsqdPK = tb["YCSQDPK"].ToString();                 
-                    if (!MainBox.port.IsOpen)
-                    {
-                        MessageBox.Show("锁已连接");
-                        MainBox.port.OpenPort();
-                    }
+                    MainBox.QycsqdPK = tb["YCSQDPK"].ToString();                   
                     MainBox.Send(wzm);
+                    MainBox.red_light(wzm, true);
                     speack("柜门已打开，取后请关门");
-                    MainBox.locklis.Add(wzm + "_1");
-                    MainBox.zwTimer.Start();
-                    MainBox.RfidTimer.Start();
+                    MainBox.locklis.Add(wzm + "_1");                 
                     this.Close();
 
                 }
@@ -111,10 +104,7 @@ namespace XJ_YSG
                    
         }
 
-       
-
-
-
+        
 
 
         #region 语音播报
