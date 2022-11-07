@@ -36,8 +36,7 @@ namespace XJ_YSG
             });
 
             this.Closed += ((s, e) =>
-            {
-                Xj_BoxList.gh = "";               
+            {                   
                 BoxList.markLayer.Visibility = Visibility.Hidden;
             });
         }
@@ -63,8 +62,7 @@ namespace XJ_YSG
 
 
         private void btn_tc_TouchLeave(object sender, TouchEventArgs e)
-        {
-            Xj_BoxList.gh = "";
+        {          
             this.Close();
         }
     }

@@ -17,6 +17,7 @@ using System.Linq;
 using System.Windows.Media;
 using System.Threading.Tasks;
 using System.Collections;
+using System.Data;
 
 namespace XJ_YSG
 {
@@ -33,6 +34,7 @@ namespace XJ_YSG
         public static SerialPortUtil port = new SerialPortUtil();
         private MainBox mainbox = null;
         public static string sbbm = ServerBase.XMLRead("Ysg_sbbm", "sbbm").ToString(); //设备编码
+        public static int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl")); //柜子格子数量
         public static DispatcherTimer zwTimer = new DispatcherTimer();//指纹计时器
         public static DispatcherTimer RfidTimer = new DispatcherTimer();//刷卡计时器
         public static DispatcherTimer ClossTimer = new DispatcherTimer();  //监控开门状态倒计时
@@ -50,8 +52,10 @@ namespace XJ_YSG
         public int m_nSize = 640 * 480;
         #endregion
         #region 用户信息和钥匙柜列表
-        List<string> userlist = new List<string>();
-        Dictionary<int, List<string>> gh = new Dictionary<int, List<string>>();
+        //List<string> userlist = new List<string>();
+        //Dictionary<int, List<string>> gh = new Dictionary<int, List<string>>();
+        public static Hashtable hashtable = new Hashtable();
+        public static DataTable cllb = new DataTable();
         #endregion
 
 
@@ -67,21 +71,21 @@ namespace XJ_YSG
             {
                 mainbox = this;
             }
-            port.OpenPort();  //连接锁          
-            UHFService.ConnectCOM();   //刷卡
-            UHF2Service.ConnectCOM();   //读钥匙
+            //port.OpenPort();  //连接锁          
+            //UHFService.ConnectCOM();   //刷卡
+            //UHF2Service.ConnectCOM();   //读钥匙
             if (activation.InitEngines() == "1")
             {
                 ChooseMultiImg();  //激活人脸识别
             }
-            if (fingerprint.ZW_Connection() == "ok")
-            {
-                zwthan();   //开始指纹验证
-            }
-            LockDjs();
-            Rfidthan();   //实时RFID读信息卡          
-            Csh_yskp(); //初始化钥匙柜卡片
-            this.Closed += MainWindow_Closed;
+            //if (fingerprint.ZW_Connection() == "ok")
+            //{
+            //    zwthan();   //开始指纹验证
+            //}
+            //LockDjs();
+            //Rfidthan();   //实时RFID读信息卡          
+            //Csh_yskp(); //初始化钥匙柜卡片
+            //this.Closed += MainWindow_Closed;
         }
         #region 输入钥匙码按钮
         private void Smkey_Click(object sender, RoutedEventArgs e)
@@ -144,8 +148,8 @@ namespace XJ_YSG
                     zwTimer.Stop();
                     RfidTimer.Stop();
                     log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index, 5);
-                    Xj_BoxList boxList = new Xj_BoxList();
-                    boxList.Show();
+                    //Xj_BoxList boxList = new Xj_BoxList();
+                    //boxList.Show();
                 }
                 else
                 {
@@ -390,11 +394,10 @@ namespace XJ_YSG
         void RfidTimer_Tick_canShow(object sender, EventArgs e)
         {
             UHFService.OneCheckInvnetoryWhile(0);
-            string kplist = UHFService.strEPC;
-            if (kplist != "")
+            string kp = UHFService.strEPC;
+            if (kp != "")
             {
-                string kp = kplist.Substring(0, kplist.Length - 1);
-                 kp= string.Join(",", kp.Split(',').Distinct().ToArray());
+               
                 zwTimer.Stop();
                 RfidTimer.Stop();
                 speack("刷卡成功");
@@ -534,10 +537,6 @@ namespace XJ_YSG
             }
         }
         #endregion
-
-
-
-
 
 
 
@@ -951,9 +950,9 @@ namespace XJ_YSG
 
 
         #region 上报钥匙柜运行状态
-
-
         #endregion
+
+
 
         private void Emergency_clos_Click(object sender, RoutedEventArgs e)
         {

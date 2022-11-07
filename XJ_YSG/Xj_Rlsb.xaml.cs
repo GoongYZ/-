@@ -24,6 +24,7 @@ namespace XJ_YSG
     {
 
         Activation activation = new Activation();
+        Interaction_WebService Service = new Interaction_WebService();
         Logo log = new Logo();
         private int countSecond = 30;
         public Xj_Rlsb()
@@ -37,7 +38,7 @@ namespace XJ_YSG
             closeDjs();
             btnStartVideo_Click();
             this.Closed += Xj_Rlsb_Closed; //窗体关闭时人脸资源释放掉，否则下次无法正常显示
-           
+
 
         }
 
@@ -59,11 +60,11 @@ namespace XJ_YSG
             {
                 this.Close();
             }
-            else 
+            else
             {
                 lbl_djs.Content = countSecond--;
             }
-             
+
         }
         #endregion
 
@@ -159,7 +160,7 @@ namespace XJ_YSG
                             FaceTrackUnit tempFaceTrack = EntityModel.trackRGBUnitDict.GetElementByKey(tempFaceId);
 
                             //RGB活体检测
-                            log.WriteLogo(string.Format("faceId:{0},活体检测第{1}次\r\n", tempFaceId, tryTime),3);
+                            log.WriteLogo(string.Format("faceId:{0},活体检测第{1}次\r\n", tempFaceId, tryTime), 3);
                             SingleFaceInfo singleFaceInfo = new SingleFaceInfo();
                             singleFaceInfo.faceOrient = tempFaceTrack.FaceOrient;
                             singleFaceInfo.faceRect = tempFaceTrack.Rect;
@@ -264,7 +265,7 @@ namespace XJ_YSG
                             //特征搜索
                             int faceIndex = -1;
                             float similarity = 0f;
-                            log.WriteLogo(string.Format("faceId:{0},特征搜索第{1}次\r\n", tempFaceId, tryTime),3);
+                            log.WriteLogo(string.Format("faceId:{0},特征搜索第{1}次\r\n", tempFaceId, tryTime), 3);
                             //提取人脸特征
                             SingleFaceInfo singleFaceInfo = new SingleFaceInfo();
                             singleFaceInfo.faceOrient = tempFaceTrack.FaceOrient;
@@ -445,12 +446,23 @@ namespace XJ_YSG
                                         string aimil = "";
                                         EntityModel.imageLists.TryGetValue(index, out aimil);
                                         //截取aimil 拿到手机号码  D:\ixjkj\synchro\龚于诏_19888925110.jpg
-                                        log.WriteLogo(aimil+"识别成功", 3);
+                                        log.WriteLogo(aimil + "识别成功", 3);
                                         string sjhm = System.Text.RegularExpressions.Regex.Replace(aimil, @"[^0-9]+", "");
-                                        //将手机号码传给新页面
-                                        Xj_BoxList boxList = new Xj_BoxList();
-                                        this.Close();
-                                        boxList.ShowDialog();
+                                        if (sjhm != "")
+                                        {
+                                            MainBox.hashtable = Service.getUserInfo(sjhm);                                            
+                                            if (MainBox.hashtable != null && MainBox.hashtable.Count > 0)
+                                            {
+                                                //将手机号码传给新页面
+                                                Xj_BoxList boxList = new Xj_BoxList(sjhm);
+                                                this.Close();
+                                                boxList.ShowDialog();
+                                            }
+                                            else 
+                                            {
+                                                speack("用户信息不存在");
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -508,6 +520,16 @@ namespace XJ_YSG
             }
         }
 
+        #region 语音播报
+        public void speack(string text)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SpeechVoice.speack(text);
+            }), System.Windows.Threading.DispatcherPriority.Normal);
+        }
+        #endregion
+
         private void Xj_Rlsb_Closed(object sender, EventArgs e)
         {
             rgbVideoSource.SignalToStop();
@@ -520,7 +542,7 @@ namespace XJ_YSG
 
         private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-           
+
             this.Close();
         }
     }

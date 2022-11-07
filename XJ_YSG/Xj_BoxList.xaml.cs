@@ -14,11 +14,12 @@ namespace XJ_YSG
     /// </summary>
     public partial class Xj_BoxList : Window
     {
-        private static int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl")); //柜子格子数量
-        DataTable tb = new DataTable();
+             
         private Xj_BoxList BoxList = null;
-        public static  string gh = "";
-        public Xj_BoxList()
+        private DataTable dtlist = new DataTable();
+        Interaction_WebService Service = new Interaction_WebService();
+        string sjh = "";
+        public Xj_BoxList(string sjhm)
         {
             InitializeComponent();
             this.Left = 0;
@@ -30,25 +31,41 @@ namespace XJ_YSG
             {
                 BoxList = this;
             }
+            sjh = sjhm;
+
             Bindinfo();
+
+
         }
-      
+
+
+
 
         private void Bindinfo()
         {
-            //获取用户可以打开的柜号         
-            tb.Columns.Add("UriSource");
-            tb.Columns.Add("BH1");
-            tb.Columns.Add("BH2");
-            for (int i = 1; i <= gzsl; i++)
+            DataTable dt = Service.getListBox(sjh, MainBox.sbbm);
+            if (dt.Rows.Count > 0 && dt != null)
             {
-                DataRow dr = tb.NewRow();
-                dr["UriSource"] = "img/Boxlist_zaiku.png";
-                dr["BH1"] = i;
-                dr["BH2"] = "正常";
-                tb.Rows.Add(dr);
+                //获取用户可以打开的柜号                   
+                for (int i = 1; i <= dt.Rows.Count; i++)
+                {
+                    DataRow dr = dtlist.NewRow(); ;
+                    dr["BH"] = dtlist.Rows[i]["BH"].ToString();
+                    string zt = dtlist.Rows[i]["ZT"].ToString();
+                    if (zt == "0")
+                    {
+                        dr["UriSource"] = "img/Boxlist_zaiku.png";
+                        dr["ZT"] = "正常";
+                    }
+                    else if (zt == "1")
+                    {
+                        dr["UriSource"] = "img/Boxlist_chuche.png";
+                        dr["ZT"] = "出车中";
+                    }                   
+                    MainBox.cllb.Rows.Add(dr);
+                }
+                s_1.DataContext = dt;
             }
-            s_1.DataContext = tb;
         }
 
 
@@ -108,6 +125,7 @@ namespace XJ_YSG
         {
             MainBox.zwTimer.Start();
             MainBox.RfidTimer.Start();
+            MainBox.cllb.Clear();
             this.Close();
         }
     }

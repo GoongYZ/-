@@ -16,6 +16,7 @@ namespace BLL
     public class Interaction_WebService
     {
         public static string _url = null;
+       
         public Interaction_WebService()
         {
             if (_url == null)
