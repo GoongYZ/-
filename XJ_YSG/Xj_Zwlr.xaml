@@ -24,7 +24,7 @@
             <ImageBrush   ImageSource="/Img/xj_zwlr.png"></ImageBrush>
         </Grid.Background>
         <Image x:Name="pictureBox_FingerImg"  HorizontalAlignment="Left" Height="320" Margin="130,90,0,0" VerticalAlignment="Top" Width="240"/>
-        <Button  Margin="31,555,311,32"  Opacity="0" Click="Button_Clos_Click"/>
-        <Button  Margin="210,556,31,31"  Opacity="0"  Click="Button_lr_Click"/>
+        <Button  Margin="31,555,311,32"  Opacity="0"  TouchUp="Button_Clos_TouchUp"/>
+        <Button  Margin="210,556,31,31"  Opacity="0"   TouchUp="Button_lr_TouchUp"/>
     </Grid>
 </Window>

@@ -11,8 +11,7 @@
         <wfi:WindowsFormsHost Name="pictureHost" Margin="179,187,179,416">
             <aforge:VideoSourcePlayer  x:Name="rgbVideoSource" Paint="VideoSource_Paint" Dock="Fill"/>
         </wfi:WindowsFormsHost>
-        <Image Height="69.148"   Width="150.805" MouseDown="Image_MouseDown" Source="img/close.png" RenderTransformOrigin="0.513,0.111" Margin="568,29,49,926"/>
+        <Image Height="69.148"   Width="150.805" TouchDown="Image_TouchDown"  Source="img/close.png" RenderTransformOrigin="0.513,0.111" Margin="568,29,49,926"/>
         <Label Content="30"  Width="26" Height="26"  FontSize="12" Margin="695,53,47,945" x:Name="lbl_djs" Foreground="White"/>
-
     </Grid>
 </Window>

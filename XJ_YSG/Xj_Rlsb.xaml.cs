@@ -44,7 +44,6 @@ namespace XJ_YSG
 
 
         #region 倒计时
-
         DispatcherTimer disTimer_djs = new DispatcherTimer();
 
         private void closeDjs()
@@ -55,14 +54,14 @@ namespace XJ_YSG
         }
         void disTimer_Tick(object sender, EventArgs e)
         {
-
             if (Convert.ToInt32(lbl_djs.Content) == 0)
             {
                 this.Close();
             }
             else
             {
-                lbl_djs.Content = countSecond--;
+                lbl_djs.Content = countSecond;
+                countSecond--;
             }
 
         }
@@ -352,7 +351,9 @@ namespace XJ_YSG
             return result;
         }
 
-        public static int ii = 0;
+
+
+      
 
         /// <summary>
         /// RGB摄像头Paint事件，图像显示到窗体上，得到每一帧图像，并进行处理
@@ -450,18 +451,14 @@ namespace XJ_YSG
                                         string sjhm = System.Text.RegularExpressions.Regex.Replace(aimil, @"[^0-9]+", "");
                                         if (sjhm != "")
                                         {
-                                            MainBox.hashtable = Service.getUserInfo(sjhm);                                            
-                                            if (MainBox.hashtable != null && MainBox.hashtable.Count > 0)
+                                            MainBox.usertable = Service.getUserInfo(sjhm);                                            
+                                            if (MainBox.usertable != null && MainBox.usertable.Count > 0)
                                             {
                                                 //将手机号码传给新页面
-                                                Xj_BoxList boxList = new Xj_BoxList(sjhm);
+                                                Xj_BoxList boxList = new Xj_BoxList();
                                                 this.Close();
                                                 boxList.ShowDialog();
-                                            }
-                                            else 
-                                            {
-                                                speack("用户信息不存在");
-                                            }
+                                            }                                           
                                         }
                                     }
                                 }
@@ -495,7 +492,6 @@ namespace XJ_YSG
                             }
                             tempIdList.Add(faceId);
                         }
-
                     }
                     //初始化及刷新待处理队列,移除出框的人脸
                     EntityModel.rgbFeatureTryDict.RefershElements(tempIdList);
@@ -520,6 +516,11 @@ namespace XJ_YSG
             }
         }
 
+
+
+
+
+
         #region 语音播报
         public void speack(string text)
         {
@@ -529,6 +530,10 @@ namespace XJ_YSG
             }), System.Windows.Threading.DispatcherPriority.Normal);
         }
         #endregion
+
+
+
+
 
         private void Xj_Rlsb_Closed(object sender, EventArgs e)
         {
@@ -540,10 +545,12 @@ namespace XJ_YSG
             MainBox.RfidTimer.Start();
         }
 
-        private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
 
+
+        private void Image_TouchDown(object sender, System.Windows.Input.TouchEventArgs e)
+        {
             this.Close();
         }
+       
     }
 }

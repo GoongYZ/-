@@ -42,12 +42,12 @@ namespace XJ_YSG
             this.Left = 134;
             this.Top = 187;
             this.Loaded += ((s, e) => {
-                //BoxList.markLayer.Visibility = Visibility.Visible;
+                BoxList.markLayer.Visibility = Visibility.Visible;
             });
 
             this.Closed += ((s, e) =>
             {               
-                //BoxList.markLayer.Visibility = Visibility.Hidden;
+                BoxList.markLayer.Visibility = Visibility.Hidden;
             });
             if (ParameterModel.m_hDevice != IntPtr.Zero)
             {
@@ -94,11 +94,11 @@ namespace XJ_YSG
 
         /// <summary>
         //用户注册按钮
-        /// </summary>
-        private void Button_lr_Click(object sender, RoutedEventArgs e)
+        /// </summary>     
+        private void Button_lr_TouchUp(object sender, TouchEventArgs e)
         {
             //这里需要通过人脸识别或密码开启后获取的手机号码查询出id。
-            int userid = 1;
+            int userid = Convert.ToInt32( MainBox.usertable["ZWID"]);
             if (userid != 0)
             {
                 // 登记用户模板(设备句柄，用户id)             
@@ -108,7 +108,7 @@ namespace XJ_YSG
                     speack("录入成功");
                     log.WriteLogo("录入成功", 5);
                     disTimer.Stop();
-                    this.Close();
+                    Close();
                 }
                 else
                 {
@@ -116,12 +116,6 @@ namespace XJ_YSG
                     log.WriteLogo("录入失败!" + "错误原因:" + erro, 5);
                 }
             }
-        }
-
-        private void Button_Clos_Click(object sender, RoutedEventArgs e)
-        {
-            disTimer.Stop();
-            this.Close();
         }
 
         private void speack(string text)
@@ -132,6 +126,12 @@ namespace XJ_YSG
             }), System.Windows.Threading.DispatcherPriority.Normal);
         }
 
-       
+        private void Button_Clos_TouchUp(object sender, TouchEventArgs e)
+        {
+            disTimer.Stop();
+            Close();
+        }
+
+        
     }
 }

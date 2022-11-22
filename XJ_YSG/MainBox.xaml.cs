@@ -40,22 +40,24 @@ namespace XJ_YSG
         public static DispatcherTimer ClossTimer = new DispatcherTimer();  //监控开门状态倒计时
         Interaction_WebService Service = new Interaction_WebService();
         public static List<string> locklis = new List<string>();// 监控箱门的数据集合1_0&1_1,柜号_取或还
+        public static List<string> yjkqlis = new List<string>();// 应急开启还钥匙
         public static string HycsqdPK = "";  //还钥匙保存用车申请单pk
         public static string QycsqdPK = "";  //取钥匙保存用车申请单pk
         public static string  clzk="0";  //车辆状况
         public static string  clwg = "0";  //车辆外观
-        public static string  clns = "0";  //车辆内饰
+        public static string  clns = "0";  //车辆内饰       
         #region  指纹图像数据
         public byte[] m_pImageBuffer = new byte[640 * 480];
         public int m_nWidth = 0;
         public int m_nHeight = 0;
         public int m_nSize = 640 * 480;
         #endregion
+
         #region 用户信息和钥匙柜列表
-        //List<string> userlist = new List<string>();
-        //Dictionary<int, List<string>> gh = new Dictionary<int, List<string>>();
-        public static Hashtable hashtable = new Hashtable();
-        public static DataTable cllb = new DataTable();
+        public static Hashtable usertable = new Hashtable(); //用户信息
+        public static DataTable cllb = new DataTable();  //车两列表
+
+        public static Dictionary<string, string> ycsqdinfo = new Dictionary<string, string>();
         #endregion
 
 
@@ -71,36 +73,38 @@ namespace XJ_YSG
             {
                 mainbox = this;
             }
-            //port.OpenPort();  //连接锁          
             //UHFService.ConnectCOM();   //刷卡
             //UHF2Service.ConnectCOM();   //读钥匙
-            if (activation.InitEngines() == "1")
-            {
-                ChooseMultiImg();  //激活人脸识别
-            }
+            //if (activation.InitEngines() == "1")
+            //{
+            //    ChooseMultiImg();  //激活人脸识别
+            //}
+            //port.OpenPort();  //连接锁                    
+            //Csh_yskp(); //初始化钥匙柜卡片
+
             //if (fingerprint.ZW_Connection() == "ok")
             //{
             //    zwthan();   //开始指纹验证
             //}
+            //Rfidthan();   //实时RFID读信息卡                    
             //LockDjs();
-            //Rfidthan();   //实时RFID读信息卡          
-            //Csh_yskp(); //初始化钥匙柜卡片
             //this.Closed += MainWindow_Closed;
         }
-        #region 输入钥匙码按钮
-        private void Smkey_Click(object sender, RoutedEventArgs e)
+        #region 输入钥匙码按钮     
+        private void Smkey_TouchUp(object sender, System.Windows.Input.TouchEventArgs e)
         {
             zwTimer.Stop();
             RfidTimer.Stop();
             Xj_Mima xj_Mima = new Xj_Mima();
             xj_Mima.ShowDialog();
         }
+      
         #endregion
 
 
 
-        #region 开启人脸识别按钮
-        private void Facekey_Click(object sender, RoutedEventArgs e)
+        #region 开启人脸识别按钮     
+        private void Facekey_TouchUp(object sender, System.Windows.Input.TouchEventArgs e)
         {
             zwTimer.Stop();
             RfidTimer.Stop();
@@ -110,13 +114,25 @@ namespace XJ_YSG
         #endregion
 
 
+        #region 应急开启
+        private void Emergency_open_TouchUp(object sender, System.Windows.Input.TouchEventArgs e)
+        {
+            zwTimer.Stop();
+            RfidTimer.Stop();
+            Xj_BoxList boxList = new Xj_BoxList();
+            boxList.ShowDialog();         
+        }
 
-        #region 应急开启按钮
         private void Emergency_open_Click(object sender, RoutedEventArgs e)
         {
-
+            zwTimer.Stop();
+            RfidTimer.Stop();
+            Xj_BoxList boxList = new Xj_BoxList();
+            boxList.ShowDialog();
         }
+
         #endregion
+
 
 
 
@@ -148,8 +164,17 @@ namespace XJ_YSG
                     zwTimer.Stop();
                     RfidTimer.Stop();
                     log.WriteLogo("指纹比对成功\r\n" + "id:" + UserID + "\r\n" + "index:" + Index, 5);
-                    //Xj_BoxList boxList = new Xj_BoxList();
-                    //boxList.Show();
+                    if (UserID!=0)
+                    {
+                        usertable = Service.getUserInfo(UserID.ToString());
+                        if (usertable != null && usertable.Count > 0)
+                        {
+                            //将手机号码传给新页面
+                            Xj_BoxList boxList = new Xj_BoxList();
+                            this.Close();
+                            boxList.ShowDialog();
+                        }
+                    }                   
                 }
                 else
                 {
@@ -394,13 +419,11 @@ namespace XJ_YSG
         void RfidTimer_Tick_canShow(object sender, EventArgs e)
         {
             UHFService.OneCheckInvnetoryWhile(0);
-            string kp = UHFService.strEPC;
+            string kp = UHFService.strEPC;           
             if (kp != "")
             {
-               
                 zwTimer.Stop();
                 RfidTimer.Stop();
-                speack("刷卡成功");
                 Getycsqdpk(kp);
             }
         }
@@ -414,31 +437,52 @@ namespace XJ_YSG
             string txt = log.GetYsgGh();
             txt = txt.Substring(0, txt.Length - 1);
             var wzm = txt.Split(',').Where(t => t.Contains(kp)).FirstOrDefault().ToString().Split('_')[0];
-            //调用用车申请单接口
-            var hash = Service.getycsqdpkInfo(sbbm, wzm);
-            if (hash != null&&hash.Count>0)
-            {
-                string PK = hash["PK"].ToString(); //用车申请单pk
-                HycsqdPK = PK;               //保存用车申请单pk
-                if (hash["SFPL"].ToString() == "1") //是否评论
+            if (wzm != "")
+            {              
+                //调用用车申请单接口
+                var hash = Service.getycsqdpkInfo(sbbm, wzm);
+                if (hash != null && hash.Count > 0)
                 {
-                    Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox, wzm);
-                    xj_Clpj.ShowDialog();
-
+                    string PK = hash["PK"].ToString(); //用车申请单pk
+                    HycsqdPK = PK;               //保存用车申请单pk
+                    if (hash["SFPL"].ToString() == "1") //是否评论
+                    {
+                        Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox, wzm);
+                        xj_Clpj.ShowDialog();
+                    }                  
                 }
                 Send(wzm);  //开门
                 red_light(wzm, true);
                 speack("柜门已打开");
-                locklis.Add(wzm + "_0"); //添加到箱门状态集合中  
+                locklis.Add(wzm + "_skhys"); //添加到箱门状态集合中  
                 UHFService.strEPC = ""; //清楚刷卡信息，下次刷卡使用
-
-            }
-            else
-            {
                 zwTimer.Start();
                 RfidTimer.Start();
             }
+            else 
+            {
+                speack("该卡无效");
+            }
+          
+
         }
+
+
+
+        /// <summary>
+        /// 应急开启还钥匙
+        /// </summary>
+        /// <param name="kp"></param>
+        public void YjkqLock(string kp) 
+        {
+            string txt = log.GetYsgGh();
+            txt = txt.Substring(0, txt.Length - 1);
+            var wzm = txt.Split(',').Where(t => t.Contains(kp)).FirstOrDefault().ToString().Split('_')[0];
+            Send(wzm);  //开门
+            Blue_light(wzm, true);
+        }
+
+
         #endregion
 
 
@@ -447,8 +491,10 @@ namespace XJ_YSG
         /// <summary>
         /// 监控开门状态倒计时
         /// </summary>
+        /// 
         public void LockDjs()
         {
+
             ClossTimer.Interval = new TimeSpan(0, 0, 0, 0, 3000); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
             ClossTimer.Tick += new EventHandler(ClossTimer_Tick_canShow); //每一秒执行的方法
             ClossTimer.Start();
@@ -462,80 +508,88 @@ namespace XJ_YSG
         }
 
         /// <summary>
-        /// 关门操作
+        /// 关门操作 
         /// </summary>
         public void Closedoor()
         {
             foreach (string item in locklis)
             {
+                //位置码_操作模式
                 string wzm = item.Split('_')[0];
-                string isqh = item.Split('_')[1];
+                string czms = item.Split('_')[1];
                 string lockzt = State_lock(wzm);
                 int zt = Convert.ToInt32(lockzt.Substring(19, 1));
                 //状态 1 表示开的状态，状态 0 表示关的状态。
                 if (zt == 0)
                 {
-                    if (isqh == "0")
+                    switch (czms)
                     {
-                        UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签                      
-                        if (UHF2Service.strEPC != "")   //卡片是否读到 
-                        {                          
-                            Service.saveHys(sbbm, HycsqdPK, clzk, clwg,clns);      //调还钥匙接口                           
-                            Blue_light(wzm, false);                          
-                        }
-                        else 
-                        {
-                            red_light(wzm, false);
-                        }
-                        locklis.Remove(item);   //归还成功就不需要对该柜号进行监控                                                                                        
-                        HycsqdPK = ""; //清除数据,待下次还钥匙用
-                        clzk = "";clwg = "";clns = "";//归还成功后清除车辆评价数据
-                        UHF2Service.strEPC = ""; //归还成功待下次还钥匙用      
-                        zwTimer.Start();
-                        RfidTimer.Start();
-                        speack("归还成功");
-                        return;
-                    }
-                    else if (isqh == "1")
-                    {
-                        UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签                          
-                        if (UHF2Service.strEPC == "")   //卡片是否读到 
-                        {
-                            Service.saveQys(sbbm, QycsqdPK);
-                            red_light(wzm, false);                         
-                        }
-                        else 
-                        {
-                            Blue_light(wzm, false);
-                        }
-                        locklis.Remove(item);   //取走就不需要对该柜号进行监控
-                        QycsqdPK = ""; //清除数据,待下次取钥匙用
-                        zwTimer.Start();
-                        RfidTimer.Start();                                               
-                        return;
-                    }
-                    else 
-                    {
-                        UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签  
-                        if (UHF2Service.strEPC == "")   //卡片是否读到 
-                        { 
-                            red_light(wzm, false);
-                            Service.saveYcsq();     //保存用车申请单                         
-                            MessageBox.Show("人脸或指纹钥匙走了");
-                        }
-                        else 
-                        {
-                            Blue_light(wzm, false);
-                        }
-                        zwTimer.Start();
-                        RfidTimer.Start();
-                        locklis.Remove(item);   //取走就不需要对该柜号进行监控
-                      
-                        return;
-                    }                   
+                        case "skhys": //刷卡还钥匙
+                            UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签                      
+                            if (UHF2Service.strEPC != "")   //卡片是否读到 
+                            {
+                                Service.saveHys(sbbm, HycsqdPK, clzk, clwg, clns);      //调还钥匙接口                           
+                                Blue_light(wzm, false);
+                            }
+                            else
+                            {
+                                red_light(wzm, false);
+                            }
+                            locklis.Remove(item);   //归还成功就不需要对该柜号进行监控                                                                                        
+                            HycsqdPK = ""; //清除数据,待下次还钥匙用
+                            clzk = ""; clwg = ""; clns = "";//归还成功后清除车辆评价数据
+                            UHF2Service.strEPC = ""; //归还成功待下次还钥匙用      
+                            zwTimer.Start();
+                            RfidTimer.Start();
+                            speack("归还成功");
+                            break;
+                        case "mmqys": //密码取钥匙
+                            UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签                          
+                            if (UHF2Service.strEPC == "")   //卡片是否读到 
+                            {
+                                Service.saveQys(sbbm, QycsqdPK);
+                                red_light(wzm, false);
+                            }
+                            else
+                            {
+                                Blue_light(wzm, false);
+                                UHF2Service.strEPC = ""; //归还成功待下次还钥匙用      
+                            }
+                            locklis.Remove(item);   //取走就不需要对该柜号进行监控
+                            QycsqdPK = ""; //清除数据,待下次取钥匙用
+                            zwTimer.Start();
+                            RfidTimer.Start();
+                            break;
+                        case "rlzwqys": //人脸或指纹取钥匙
+                            UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签  
+                            if (UHF2Service.strEPC == "")   //卡片是否读到 取走
+                            {
+                                if (usertable.Count > 0 && usertable != null)
+                                {
+                                    Service.saveYcsq(sbbm, ycsqdinfo["wzm"].ToString(), usertable["PK"].ToString(), ycsqdinfo["yclxpk"].ToString(), ycsqdinfo["ycsypk"].ToString(), ycsqdinfo["mddspk"].ToString() , ycsqdinfo["mddxpk"].ToString() , ycsqdinfo["yjghsj"].ToString());
+                                }
+                                else
+                                {
+                                    Service.saveYcsq(sbbm, ycsqdinfo["wzm"].ToString(), "1", ycsqdinfo["yclxpk"].ToString(), ycsqdinfo["ycsypk"].ToString(), ycsqdinfo["mddspk"].ToString(), ycsqdinfo["mddxpk"].ToString(), ycsqdinfo["yjghsj"].ToString());
+                                }
+                                red_light(wzm, false);                                                
+                                MessageBox.Show("人脸或指纹钥匙走了");
+                            }
+                            else
+                            {
+                                Blue_light(wzm, false);
+                                UHF2Service.strEPC = ""; //归还成功待下次还钥匙用      
+                            }                         
+                            locklis.Remove(item);   //取走就不需要对该柜号进行监控
+                            break;
+                        default:
+                            break;
+                    }                    
                 }
             }
         }
+
+       
         #endregion
 
 
@@ -549,16 +603,21 @@ namespace XJ_YSG
                 int gzsl = Convert.ToInt32(ServerBase.XMLRead("Count", "Ysg_gzsl"));  //钥匙柜格子数量
                 for (int i = 1; i <= gzsl; i++)
                 {
+                    Ice_Blue(i.ToString(), true);
                     UHF2Service.OneCheckInvnetoryWhile(i - 1);
                     string yskp = UHF2Service.strEPC;
                     if (yskp != "")
                     {
                         gh_kp += "" + i + "_" + yskp + "," + "\r";
                         UHF2Service.strEPC = "";
+                        Blue_light(i.ToString(), false);
                     }
-                    Blue_light(i.ToString(), false) ;
+                    else 
+                    {
+                        red_light(i.ToString(), false);
+                    }                    
                 }
-                Logo.sWriteYsgh(gh_kp);
+                Logo.sWriteYsgh(gh_kp.Substring(0, gh_kp.Length - 1));
                 speack("智能钥匙管理柜初始化成功");
             });
         }
@@ -958,13 +1017,16 @@ namespace XJ_YSG
         {
             this.Close();
         }
+
+        private void Emergency_clos_PreviewTouchUp(object sender, System.Windows.Input.TouchEventArgs e)
+        {
+            this.Close();
+        }
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             Environment.Exit(0);
         }
 
-
-
-
+        
     }
 }

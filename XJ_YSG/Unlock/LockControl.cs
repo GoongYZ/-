@@ -12,7 +12,7 @@ namespace XJ_YSG
         /// </summary>
         /// <param name="gzh">格子号</param>
         public void Send(string  gzh)      
-        {
+        {         
             int gz = Convert.ToInt32(gzh);
             string rtn = "";
             byte[] data = new byte[12];

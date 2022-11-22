@@ -286,7 +286,7 @@ namespace BLL
                 string FilePath = sSetYsgGh();
                 if (File.Exists(FilePath))
                 {
-                    StreamWriter sw = new StreamWriter(FilePath, true);
+                    StreamWriter sw = new StreamWriter(FilePath, false);
                     sw.WriteLine(text);
                     sw.Close();
                 }

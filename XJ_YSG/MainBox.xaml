@@ -12,18 +12,17 @@
         <Image x:Name="pictureBox_FingerImg"  HorizontalAlignment="Left" Height="200" Margin="4,3,0,0" VerticalAlignment="Top" Width="200"/>
         <Viewbox Stretch=" fill">
             <Canvas Width="768" Height="1024"  Background="Transparent">
-                <Button Content="" HorizontalAlignment="Left"  x:Name="Smkey"  Click="Smkey_Click" Opacity="0"  Background="Transparent" BorderThickness="0"  Height="150" VerticalAlignment="Top" Width="515" Canvas.Left="22" Canvas.Top="854"/>
-                <Button Content="" HorizontalAlignment="Left"  x:Name="Facekey" Click="Facekey_Click" Background="Transparent" Opacity="0" BorderThickness="0"   Height="150" VerticalAlignment="Top" Width="180" Canvas.Left="565" Canvas.Top="854"/>
-                <materialDesign:PopupBox 
-                 Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
+                <Button Content="" HorizontalAlignment="Left"  x:Name="Smkey"    TouchUp="Smkey_TouchUp" Opacity="0"   Background="Transparent" BorderThickness="0"  Height="150" VerticalAlignment="Top" Width="515" Canvas.Left="22" Canvas.Top="854"/>
+                <Button Content="" HorizontalAlignment="Left"  x:Name="Facekey"   TouchUp="Facekey_TouchUp"     Background="Transparent" Opacity="0" BorderThickness="0"   Height="150" VerticalAlignment="Top" Width="180" Canvas.Left="565" Canvas.Top="854"/>
+                <materialDesign:PopupBox  Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
                       PlacementMode="BottomAndAlignCentres"
-                      ToggleCheckedContentCommandParameter="wowsers" Canvas.Left="688" Canvas.Top="10">
+                      ToggleCheckedContentCommandParameter="wowsers"  Canvas.Left="650" Canvas.Top="10" Width="100" Height="100">
                     <materialDesign:PopupBox.ToggleContent>
-                        <materialDesign:PackIcon Kind="FormatListBulleted" Width="30" Height="30" />
+                        <materialDesign:PackIcon Kind="FormatListBulleted"   Width="70" Height="70" />
                     </materialDesign:PopupBox.ToggleContent>
                     <StackPanel>
-                        <Button  Style="{StaticResource MaterialDesignRaisedAccentButton}" Width="100" ToolTip="应急开启" x:Name="Emergency_open" Click="Emergency_open_Click">应急开启</Button>
-                        <Button  Style="{StaticResource MaterialDesignRaisedAccentButton}" Width="100" ToolTip="应急开启" x:Name="Emergency_clos" Click="Emergency_clos_Click">退出</Button>
+                        <Button  Style="{StaticResource MaterialDesignRaisedAccentButton}" Width="100" Height="50" ToolTip="应急开启" x:Name="Emergency_open" Click="Emergency_open_Click"  TouchUp="Emergency_open_TouchUp"  IsManipulationEnabled="True">应急开启</Button>
+                        <Button  Style="{StaticResource MaterialDesignRaisedAccentButton}" Width="100" Height="50" Margin="0,5,0,0" ToolTip="退出" x:Name="Emergency_clos" TouchUp="Emergency_clos_PreviewTouchUp"  IsManipulationEnabled="True">退出</Button>
                     </StackPanel>
                 </materialDesign:PopupBox>
             </Canvas>

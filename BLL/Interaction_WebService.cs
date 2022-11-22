@@ -86,6 +86,7 @@ namespace BLL
                         outtb.Add("SFZH", vmodel["SFZH"].ToString());
                         outtb.Add("SJHM", vmodel["SJHM"].ToString());
                         outtb.Add("PK", vmodel["PK"].ToString());
+                        outtb.Add("ZWID", vmodel["ZWID"].ToString());
                         outtb.Add("DEPTPK", vmodel["DEPTPK"].ToString());
                     }
                 }
@@ -230,12 +231,48 @@ namespace BLL
         }
 
 
-        ///
-
-        public Hashtable saveYcsq()
+       
+        /// <summary>
+        /// 保存用车申请单
+        /// </summary>
+        /// <param name="sbbm"></param>
+        /// <param name="wzm"></param>
+        /// <param name="userpk"></param>
+        /// <param name="yclx"></param>
+        /// <param name="ycsy"></param>
+        /// <param name="mdds"></param>
+        /// <param name="mddx"></param>
+        /// <param name="yjghsj"></param>
+        /// <returns></returns>
+        public bool saveYcsq(string sbbm,string wzm, string userpk, string yclx, string ycsy, string mdds, string mddx, string yjghsj)
         {
-            Hashtable p = new Hashtable();
-            return null;
+            Hashtable p = new Hashtable();         
+            p.Add("sbbm", sbbm);
+            p.Add("wzm", wzm);
+            p.Add("userpk", userpk);
+            p.Add("yclx", yclx);
+            p.Add("ycsy", ycsy);         
+            p.Add("mdds", mdds);
+            p.Add("mddx", mddx);
+            p.Add("yjghsj", yjghsj);
+            string Json = doCallingInterface_String("clgl", "saveycsq", p);
+            if (!String.IsNullOrEmpty(Json))
+            {
+                JObject jsonObj = JsonConvert.DeserializeObject<JObject>(Json);
+                string r = jsonObj["r"].ToString();
+                if (r.ToLower() == "true")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }           
         }
 
 

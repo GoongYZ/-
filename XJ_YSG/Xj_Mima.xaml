@@ -6,68 +6,87 @@
         xmlns:local="clr-namespace:XJ_YSG"
         mc:Ignorable="d"
         Title="Xj_Mima"  Height="1024" Width="768" WindowStyle="None" ResizeMode="CanMinimize">
-    <StackPanel>
-     
-        <StackPanel>
-            <Button Width="80" Height="50" Margin="650,20,0,0" Content="取消"  FontSize="20" Background="#2196F3" x:Name="Shut_down" Click="Shut_down_Click"></Button>
-        </StackPanel>
-        <StackPanel Width="358" Height="116"  Margin="212,170,198,675">
-            <Label Height="66"  VerticalAlignment="Center"  HorizontalContentAlignment="Center" Background="Transparent" BorderBrush="Transparent" x:Name="mm" Foreground="White" FontSize="30"  VerticalContentAlignment="Center" Content="" Margin="43,35,43,0" />
-        </StackPanel>
-        <StackPanel Width="358" Height="469"  Margin="212,-675,198,233">
-            <StackPanel Width="336" Height="446"  Margin="11,12,11,11">
-                <Grid x:Name="btn_list">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="5"></RowDefinition>
-                        <!--0-->
-                        <RowDefinition Height="106"></RowDefinition>
-                        <!--1-->
-                        <RowDefinition Height="2"></RowDefinition>
-                        <!--2-->
-                        <RowDefinition Height="106"></RowDefinition>
-                        <!--3-->
-                        <RowDefinition Height="2"></RowDefinition>
-                        <!--4-->
-                        <RowDefinition Height="106"></RowDefinition>
-                        <!--5-->
-                        <RowDefinition Height="2"></RowDefinition>
-                        <!--6-->
-                        <RowDefinition Height="106"></RowDefinition>
-                        <!--7-->
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5"></ColumnDefinition>
-                        <!--0-->
-                        <ColumnDefinition Width="107"></ColumnDefinition>
-                        <!--1-->
-                        <ColumnDefinition Width="2"></ColumnDefinition>
-                        <!--2-->
-                        <ColumnDefinition Width="107"></ColumnDefinition>
-                        <!--3-->
-                        <ColumnDefinition Width="2"></ColumnDefinition>
-                        <!--4-->
-                        <ColumnDefinition Width="107"></ColumnDefinition>
-                        <!--5-->
-                    </Grid.ColumnDefinitions>
+    <Window.Resources>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
+        <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+        <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" CornerRadius="5" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 
-
-                    <Button Width="106" Height="110" Opacity="0" x:Name="btn_1" Tag="1"  Click="btn_mima_Click" Background="Red" Margin="5,-2,3,3" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
-                    <Button Width="106" Height="105"  Grid.Column="2" Opacity="0" x:Name="btn_2" Tag="2" Click="btn_mima_Click" Background="Red" Margin="2,0,3,1" Grid.ColumnSpan="2" Grid.Row="1"/>
-                    <Button Width="106" Height="105"  Grid.Column="4" Opacity="0" x:Name="btn_3" Tag="3" Click="btn_mima_Click" Background="Red" Margin="2,0,3,1" Grid.ColumnSpan="2" Grid.Row="1"/>
-
-                    <Button Width="106" Height="105" Grid.Row="3" Opacity="0" x:Name="btn_4" Tag="4" Click="btn_mima_Click" Background="Red" Margin="5,6,3,103" Grid.ColumnSpan="2" Grid.RowSpan="3"/>
-                    <Button Width="106" Height="105" Grid.Row="3"  Grid.Column="2" Opacity="0" x:Name="btn_5" Tag="5" Click="btn_mima_Click" Background="Red" Margin="2,3,3,0" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-                    <Button Width="106" Height="105" Grid.Row="2"  Grid.Column="5" Opacity="0" x:Name="btn_6" Tag="6" Click="btn_mima_Click" Background="Red" Margin="1,0,1,3" Grid.RowSpan="2"/>
-
-                    <Button Width="106" Height="105" Grid.Row="5"  Grid.Column="1" Opacity="0" x:Name="btn_7" Tag="7" Click="btn_mima_Click" Background="Red" Margin="0,7,2,102" Grid.RowSpan="3"/>
-                    <Button Width="106" Height="105" Grid.Row="5"  Grid.Column="3" Opacity="0" x:Name="btn_8" Tag="8" Click="btn_mima_Click" Background="Red" Margin="1,8,1,101" Grid.RowSpan="3"/>
-                    <Button Width="106" Height="105" Grid.Row="5"  Grid.Column="5" Opacity="0" x:Name="btn_9" Tag="9" Click="btn_mima_Click" Background="Red" Margin="1,10,1,99" Grid.RowSpan="3"/>
-
-                    <Button Width="106" Height="105" Grid.Row="7"  Grid.Column="1" Opacity="0" x:Name="btn_Delete" Click="btn_Delete_Click"  Background="Red" Margin="1,19,1,-18"/>
-                    <Button Width="106" Height="105" Grid.Row="7"  Grid.Column="3" Opacity="0" x:Name="btn_0" Tag="0"  Click="btn_mima_Click"  Background="Red" Margin="1,17,1,-16"/>
-                    <Button Width="106" Height="105" Grid.Row="7"  Grid.Column="5" Opacity="0" x:Name="btn_Save"  Click="btn_Save_Click"  Background="Red" Margin="1,19,1,-18"/>
-                </Grid>
-            </StackPanel>
-        </StackPanel>
-    </StackPanel>
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="IMG\xj_mima.png"></ImageBrush>
+        </Grid.Background>
+        <Button Width="80" Height="50" Margin="663,18,25,956" Content="取消"  FontSize="20" Background="#2196F3" x:Name="Shut_down"  TouchUp="Shut_down_TouchUp"></Button>
+        <Border CornerRadius="20"  Width="358" Height="116" Margin="13,0,0,444">
+            <Label Height="66"   VerticalAlignment="Center"  HorizontalContentAlignment="Center" Background="Transparent" BorderBrush="Transparent" x:Name="mm" Foreground="White" FontSize="30"  VerticalContentAlignment="Center"  Margin="43,42,43,8" />
+        </Border>
+        <Border CornerRadius="5" Background="BurlyWood"  Opacity="0.5" Width="336" Height="446.3" Margin="14,135,0,0" >
+            <UniformGrid Rows="4" Columns="3" >
+                <Button Width="107" Height="106" Tag="1" Style="{DynamicResource ButtonStyle1}"  TouchUp="Button_mima_TouchUp"></Button>
+                <Button Width="107" Height="106" Tag="2" Style="{DynamicResource ButtonStyle1}"  TouchUp="Button_mima_TouchUp"></Button>
+                <Button Width="107" Height="106" Tag="3" Style="{DynamicResource ButtonStyle1}" TouchUp="Button_mima_TouchUp"></Button>
+                <Button Width="107" Height="106" Tag="4" Style="{DynamicResource ButtonStyle1}"  TouchUp="Button_mima_TouchUp"></Button>
+                <Button Width="107" Height="106" Tag="5" Style="{DynamicResource ButtonStyle1}"  TouchUp="Button_mima_TouchUp"></Button>
+                <Button Width="107" Height="106" Tag="6" Style="{DynamicResource ButtonStyle1}"  TouchUp="Button_mima_TouchUp"></Button>
+                <Button Width="107" Height="106" Tag="7" Style="{DynamicResource ButtonStyle1}" TouchUp="Button_mima_TouchUp"></Button>
+                <Button Width="107" Height="106" Tag="8" Style="{DynamicResource ButtonStyle1}" TouchUp="Button_mima_TouchUp"></Button>
+                <Button Width="107" Height="106" Tag="9" Style="{DynamicResource ButtonStyle1}" TouchUp="Button_mima_TouchUp"></Button>
+                <Button Width="107" Height="106" Style="{DynamicResource ButtonStyle1}"  TouchUp="Button_Delete_TouchUp"></Button>
+                <Button Width="107" Height="106" Tag="0" Style="{DynamicResource ButtonStyle1}"  TouchUp="Button_mima_TouchUp"></Button>
+                <Button Width="107" Height="106" Style="{DynamicResource ButtonStyle1}"  TouchUp="Button_Save_TouchUp"></Button>
+            </UniformGrid>
+        </Border>
+    </Grid>
 </Window>
