@@ -54,15 +54,16 @@ namespace XJ_YSG
         }
         void disTimer_Tick(object sender, EventArgs e)
         {
-            if (Convert.ToInt32(lbl_djs.Content) == 0)
-            {
-                this.Close();
-            }
-            else
-            {
-                lbl_djs.Content = countSecond;
-                countSecond--;
-            }
+            lbl_djs.Content = countSecond--;
+            //if (Convert.ToInt32(lbl_djs.Content) == 0)
+            //{
+            //    this.Close();
+            //}
+            //else
+            //{
+            //    lbl_djs.Content = countSecond;
+            //    countSecond--;
+            //}
 
         }
         #endregion

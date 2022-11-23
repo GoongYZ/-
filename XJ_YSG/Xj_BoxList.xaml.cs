@@ -16,7 +16,8 @@ namespace XJ_YSG
     {
 
         private Xj_BoxList BoxList = null;
-        Interaction_WebService Service = new Interaction_WebService();       
+        Interaction_WebService Service = new Interaction_WebService();
+        DataTable cllb = new DataTable();  //车两列表
         public Xj_BoxList()
         {
             InitializeComponent();
@@ -29,54 +30,25 @@ namespace XJ_YSG
             {
                 BoxList = this;
             }
-            Bindinfo();
-            this.Closed += Bolist_clos;
+            Bindinfo();          
         }
 
-        
-
-
-
-
+       
         /// <summary>
         /// 绑定列表
         /// </summary>
         private void Bindinfo()
         {
-            MainBox.cllb.Columns.Add("BH");
-            MainBox.cllb.Columns.Add("UriSource");
-            MainBox.cllb.Columns.Add("ZT");
-            if (MainBox.usertable != null && MainBox.usertable.Count > 0)
-            {               
-                DataTable dt = Service.getListBox(MainBox.usertable["SJHM"].ToString(), MainBox.sbbm);
-                if (dt.Rows.Count > 0 && dt != null)
-                {
-                    for (int i = 1; i <=MainBox.cllb.Rows.Count; i++)
-                    {
-                        DataRow dr = MainBox.cllb.NewRow();
-                        dr["BH"] = MainBox.cllb.Rows[i]["BH"].ToString();
-                        string zt = MainBox.cllb.Rows[i]["ZT"].ToString();
-                        if (zt == "0")
-                        {
-                            dr["UriSource"] = "img/Boxlist_zaiku.png";
-                            dr["ZT"] = "正常";
-                        }
-                        else if (zt == "1")
-                        {
-                            dr["UriSource"] = "img/Boxlist_chuche.png";
-                            dr["ZT"] = "出车中";
-                        }
-                        MainBox.cllb.Rows.Add(dr);
-                    }
-                    s_1.DataContext = MainBox.cllb;
-                }               
-            }
-            else
+           
+            cllb.Columns.Add("BH");
+            cllb.Columns.Add("UriSource");
+            cllb.Columns.Add("ZT");
+            if (MainBox.isyjkq)  
             {
-                //获取用户可以打开的柜号                   
+                //应急开启展示所有柜子                  
                 for (int i = 1; i <= MainBox.gzsl; i++)
                 {
-                    DataRow dr = MainBox.cllb.NewRow();                    
+                    DataRow dr = cllb.NewRow();
                     dr["BH"] = i.ToString();
                     string zt = "0";
                     if (zt == "0")
@@ -89,9 +61,35 @@ namespace XJ_YSG
                         dr["UriSource"] = "img/Boxlist_chuche.png";
                         dr["ZT"] = "出车中";
                     }
-                    MainBox.cllb.Rows.Add(dr);
+                   cllb.Rows.Add(dr);
                 }
-                s_1.DataContext = MainBox.cllb;
+                s_1.DataContext = cllb;
+            }
+            else
+            {              
+                DataTable dt = Service.getListBox(MainBox.usertable["SJHM"].ToString(), MainBox.sbbm);
+                if (dt.Rows.Count > 0 && dt != null)
+                {                 
+                    for (int i = 1; i <= cllb.Rows.Count; i++)
+                    {
+                        DataRow dr = cllb.NewRow();
+                        dr["BH"] = cllb.Rows[i]["BH"].ToString();
+                        string zt = cllb.Rows[i]["ZT"].ToString();
+                        if (zt == "0")
+                        {
+                            dr["UriSource"] = "img/Boxlist_zaiku.png";
+                            dr["ZT"] = "正常";
+                        }
+                        else if (zt == "1")
+                        {
+                            dr["UriSource"] = "img/Boxlist_chuche.png";
+                            dr["ZT"] = "出车中";
+                        }
+                        cllb.Rows.Add(dr);
+                    }
+                    s_1.DataContext = cllb;
+                }
+
 
             }
         }
@@ -107,34 +105,8 @@ namespace XJ_YSG
         }
        
 
-        /// <summary>
-        /// 点击格子
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void Grid_b_MouseDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    //遍历用户控件
-        //    var d = sender as Grid;
-        //    d.Focus();
-        //    UIElementCollection Childrens = d.Children;
-        //    foreach (UIElement ui in Childrens)
-        //    {
-        //        if (((Label)ui).Name == "BH")
-        //        {
-        //            string dwm = ((Label)ui).Content.ToString();
-        //            if (!string.IsNullOrEmpty(dwm))
-        //            {
-        //                //开启柜门                                          
-        //                Xj_Ycsy Ycsy = new Xj_Ycsy(BoxList, dwm);                       
-        //                Ycsy.ShowDialog();
-        //            }
-        //        }
-        //    }
-        //}
-
-
-        private void Grid_b_TouchDown(object sender, TouchEventArgs e)
+       
+        private void Grid_b_TouchUp(object sender, TouchEventArgs e)
         {
             //遍历用户控件
             var d = sender as Grid;
@@ -154,48 +126,29 @@ namespace XJ_YSG
                 }
             }
         }
-
-        private void Grid_b_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            //遍历用户控件
-            var d = sender as Grid;
-            d.Focus();
-            UIElementCollection Childrens = d.Children;
-            foreach (UIElement ui in Childrens)
-            {
-                if (((Label)ui).Name == "BH")
-                {
-                    string dwm = ((Label)ui).Content.ToString();
-                    if (!string.IsNullOrEmpty(dwm))
-                    {
-                        //开启柜门                                          
-                        Xj_Ycsy Ycsy = new Xj_Ycsy(BoxList, dwm);
-                        Ycsy.ShowDialog();
-                    }
-                }
-            }
-        }
-
-
-
 
         private void s_1_ManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
         {
             e.Handled = true;
         }
 
-        //页面关闭时执行的方法
-        private void Bolist_clos(object sender, EventArgs e)
-        {
-            MainBox.usertable.Clear();
-            MainBox.cllb.Clear();
-            MainBox.zwTimer.Start();
-            MainBox.RfidTimer.Start();
-        }   
 
+
+
+        //页面关闭时执行的方法  
         private void btn_clos_TouchUp(object sender, TouchEventArgs e)
         {
-            this.Close();
+            if (MainBox.usertable.Count != 0 || MainBox.usertable == null)
+            {
+                MainBox.usertable.Clear();
+            }
+            if (MainBox.isyjkq)
+            {
+                MainBox.isyjkq = false;
+            }            
+            MainBox.zwTimer.Start();
+            MainBox.RfidTimer.Start();
+            Close();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

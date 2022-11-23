@@ -41,11 +41,12 @@ namespace XJ_YSG
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btn_mima_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
             mm.Content += button.Tag.ToString();
         }
+
         private void Button_mima_TouchUp(object sender, TouchEventArgs e)
         {
             Button button = (Button)sender;
@@ -59,15 +60,6 @@ namespace XJ_YSG
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-
-        private void btn_Delete_Click(object sender, RoutedEventArgs e)
-        {
-            if (mm.Content.ToString().Length > 0)
-            {
-                mm.Content = mm.Content.ToString().Substring(0, mm.Content.ToString().Length - 1);
-            }
-        }
-
         private void Button_Delete_TouchUp(object sender, TouchEventArgs e)
         {
             if (mm.Content.ToString().Length > 0)
@@ -84,37 +76,50 @@ namespace XJ_YSG
         /// <param name="e"></param>     
         private void Button_Save_TouchUp(object sender, TouchEventArgs e)
         {
-            doLogin();
-        }
-
-        /// <summary>
-        /// 获取钥匙柜信息数据
-        /// </summary>
-        private void doLogin()
-        {
-
             if (mm.Content.ToString().Length == 6)
-            {
-                Hashtable tb = service.getInfoByEwm(mm.Content.ToString(), MainBox.sbbm);
-                if (tb != null && tb.Count > 0)
+            {               
+                if (MainBox.isyjkq)
                 {
-                    string wzm = tb["WZM"].ToString();
-                    MainBox.QycsqdPK = tb["YCSQDPK"].ToString();
-                    MainBox.Send(wzm);
-                    MainBox.red_light(wzm, true);
-                    speack("柜门已打开，取后请关门");
-                    MainBox.locklis.Add(wzm + "_mmqys");
-                    this.Close();
+                   bool seccss= service.Checkmanaemm(MainBox.sbbm, mm.Content.ToString());
+                    if (seccss)
+                    {                        
+                        MainBox.usertable.Add("PK", "1");                      
+                        Xj_BoxList boxList = new Xj_BoxList();
+                        Close();
+                        boxList.ShowDialog();
+                    }
+                    else 
+                    {
+                        speack("密码错误");
+                    }
                 }
                 else
                 {
-                    speack("验证码不正确，请重新输入");
+                    if (mm.Content.ToString().Length == 6)
+                    {
+                        Hashtable tb = service.getInfoByEwm(mm.Content.ToString(), MainBox.sbbm);
+                        if (tb != null && tb.Count > 0)
+                        {
+                            string wzm = tb["WZM"].ToString();
+                            MainBox.QycsqdPK = tb["YCSQDPK"].ToString();
+                            MainBox.Send(wzm);
+                            MainBox.red_light(wzm, true);
+                            speack("柜门已打开，取后请关门");
+                            MainBox.locklis.Add(wzm + "_mmqys");
+                            Close();
+                        }
+                        else
+                        {
+                            speack("验证码不正确，请重新输入");
+                        }
+                    }
                 }
-            }
-                   
-        }
 
-        
+            }                          
+        }
+       
+
+
 
 
         #region 语音播报
@@ -132,18 +137,21 @@ namespace XJ_YSG
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Shut_down_Click(object sender, RoutedEventArgs e)
-        {
-            MainBox.zwTimer.Start() ;
-            MainBox.RfidTimer.Start();
-            this.Close();
-        }
 
         private void Shut_down_TouchUp(object sender, TouchEventArgs e)
         {
             MainBox.zwTimer.Start();
             MainBox.RfidTimer.Start();
-            this.Close();
+            if (MainBox.usertable.Count >= 0 || MainBox.usertable == null) 
+            {
+                MainBox.usertable.Clear();
+            }
+            if (MainBox.isyjkq) 
+            {
+                MainBox.isyjkq = false;
+            }           
+            Close();
         }
+
     }
 }

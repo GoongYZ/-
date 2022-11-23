@@ -94,6 +94,8 @@ namespace BLL
             return outtb;
         }
 
+
+      
         /// <summary>
         /// 获取钥匙柜列表
         /// </summary>
@@ -275,9 +277,66 @@ namespace BLL
             }           
         }
 
+        /// <summary>
+        /// 验证应急开启密码
+        /// </summary>
+        public bool Checkmanaemm(string sbbm,string mm)
+        {
+            Hashtable p = new Hashtable();
+            p.Add("sbbm", sbbm);
+            p.Add("mm", mm);
+            string Json = doCallingInterface_String("clgl", "checkmanagemm", p);
+            if (!String.IsNullOrEmpty(Json))
+            {
+                JObject jsonObj = JsonConvert.DeserializeObject<JObject>(Json);
+                string r = jsonObj["r"].ToString();
+                if (r.ToLower() == "true")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+            
+        }
 
 
-
+        /// <summary>
+        /// 上报设备运行状态
+        /// </summary>
+        /// <param name="sbbm"></param>
+        /// <param name="bbh"></param>
+        /// <returns></returns>
+        public bool sendyxzk(string sbbm, string bbh) 
+        {
+            Hashtable p = new Hashtable();
+            p.Add("sbbm", sbbm);
+            p.Add("bbh", bbh);
+            string Json = doCallingInterface_String("clgl", "sendyxzk", p);
+            if (!String.IsNullOrEmpty(Json))
+            {
+                JObject jsonObj = JsonConvert.DeserializeObject<JObject>(Json);
+                string r = jsonObj["r"].ToString();
+                if (r.ToLower() == "true")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
 
 
 

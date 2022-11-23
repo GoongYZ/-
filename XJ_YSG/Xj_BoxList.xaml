@@ -87,7 +87,7 @@
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate >
                         <DataTemplate>
-                            <Grid Height="110" Width="165" x:Name="Grid_b" Tag="{Binding Path=BH}"   TouchDown="Grid_b_TouchDown" MouseDown="Grid_b_MouseDown" >
+                            <Grid Height="110" Width="165" x:Name="Grid_b" Tag="{Binding Path=BH}" TouchDown="Grid_b_TouchUp"  Stylus.IsPressAndHoldEnabled="False " >
                                 <Grid.Background>
                                     <ImageBrush  ImageSource="{Binding Path=UriSource}"/>
                                 </Grid.Background>
@@ -97,8 +97,6 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-
-
             </Canvas>
         </Viewbox>
     </Grid>

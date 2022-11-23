@@ -288,6 +288,7 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
+        
         <Style x:Key="ComboBoxStyle1" TargetType="{x:Type ComboBox}">
             <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
             <Setter Property="Background" Value="{StaticResource ComboBox.Static.Background}"/>
@@ -307,7 +308,7 @@
             <Setter Property="FontWeight" Value="Black"/>
             <Style.Triggers>
                 <Trigger Property="IsEditable" Value="true">
-                    <Setter Property="IsTabStop" Value="false"/>
+                    <Setter Property="IsTabStop" Value="True"/>
                     <Setter Property="Padding" Value="2"/>
                     <Setter Property="Template" Value="{StaticResource ComboBoxEditableTemplate}"/>
                 </Trigger>
@@ -487,22 +488,10 @@
 
         <ComboBox HorizontalAlignment="Left" Margin="368,260,0,0" VerticalAlignment="Top"  x:Name="mddx" Width="144" Height="52" Style="{DynamicResource ComboBoxStyle1}"/>
 
-        <DatePicker  Language="zh-cn"   x:Name="name_scrq"  Width="300" Height="52" VerticalContentAlignment="Center"  FontFamily="微软雅黑" Foreground="#666666" FontSize="20" Margin="196,348,53,168" Background="#F5F5F5" >
-        <DatePicker.Resources>
-            <Style TargetType="DatePickerTextBox">
-                <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <TextBox VerticalContentAlignment="Center"  FontFamily="微软雅黑" Foreground="#666666" FontSize="20"  Text="{Binding Path=SelectedDate, StringFormat={}{0:yyyy-MM-dd}, RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" />
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </DatePicker.Resources>
-        </DatePicker>
 
-        <Button Content="确定"   TouchUp="open_Button_TouchUp"   HorizontalAlignment="Left" Margin="205,436,0,0" VerticalAlignment="Top" Width="150" Height="64" Style="{DynamicResource ButtonStyle1}"/>
+        <ComboBox HorizontalAlignment="Left"  Margin="192,345,0,0" VerticalAlignment="Top"  x:Name="yjghsj"  Width="320" Height="52"  Style="{DynamicResource ComboBoxStyle1}"/>
+        
+        <Button Content="确定"   TouchUp="open_Button_TouchUp" Click="Button_Click"   HorizontalAlignment="Left" Margin="205,436,0,0" VerticalAlignment="Top" Width="150" Height="64" Style="{DynamicResource ButtonStyle1}"/>
 
     </Grid>
 </Window>

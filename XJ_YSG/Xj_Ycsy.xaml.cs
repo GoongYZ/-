@@ -44,7 +44,6 @@ namespace XJ_YSG
             yclx_cc.Checked += yclx_cc_Checked;
             yclx_rcwb.Checked += yclx_rcwb_Checked;
         }
-
         private void yclx_cc_Checked(object sender, RoutedEventArgs e)
         {
             if (yclx_rcwb.IsChecked==true) 
@@ -53,7 +52,6 @@ namespace XJ_YSG
             }
            
         }
-
         private void yclx_rcwb_Checked(object sender, RoutedEventArgs e)
         {
             if (yclx_cc.IsChecked == true)
@@ -80,7 +78,6 @@ namespace XJ_YSG
             ycsy.SelectedValuePath = "ID";//设置选择属性
             ycsy.DisplayMemberPath = "Name";//设置显示属性
             ycsy.SelectedIndex = 0;
-
             List<YcsqModel> listmdds = new List<YcsqModel>();
             listmdds.Add(new YcsqModel { ID = "85f89b0e-299f-43a0-a6fe-6d398ff7d6f8", Name = "县内" });
             listmdds.Add(new YcsqModel { ID = "a54ff4e5-2af9-47c5-baa8-1fe6e98710a0", Name = "杭嘉湖" });
@@ -88,7 +85,18 @@ namespace XJ_YSG
             mdds.ItemsSource = listmdds;
             mdds.SelectedValuePath = "ID";//设置选择属性
             mdds.DisplayMemberPath = "Name";//设置显示属性
-            mdds.SelectedIndex = 0;              
+            mdds.SelectedIndex = 0;
+            List<YcsqModel> listyjghsj = new List<YcsqModel>();
+            listyjghsj.Add(new YcsqModel { ID = "2", Name = "2小时" });
+            listyjghsj.Add(new YcsqModel { ID = "4", Name = "4小时" });
+            listyjghsj.Add(new YcsqModel { ID = "8", Name = "8小时" });
+            listyjghsj.Add(new YcsqModel { ID = "12", Name = "12小时" });
+            listyjghsj.Add(new YcsqModel { ID = "24", Name = "24小时" });
+            listyjghsj.Add(new YcsqModel { ID = "48", Name = "48小时" });          
+            yjghsj.ItemsSource = listyjghsj;
+            yjghsj.SelectedValuePath = "ID";//设置选择属性
+            yjghsj.DisplayMemberPath = "Name";//设置显示属性
+            yjghsj.SelectedIndex = 0;
         }
 
         private void mdds_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -152,34 +160,68 @@ namespace XJ_YSG
        
 
         private void open_Button_TouchUp(object sender, TouchEventArgs e)
-        {
-            MainBox.ycsqdinfo.Clear();
+        {        
             if (gh != "")
             {
-                MainBox.ycsqdinfo.Add("wzm", gh);              
+                string yclxpk = "";  
                 if (yclx_cc.IsChecked==true)
                 {
-                    MainBox.ycsqdinfo.Add("yclxpk", yclx_cc.Tag.ToString());
-                    
+                    yclxpk = yclx_cc.Tag.ToString();                                     
                 }
                 if (yclx_rcwb.IsChecked == true) 
                 {
-                    MainBox.ycsqdinfo.Add("yclxpk", yclx_rcwb.Tag.ToString());                    
-                }
-                MainBox.ycsqdinfo.Add("ycsypk", ycsy.SelectedValue.ToString());
-                MainBox.ycsqdinfo.Add("mddspk", mdds.SelectedValue.ToString());
-                MainBox.ycsqdinfo.Add("mddxpk", mddx.SelectedValue.ToString());
-                MainBox.ycsqdinfo.Add("yjghsj", string.Format("{0:yyyy-MM-dd}", name_scrq.SelectedDate.Value));
-                if (MainBox.ycsqdinfo.Count > 0 && MainBox.ycsqdinfo != null) 
+                    yclxpk = yclx_rcwb.Tag.ToString();                                   
+                }              
+               string ycsypk= ycsy.SelectedValue.ToString();
+               string mddspk= mdds.SelectedValue.ToString();
+               string mddxpk= mddx.SelectedValue.ToString();
+               string yjghsjpk= yjghsj.SelectedValue.ToString();
+               bool sesscc = Service.saveYcsq(MainBox.sbbm, gh, MainBox.usertable["PK"].ToString(), yclxpk, ycsypk, mddspk, mddxpk, yjghsjpk);
+                if (sesscc)
                 {
-                    MainBox.Send(gh);                
-                    speack("柜门已打开");
-                    MainBox.red_light(gh, false);
-                    MainBox.locklis.Add(gh + "_rlzwqys");
+                    MainBox.Send(gh);
+                    MainBox.red_light(gh, true);
+                    speack("柜门已打开,取后请关门");
+                    MainBox.locklis.Add(gh + "_qtqys");
                     Close();
-                }          
+                }
+                else
+                {
+                    speack("该格未绑定车辆，请联系管理员配置");
+                }
+
             }
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (gh != "")
+            {
+                string yclxpk = "";
+                if (yclx_cc.IsChecked == true)
+                {
+                    yclxpk = yclx_cc.Tag.ToString();
+                }
+                if (yclx_rcwb.IsChecked == true)
+                {
+                    yclxpk = yclx_rcwb.Tag.ToString();
+                }
+                string ycsypk = ycsy.SelectedValue.ToString();
+                string mddspk = mdds.SelectedValue.ToString();
+                string mddxpk = mddx.SelectedValue.ToString();
+                string yjghsjpk = yjghsj.SelectedValue.ToString();
+                bool sesscc = Service.saveYcsq(MainBox.sbbm, gh, MainBox.usertable["PK"].ToString(), yclxpk, ycsypk, mddspk, mddxpk, yjghsjpk);
+                if (sesscc)
+                {
+                    MainBox.Send(gh);
+                    MainBox.red_light(gh, false);
+                    speack("柜门已打开");
+                    MainBox.locklis.Add(gh + "_rlzwqys");
+                    Close();
+                }
+            }
+        }
+
 
         #region 语音播报
         private void speack(string text)
@@ -196,6 +238,6 @@ namespace XJ_YSG
             this.Close();
         }
 
-      
+        
     }
 }

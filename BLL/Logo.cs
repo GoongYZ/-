@@ -58,6 +58,9 @@ namespace BLL
                 case 7:
                     rtn = "_刷卡";
                     break;
+                case 8:
+                    rtn = "_运行日志";
+                    break;
             }
             return rtn;
         }
