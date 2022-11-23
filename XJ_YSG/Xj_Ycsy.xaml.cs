@@ -163,33 +163,26 @@ namespace XJ_YSG
         {        
             if (gh != "")
             {
-                string yclxpk = "";  
                 if (yclx_cc.IsChecked==true)
-                {
-                    yclxpk = yclx_cc.Tag.ToString();                                     
+                {                  
+                    MainBox.ycsqdinfo.Add("yclxpk", yclx_cc.Tag.ToString());
                 }
                 if (yclx_rcwb.IsChecked == true) 
-                {
-                    yclxpk = yclx_rcwb.Tag.ToString();                                   
-                }              
-               string ycsypk= ycsy.SelectedValue.ToString();
-               string mddspk= mdds.SelectedValue.ToString();
-               string mddxpk= mddx.SelectedValue.ToString();
-               string yjghsjpk= yjghsj.SelectedValue.ToString();
-               bool sesscc = Service.saveYcsq(MainBox.sbbm, gh, MainBox.usertable["PK"].ToString(), yclxpk, ycsypk, mddspk, mddxpk, yjghsjpk);
-                if (sesscc)
+                {                    
+                    MainBox.ycsqdinfo.Add("yclxpk", yclx_rcwb.Tag.ToString());
+                }                           
+                MainBox.ycsqdinfo.Add("ycsypk", ycsy.SelectedValue.ToString());
+                MainBox.ycsqdinfo.Add("mddspk", mdds.SelectedValue.ToString());
+                MainBox.ycsqdinfo.Add("mddxpk", mddx.SelectedValue.ToString());
+                MainBox.ycsqdinfo.Add("yjghsjpk", yjghsj.SelectedValue.ToString());
+                if (MainBox.ycsqdinfo != null)
                 {
                     MainBox.Send(gh);
                     MainBox.red_light(gh, true);
                     speack("柜门已打开,取后请关门");
                     MainBox.locklis.Add(gh + "_qtqys");
                     Close();
-                }
-                else
-                {
-                    speack("该格未绑定车辆，请联系管理员配置");
-                }
-
+                }                             
             }
         }
 

@@ -57,7 +57,7 @@ namespace XJ_YSG
 
         #region 用户信息和钥匙柜列表
         public static Hashtable usertable = new Hashtable(); //用户信息      
-        
+        public static Dictionary<string, string> ycsqdinfo = new Dictionary<string, string>(); 
         public static bool isyjkq=false;
       
         #endregion
@@ -567,7 +567,7 @@ namespace XJ_YSG
                             UHF2Service.OneCheckInvnetoryWhile(Convert.ToInt32(wzm) - 1); //读标签  
                             if (UHF2Service.strEPC == "")   // 取走
                             {
-                                Service.saveQys(sbbm, QycsqdPK);
+                                Service.saveYcsq(sbbm, wzm, usertable["PK"].ToString(), ycsqdinfo["yclxpk"].ToString(), ycsqdinfo["ycsypk"].ToString(), ycsqdinfo["mddspk"].ToString() , ycsqdinfo["mddxpk"].ToString() , ycsqdinfo["yjghsjpk"].ToString());
                                 red_light(wzm, false);
                             }
                             else  //未取走
@@ -577,7 +577,11 @@ namespace XJ_YSG
                             locklis.Remove(item);   //移除对该柜号的监控
                             if (HycsqdPK != "")
                             {
-                                HycsqdPK = "";
+                                HycsqdPK = "";    //清除用车申请
+                            }
+                            if (usertable!=null) 
+                            {
+                                usertable.Clear(); //清除用车申请单
                             }
                             break;
                         default:
@@ -1006,7 +1010,6 @@ namespace XJ_YSG
 
 
         #region 上报钥匙柜运行状态
-        
         public void Sbyxzt()
         {
            yxzkTimer.Interval = new TimeSpan(0, 2, 0, 0, 0); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。

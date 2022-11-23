@@ -33,36 +33,46 @@ namespace XJ_YSG
             Bindinfo();          
         }
 
-       
+
         /// <summary>
         /// 绑定列表
         /// </summary>
         private void Bindinfo()
         {
-           
+
             cllb.Columns.Add("BH");
             cllb.Columns.Add("UriSource");
             cllb.Columns.Add("ZT");
-            if (MainBox.isyjkq)  
+            if (MainBox.isyjkq)
             {
+                DataTable dt = Service.getListBox(null, MainBox.sbbm);
                 //应急开启展示所有柜子                  
-                for (int i = 1; i <= MainBox.gzsl; i++)
+                for (int i = 1; i <= MainBox.gzsl; i++)  //按规格显示
                 {
                     DataRow dr = cllb.NewRow();
                     dr["BH"] = i.ToString();
-                    string zt = "0";
-                    if (zt == "0")
+                    dr["UriSource"] = "img/Boxlist_zaiku.png";
+                    var DataRowArr = dt.Select("WZM = '" + i + "' and CLHP != ''");
+                    if (DataRowArr.Length > 0)
                     {
-                        dr["UriSource"] = "img/Boxlist_zaiku.png";
-                        dr["ZT"] = "正常";
+                        DataRow New_dr = DataRowArr[0];
+                        if (New_dr["ZT"].ToString() == "0")
+                        {
+                            dr["ZT"] = "正常";
+                        }
+                        else
+                        {
+                            dr["ZT"] = "出车中";
+                        }
                     }
-                    else if (zt == "1")
+                    else
                     {
-                        dr["UriSource"] = "img/Boxlist_chuche.png";
-                        dr["ZT"] = "出车中";
-                    }
-                   cllb.Rows.Add(dr);
+                        dr["ZT"] = "未绑定";
+                    }    
+                    cllb.Rows.Add(dr);
+
                 }
+               
                 s_1.DataContext = cllb;
             }
             else
@@ -72,9 +82,9 @@ namespace XJ_YSG
                 {                 
                     for (int i = 1; i <= cllb.Rows.Count; i++)
                     {
-                        DataRow dr = cllb.NewRow();
-                        dr["BH"] = cllb.Rows[i]["BH"].ToString();
-                        string zt = cllb.Rows[i]["ZT"].ToString();
+                        DataRow dr = dt.NewRow();
+                        dr["BH"] = dt.Rows[i]["WZM"].ToString();
+                        string zt = dt.Rows[i]["ZT"].ToString();
                         if (zt == "0")
                         {
                             dr["UriSource"] = "img/Boxlist_zaiku.png";
