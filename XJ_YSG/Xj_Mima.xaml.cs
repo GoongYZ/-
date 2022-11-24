@@ -41,12 +41,6 @@ namespace XJ_YSG
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Button button = (Button)sender;
-            mm.Content += button.Tag.ToString();
-        }
-
         private void Button_mima_TouchUp(object sender, TouchEventArgs e)
         {
             Button button = (Button)sender;
@@ -77,18 +71,18 @@ namespace XJ_YSG
         private void Button_Save_TouchUp(object sender, TouchEventArgs e)
         {
             if (mm.Content.ToString().Length == 6)
-            {               
+            {
                 if (MainBox.isyjkq)
                 {
-                   bool seccss= service.Checkmanaemm(MainBox.sbbm, mm.Content.ToString());
+                    bool seccss = service.Checkmanaemm(MainBox.sbbm, mm.Content.ToString());
                     if (seccss)
-                    {                        
-                        MainBox.usertable.Add("PK", "1");                      
+                    {
+                        MainBox.usertable.Add("PK", "1");
                         Xj_BoxList boxList = new Xj_BoxList();
                         Close();
                         boxList.ShowDialog();
                     }
-                    else 
+                    else
                     {
                         speack("密码错误");
                     }
@@ -115,7 +109,7 @@ namespace XJ_YSG
                     }
                 }
 
-            }                          
+            }
         }
        
 
@@ -153,5 +147,8 @@ namespace XJ_YSG
             Close();
         }
 
+       
+
+        
     }
 }

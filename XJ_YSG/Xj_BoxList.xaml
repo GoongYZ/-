@@ -91,8 +91,8 @@
                                 <Grid.Background>
                                     <ImageBrush  ImageSource="{Binding Path=UriSource}"/>
                                 </Grid.Background>
-                                <Label Content="{Binding Path=BH}"  x:Name="BH" FontFamily="Microsoft YaHei" FontSize="36" FontWeight="black"  Foreground="#333333"   Margin="30,10,0,0"/>
-                                <Label Content="{Binding Path=ZT}"  x:Name="ZT" FontFamily="Microsoft YaHei" FontSize="20" FontWeight="black" Foreground="#999999"   Margin="24,65,0,0"/>
+                                <Label Content="{Binding Path=BH}"  x:Name="lab_BH" FontFamily="Microsoft YaHei" FontSize="36" FontWeight="black"  Foreground="#333333"   Margin="30,10,0,0"/>
+                                <Label Content="{Binding Path=ZT}"  x:Name="lab_ZT" FontFamily="Microsoft YaHei" FontSize="20" FontWeight="black" Foreground="#999999"   Margin="24,65,0,0"/>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

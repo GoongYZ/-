@@ -45,29 +45,32 @@ namespace XJ_YSG
             cllb.Columns.Add("ZT");
             if (MainBox.isyjkq)
             {
-                DataTable dt = Service.getListBox(null, MainBox.sbbm);
+                DataTable dt = Service.getListBox("", MainBox.sbbm);
                 //应急开启展示所有柜子                  
                 for (int i = 1; i <= MainBox.gzsl; i++)  //按规格显示
                 {
                     DataRow dr = cllb.NewRow();
-                    dr["BH"] = i.ToString();
-                    dr["UriSource"] = "img/Boxlist_zaiku.png";
-                    var DataRowArr = dt.Select("WZM = '" + i + "' and CLHP != ''");
+                    dr["BH"] = i.ToString();                  
+                    var DataRowArr = dt.Select("WZM = '" + i + "'");
                     if (DataRowArr.Length > 0)
                     {
                         DataRow New_dr = DataRowArr[0];
-                        if (New_dr["ZT"].ToString() == "0")
+                        if (Convert.ToInt32(New_dr["ZT"]) == 0)
                         {
+                            dr["UriSource"] = "img/Boxlist_zaiku.png";
                             dr["ZT"] = "正常";
                         }
-                        else
+                        else 
                         {
+                            dr["UriSource"] = "img/Boxlist_chuche.png";
                             dr["ZT"] = "出车中";
-                        }
+                        }                       
                     }
                     else
                     {
                         dr["ZT"] = "未绑定";
+                        dr["UriSource"] = "img/Boxlist_daifenpei.png";
+                        
                     }    
                     cllb.Rows.Add(dr);
 
@@ -85,7 +88,7 @@ namespace XJ_YSG
                         DataRow dr = dt.NewRow();
                         dr["BH"] = dt.Rows[i]["WZM"].ToString();
                         string zt = dt.Rows[i]["ZT"].ToString();
-                        if (zt == "0")
+                        if (zt == "0" && zt=="1")
                         {
                             dr["UriSource"] = "img/Boxlist_zaiku.png";
                             dr["ZT"] = "正常";
@@ -122,18 +125,35 @@ namespace XJ_YSG
             var d = sender as Grid;
             d.Focus();
             UIElementCollection Childrens = d.Children;
+            string dwm = "";
+            string zt = "";
             foreach (UIElement ui in Childrens)
             {
-                if (((Label)ui).Name == "BH")
+                if (((Label)ui).Name == "lab_BH")
                 {
-                    string dwm = ((Label)ui).Content.ToString();
-                    if (!string.IsNullOrEmpty(dwm))
-                    {
-                        //开启柜门                                          
-                        Xj_Ycsy Ycsy = new Xj_Ycsy(BoxList, dwm);
-                        Ycsy.ShowDialog();
-                    }
+                    dwm = ((Label)ui).Content.ToString();
                 }
+            }
+            foreach (UIElement ui in Childrens)
+            {
+                if (((Label)ui).Name == "lab_ZT")
+                {
+                    zt = ((Label)ui).Content.ToString();
+                }
+            }
+            if (zt == "正常")
+            {
+                //开启柜门
+                Xj_Ycsy Ycsy = new Xj_Ycsy(BoxList, dwm);
+                Ycsy.ShowDialog();
+            }
+            if (zt == "未绑定")
+            {
+                MainBox.Send(dwm);
+            }
+            if (zt == "出车中")
+            {
+                speack("该车俩已出车");
             }
         }
 
@@ -167,6 +187,14 @@ namespace XJ_YSG
             zwlr.ShowDialog();
         }
 
-       
+        #region 语音播报
+        public void speack(string text)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SpeechVoice.speack(text);
+            }), System.Windows.Threading.DispatcherPriority.Normal);
+        }
+        #endregion
     }
 }

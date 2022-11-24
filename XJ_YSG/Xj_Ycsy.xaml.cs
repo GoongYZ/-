@@ -185,37 +185,6 @@ namespace XJ_YSG
                 }                             
             }
         }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (gh != "")
-            {
-                string yclxpk = "";
-                if (yclx_cc.IsChecked == true)
-                {
-                    yclxpk = yclx_cc.Tag.ToString();
-                }
-                if (yclx_rcwb.IsChecked == true)
-                {
-                    yclxpk = yclx_rcwb.Tag.ToString();
-                }
-                string ycsypk = ycsy.SelectedValue.ToString();
-                string mddspk = mdds.SelectedValue.ToString();
-                string mddxpk = mddx.SelectedValue.ToString();
-                string yjghsjpk = yjghsj.SelectedValue.ToString();
-                bool sesscc = Service.saveYcsq(MainBox.sbbm, gh, MainBox.usertable["PK"].ToString(), yclxpk, ycsypk, mddspk, mddxpk, yjghsjpk);
-                if (sesscc)
-                {
-                    MainBox.Send(gh);
-                    MainBox.red_light(gh, false);
-                    speack("柜门已打开");
-                    MainBox.locklis.Add(gh + "_rlzwqys");
-                    Close();
-                }
-            }
-        }
-
-
         #region 语音播报
         private void speack(string text)
         {

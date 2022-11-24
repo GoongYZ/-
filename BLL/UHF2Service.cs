@@ -112,12 +112,9 @@ namespace BLL
                     {
                         tag = tagReport.m_listTags[i];
                         if (!Listm_strEPC.Contains(tag.m_strEPC)) {
-
-                            // Listm_strEPC.Add(tag.m_strEPC, tag.m_strEPC); 
+                        
                             strEPC = tag.m_strEPC;
                         }
-
-
                     }
                 }
                 Thread.Sleep(10);

@@ -123,11 +123,14 @@ namespace BLL
                     tb_kglzb.Columns.Add("JSYXM");
                     tb_kglzb.Columns.Add("CXMC");
                     tb_kglzb.Columns.Add("CLHP");
+                    tb_kglzb.Columns.Add("WZM");
+                    tb_kglzb.Columns.Add("ZT");
+                    tb_kglzb.Columns.Add("YSBH");
                     javascript = (JArray)jsonObj["rows"];
                     for (int i = 0; i < javascript.Count; i++)
                     {
                         JObject jsonobj = (JObject)javascript[i];
-                        tb_kglzb.Rows.Add(new object[] { jsonobj["PK"].ToString(), jsonobj["XZMC"].ToString(), jsonobj["JSYXM"].ToString(), jsonobj["CLHP"].ToString() });
+                        tb_kglzb.Rows.Add(new object[] { jsonobj["PK"].ToString(), jsonobj["XZMC"].ToString(), jsonobj["JSYXM"].ToString() , jsonobj["CXMC"].ToString(), jsonobj["CLHP"].ToString(), jsonobj["WZM"].ToString(), jsonobj["ZT"].ToString(), jsonobj["YSBH"].ToString() });
                     }
                 }
             }

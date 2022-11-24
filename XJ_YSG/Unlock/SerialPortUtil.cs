@@ -327,8 +327,7 @@ namespace XJ_YSG
                     Stream ns = comPort.BaseStream;
                     ns.ReadTimeout = 50;
                     len = ns.Read(data, 0, 2048);
-
-                    ReceiveData = ByteArrayToHexString(data).Substring(0, len*2);
+                    ReceiveData = ByteArrayToHexString(data).Substring(0, len * 2);
                 }
                 catch (Exception e)
                 {
@@ -360,7 +359,6 @@ namespace XJ_YSG
                     Stream ns = comPort.BaseStream;
                     ns.ReadTimeout = 1000;
                     len = ns.Read(data, 0, 2048);
-
                     ReceiveData = ByteArrayToHexString(data).Substring(0, len * 2);
                 }
                 catch (Exception e)
