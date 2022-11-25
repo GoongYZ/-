@@ -22,11 +22,11 @@ namespace XJ_YSG
     /// </summary>
     public partial class Xj_Rlsb : Window
     {
-
+       
         Activation activation = new Activation();
         Interaction_WebService Service = new Interaction_WebService();
         Logo log = new Logo();
-        private int countSecond = 30;
+        private  DispatcherTimer disTimer = new DispatcherTimer();
         public Xj_Rlsb()
         {
             InitializeComponent();
@@ -35,7 +35,8 @@ namespace XJ_YSG
             ImageBrush b3 = new ImageBrush();
             b3.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Img/key_rlsb.png", UriKind.Absolute));
             this.Background = b3;
-            closeDjs();
+            speack("人脸识别开启");
+            djs2();
             btnStartVideo_Click();
             this.Closed += Xj_Rlsb_Closed; //窗体关闭时人脸资源释放掉，否则下次无法正常显示
 
@@ -43,30 +44,52 @@ namespace XJ_YSG
         }
 
 
-        #region 倒计时
-        DispatcherTimer disTimer_djs = new DispatcherTimer();
+        #region 倒计时  
 
-        private void closeDjs()
+        System.Timers.Timer t = new System.Timers.Timer();
+        int i = 30;
+        private void djs2()
         {
-            disTimer_djs.Interval = new TimeSpan(0, 0, 0, 1); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
-            disTimer_djs.Tick += new EventHandler(disTimer_Tick); //每一秒执行的方法
-            disTimer_djs.Start();
+            t.Interval = 1000;
+            t.Elapsed += new System.Timers.ElapsedEventHandler(timeout);
+            t.AutoReset = true;
+            t.Enabled = true;
+            t.Start();
         }
-        void disTimer_Tick(object sender, EventArgs e)
+        void timeout(object source, System.Timers.ElapsedEventArgs e)
         {
-            lbl_djs.Content = countSecond--;
-            //if (Convert.ToInt32(lbl_djs.Content) == 0)
-            //{
-            //    this.Close();
-            //}
-            //else
-            //{
-            //    lbl_djs.Content = countSecond;
-            //    countSecond--;
-            //}
+            this.lbl_djs.Content = i--;
+            if (i == 0)//到时间判断条件，执行响应的事件停止计时
+            {
+                t.Stop();
+                this.Close();
+                return;
+            }
+        }
 
+        private void djs()
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                int i = 30;
+                disTimer.Interval = new TimeSpan(0, 0, 0, 0, 100); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
+                disTimer.Tick += new EventHandler(disTimer_Tick_canShow); //每一秒执行的方法               
+                disTimer.Start();
+                void disTimer_Tick_canShow(object sender, EventArgs e)
+                {
+                    this.lbl_djs.Content = i--;
+                    if (i == 0)
+                    {
+                        this.Close();
+                    }
+                }
+            }), System.Windows.Threading.DispatcherPriority.Normal);
         }
         #endregion
+
+
+      
+        
 
 
 
@@ -106,9 +129,6 @@ namespace XJ_YSG
                 LogUtil.LogInfo(GetType(), ex);
             }
         }
-
-
-
 
 
 

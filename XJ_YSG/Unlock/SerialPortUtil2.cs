@@ -1,18 +1,19 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO.Ports;
-using System.Threading;
 using System.IO;
+using System.IO.Ports;
+using System.Text;
+using System.Threading;
 using System.Windows.Controls;
-using BLL;
 
 namespace XJ_YSG
 {
     /// <summary>
     /// 串口开发辅助类
     /// </summary>
-    public class SerialPortUtil
+    public class SerialPortUtil2
     {
         /// <summary>
         /// 接收事件是否有效 false表示有效
@@ -30,12 +31,11 @@ namespace XJ_YSG
         public event SerialErrorReceivedEventHandler Error;
 
         #region 变量属性
-        
-        private static string _portName = ServerBase.XMLRead("Lock", "COM_LOCK");
-        private SerialPortBaudRates _baudRate = SerialPortBaudRates.BaudRate_115200;//波特率
+        private string _portName = "COM15";//串口号，默认COM1
+        private SerialPortBaudRates _baudRate = SerialPortBaudRates.BaudRate_9600;//波特率
         private Parity _parity = Parity.None;//校验位
-        private SerialPortDatabits _dataBits = SerialPortDatabits.EightBits;//数据位
         private StopBits _stopBits = StopBits.One;//停止位
+        private SerialPortDatabits _dataBits = SerialPortDatabits.EightBits;//数据位
 
         private SerialPort comPort = new SerialPort();
 
@@ -96,7 +96,7 @@ namespace XJ_YSG
         /// <param name="sBits">停止位</param>
         /// <param name="dBits">数据位</param>
         /// <param name="name">串口号</param>
-        public SerialPortUtil(string name, SerialPortBaudRates baud, Parity par, SerialPortDatabits dBits, StopBits sBits)
+        public SerialPortUtil2(string name, SerialPortBaudRates baud, Parity par, SerialPortDatabits dBits, StopBits sBits)
         {
             _portName = name;
             _baudRate = baud;
@@ -116,7 +116,7 @@ namespace XJ_YSG
         /// <param name="sBits">停止位</param>
         /// <param name="dBits">数据位</param>
         /// <param name="name">串口号</param>
-        public SerialPortUtil(string name, string baud, string par, string dBits, string sBits)
+        public SerialPortUtil2(string name, string baud, string par, string dBits, string sBits)
         {
             _portName = name;
             _baudRate = (SerialPortBaudRates)Enum.Parse(typeof(SerialPortBaudRates), baud);
@@ -131,10 +131,10 @@ namespace XJ_YSG
         /// <summary>
         /// 默认构造函数
         /// </summary>
-        public SerialPortUtil()
+        public SerialPortUtil2()
         {
-            _portName = "COM4";
-            _baudRate = SerialPortBaudRates.BaudRate_115200;
+            _portName = "COM15";
+            _baudRate = SerialPortBaudRates.BaudRate_9600;
             _parity = Parity.None;
             _dataBits = SerialPortDatabits.EightBits;
             _stopBits = StopBits.One;
@@ -145,10 +145,10 @@ namespace XJ_YSG
         /// <summary>
         /// 默认构造函数
         /// </summary>
-        public SerialPortUtil(string com)
+        public SerialPortUtil2(string com)
         {
             _portName = com;
-            _baudRate = SerialPortBaudRates.BaudRate_115200;
+            _baudRate = SerialPortBaudRates.BaudRate_9600;
             _parity = Parity.None;
             _dataBits = SerialPortDatabits.EightBits;
             _stopBits = StopBits.One;
@@ -185,17 +185,17 @@ namespace XJ_YSG
             try
             {
                 if (comPort.IsOpen) comPort.Close();
+
                 comPort.PortName = _portName;
                 comPort.BaudRate = (int)_baudRate;
                 comPort.Parity = _parity;
                 comPort.DataBits = (int)_dataBits;
                 comPort.StopBits = _stopBits;
+
                 comPort.Open();
-                Logo.sWriteLogo("锁连接成功", 6);
             }
             catch (Exception ex)
             {
-                Logo.sWriteLogo("锁连接失败", 6);
             }
         }
 
@@ -277,7 +277,6 @@ namespace XJ_YSG
             comPort.Write(msg);
         }
 
-
         //在串口通讯过程中，经常要用到 16进制与字符串、字节数组之间的转换
         public static byte[] HexStringToBytes(string hs)
         {
@@ -304,17 +303,14 @@ namespace XJ_YSG
             comPort.Write(data, 0, data.Length);
         }
 
-
-      
-
-
         /// <summary>
         /// 写入数据
         /// </summary>
         /// <param name="msg">写入端口的字节数组</param>
-        public void WriteData(byte[] msg, ref  string ReceiveData)
+        public void WriteData(byte[] msg, ref string ReceiveData)
         {
             if (!(comPort.IsOpen)) comPort.Open();
+
             try
             {
                 byte[] data = new byte[2048];
@@ -327,6 +323,7 @@ namespace XJ_YSG
                     Stream ns = comPort.BaseStream;
                     ns.ReadTimeout = 50;
                     len = ns.Read(data, 0, 2048);
+
                     ReceiveData = ByteArrayToHexString(data).Substring(0, len * 2);
                 }
                 catch (Exception e)
@@ -334,7 +331,7 @@ namespace XJ_YSG
                     ReceiveData = e.Message.ToString();
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 ReceiveData = e.Message.ToString();
             }
@@ -355,10 +352,12 @@ namespace XJ_YSG
                 int len = 0;
 
                 try
-                {;
+                {
+                    ;
                     Stream ns = comPort.BaseStream;
                     ns.ReadTimeout = 1000;
                     len = ns.Read(data, 0, 2048);
+
                     ReceiveData = ByteArrayToHexString(data).Substring(0, len * 2);
                 }
                 catch (Exception e)
@@ -392,7 +391,7 @@ namespace XJ_YSG
         /// <param name="ReceiveData">接收数据</param>
         /// <param name="Overtime">重复次数</param>
         /// <returns></returns>
-        public  int SendCommand(String SendData, ref  string ReceiveData, int Overtime,DataType dataType)
+        public int SendCommand(String SendData, ref string ReceiveData, int Overtime, DataType dataType)
         {
             if (!(comPort.IsOpen)) comPort.Open();
 
@@ -414,11 +413,11 @@ namespace XJ_YSG
             {
                 if (comPort.BytesToRead > ReceiveData.Length) break;
                 System.Threading.Thread.Sleep(1);
-            }            
+            }
             if (comPort.BytesToRead >= 0)
             {
                 byte[] ReceiveBytes = new byte[comPort.BytesToRead];
-                ret = comPort.Read(ReceiveBytes, 0, comPort.BytesToRead);               
+                ret = comPort.Read(ReceiveBytes, 0, comPort.BytesToRead);
                 switch (dataType)
                 {
                     case DataType.Hex:
@@ -443,7 +442,7 @@ namespace XJ_YSG
         /// <param name="ReceiveData">接收数据</param>
         /// <param name="Overtime">重复次数</param>
         /// <returns></returns>
-        public int ReceiveCommand(ref  byte[] ReceiveData)
+        public int ReceiveCommand(ref byte[] ReceiveData)
         {
             if (!(comPort.IsOpen)) comPort.Open();
 
@@ -482,7 +481,7 @@ namespace XJ_YSG
             return result;
         }
 
-        public  byte[] HexStringToByteArray(string s)
+        public byte[] HexStringToByteArray(string s)
         {//16进制字符串转化为字节数组
             s = s.Replace(" ", "");
             byte[] buffer = new byte[s.Length / 2];
@@ -716,6 +715,6 @@ namespace XJ_YSG
         BaudRate_230400 = 230400,
         BaudRate_256000 = 256000
     }
-    public enum DataType { Hex,Decimal,Octor}
-    
+    public enum DataType { Hex, Decimal, Octor }
+
 }

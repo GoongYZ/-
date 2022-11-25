@@ -9,8 +9,7 @@ namespace XJ_YSG
     /// Xj_Clpj.xaml 的交互逻辑
     /// </summary>
     public partial class Xj_Clpj : Window
-    {
-        SerialPortUtil port = new SerialPortUtil();
+    {       
         string gh = "";
        
         public Xj_Clpj(MainBox mainbox, string wzm)

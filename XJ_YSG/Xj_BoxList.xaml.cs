@@ -18,6 +18,10 @@ namespace XJ_YSG
         private Xj_BoxList BoxList = null;
         Interaction_WebService Service = new Interaction_WebService();
         DataTable cllb = new DataTable();  //车两列表
+
+        private const int MAXSHOWNINDEX = 9;
+        private ScrollViewer scrollViewer = new ScrollViewer();
+        private double theOffset = 0;
         public Xj_BoxList()
         {
             InitializeComponent();
@@ -42,7 +46,7 @@ namespace XJ_YSG
 
             cllb.Columns.Add("BH");
             cllb.Columns.Add("UriSource");
-            cllb.Columns.Add("ZT");
+            cllb.Columns.Add("ZT");           
             if (MainBox.isyjkq)
             {
                 DataTable dt = Service.getListBox("", MainBox.sbbm);
@@ -73,9 +77,10 @@ namespace XJ_YSG
                         
                     }    
                     cllb.Rows.Add(dr);
-
                 }
-               
+
+                int rows = cllb.Rows.Count / 4;
+
                 s_1.DataContext = cllb;
             }
             else
@@ -102,8 +107,6 @@ namespace XJ_YSG
                     }
                     s_1.DataContext = cllb;
                 }
-
-
             }
         }
 
@@ -119,6 +122,12 @@ namespace XJ_YSG
        
 
        
+
+        /// <summary>
+        /// 打开柜子
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Grid_b_TouchUp(object sender, TouchEventArgs e)
         {
             //遍历用户控件
@@ -149,7 +158,7 @@ namespace XJ_YSG
             }
             if (zt == "未绑定")
             {
-                MainBox.Send(dwm);
+                LockService.Send(dwm);
             }
             if (zt == "出车中")
             {
@@ -157,6 +166,13 @@ namespace XJ_YSG
             }
         }
 
+
+
+        /// <summary>
+        /// 防止滑动到最低时窗口抖动
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void s_1_ManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
         {
             e.Handled = true;
@@ -164,8 +180,11 @@ namespace XJ_YSG
 
 
 
-
-        //页面关闭时执行的方法  
+        /// <summary>
+        /// 页面关闭时执行的方法  
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btn_clos_TouchUp(object sender, TouchEventArgs e)
         {
             if (MainBox.usertable.Count != 0 || MainBox.usertable == null)
@@ -196,5 +215,15 @@ namespace XJ_YSG
             }), System.Windows.Threading.DispatcherPriority.Normal);
         }
         #endregion
+
+        private void top_page_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void down_page_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

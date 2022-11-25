@@ -96,8 +96,8 @@ namespace XJ_YSG
                         {
                             string wzm = tb["WZM"].ToString();
                             MainBox.QycsqdPK = tb["YCSQDPK"].ToString();
-                            MainBox.Send(wzm);
-                            MainBox.red_light(wzm, true);
+                            LockService.Send(wzm);
+                            LockService.red_light(wzm, true);
                             speack("柜门已打开，取后请关门");
                             MainBox.locklis.Add(wzm + "_mmqys");
                             Close();

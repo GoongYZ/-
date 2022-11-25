@@ -131,8 +131,8 @@
     <Compile Include="Entity\FaceTrackUnit.cs" />
     <Compile Include="TheActivation\Activation.cs" />
     <Compile Include="TheActivation\EntityModel.cs" />
-    <Compile Include="Unlock\LockControl.cs" />
-    <Compile Include="Unlock\SerialPortUtil.cs" />
+    <Compile Include="Unlock\LockService.cs" />
+    <Compile Include="Unlock\SerialPortUtil2.cs" />
     <Compile Include="Utils\FaceUtil.cs" />
     <Compile Include="Utils\LogUtil.cs" />
     <Compile Include="Xj_BoxList.xaml.cs">
@@ -221,6 +221,7 @@
     <Resource Include="Img\ycsy.png" />
     <Resource Include="Img\jticon.png" />
     <Resource Include="favicon.ico" />
+    <Resource Include="Img\main.jpg" />
     <Content Include="lib\CustomControl.dll" />
     <Content Include="lib\DotNetSpeech.dll" />
     <Content Include="lib\RFIDReaderNetwork_SerialSDK_ForCSharp.dll" />
@@ -228,7 +229,6 @@
     <Resource Include="Img\Close1.png" />
     <Resource Include="Img\favicon.ico" />
     <Resource Include="Img\key_rlsb.png" />
-    <Resource Include="Img\main.png" />
     <Resource Include="Img\xj_listbox.png" />
     <Resource Include="Img\xj_message.png" />
     <Resource Include="Img\xj_mima.png" />

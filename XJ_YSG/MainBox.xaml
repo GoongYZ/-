@@ -12,19 +12,10 @@
         <Image x:Name="pictureBox_FingerImg"  HorizontalAlignment="Left" Height="200" Margin="4,3,0,0" VerticalAlignment="Top" Width="200"/>
         <Viewbox Stretch=" fill">
             <Canvas Width="768" Height="1024"  Background="Transparent">
+                <Button  Width="148" Height="56" ToolTip="应急开启" Canvas.Top="52"   Canvas.Left="458" Opacity="0"  x:Name="Emergency_open"   TouchUp="Emergency_open_TouchUp"  IsManipulationEnabled="True">应急开启</Button>
+                <Button  Width="110" Height="56" Canvas.Top="52"  Canvas.Left="630" ToolTip="退出" Opacity="0" x:Name="Emergency_clos" TouchUp="Emergency_clos_PreviewTouchUp"  IsManipulationEnabled="True">退出</Button>
                 <Button Content="" HorizontalAlignment="Left"  x:Name="Smkey"    TouchUp="Smkey_TouchUp" Opacity="0"   Background="Transparent" BorderThickness="0"  Height="150" VerticalAlignment="Top" Width="515" Canvas.Left="22" Canvas.Top="854"/>
                 <Button Content="" HorizontalAlignment="Left"  x:Name="Facekey"   TouchUp="Facekey_TouchUp"     Background="Transparent" Opacity="0" BorderThickness="0"   Height="150" VerticalAlignment="Top" Width="180" Canvas.Left="565" Canvas.Top="854"/>
-                <materialDesign:PopupBox  Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
-                      PlacementMode="BottomAndAlignCentres"
-                      ToggleCheckedContentCommandParameter="wowsers"  Canvas.Left="650" Canvas.Top="10" Width="100" Height="100">
-                    <materialDesign:PopupBox.ToggleContent>
-                        <materialDesign:PackIcon Kind="FormatListBulleted"   Width="70" Height="70" />
-                    </materialDesign:PopupBox.ToggleContent>
-                    <StackPanel>
-                        <Button  Style="{StaticResource MaterialDesignRaisedAccentButton}" Width="100" Height="50" ToolTip="应急开启"  x:Name="Emergency_open"   TouchUp="Emergency_open_TouchUp"  IsManipulationEnabled="True">应急开启</Button>
-                        <Button  Style="{StaticResource MaterialDesignRaisedAccentButton}" Width="100" Height="50" Margin="0,5,0,0" ToolTip="退出" x:Name="Emergency_clos" TouchUp="Emergency_clos_PreviewTouchUp"  IsManipulationEnabled="True">退出</Button>
-                    </StackPanel>
-                </materialDesign:PopupBox>
             </Canvas>
         </Viewbox>
     </Grid>

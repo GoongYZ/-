@@ -177,8 +177,8 @@ namespace XJ_YSG
                 MainBox.ycsqdinfo.Add("yjghsjpk", yjghsj.SelectedValue.ToString());
                 if (MainBox.ycsqdinfo != null)
                 {
-                    MainBox.Send(gh);
-                    MainBox.red_light(gh, true);
+                    LockService.Send(gh);
+                    LockService.red_light(gh, true);
                     speack("柜门已打开,取后请关门");
                     MainBox.locklis.Add(gh + "_qtqys");
                     Close();
