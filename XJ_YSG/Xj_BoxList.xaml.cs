@@ -18,10 +18,9 @@ namespace XJ_YSG
         private Xj_BoxList BoxList = null;
         Interaction_WebService Service = new Interaction_WebService();
         DataTable cllb = new DataTable();  //车两列表
-
+        public double heig = 0;
         private const int MAXSHOWNINDEX = 9;
         private ScrollViewer scrollViewer = new ScrollViewer();
-        private double theOffset = 0;
         public Xj_BoxList()
         {
             InitializeComponent();
@@ -218,12 +217,41 @@ namespace XJ_YSG
 
         private void top_page_Click(object sender, RoutedEventArgs e)
         {
-            
+            Decorator border = VisualTreeHelper.GetChild(s_1, 0) as Decorator;
+            if (border != null)
+            {
+                // Get scrollviewer
+                ScrollViewer scrollViewer = border.Child as ScrollViewer;
+                if (scrollViewer != null)
+                {
+                    heig -= scrollViewer.ScrollableHeight / 3.0;
+                    scrollViewer.ScrollToVerticalOffset(heig);
+                    if (heig < 0)
+                    {
+                        heig = 0;
+                    }
+                }
+            }
+
         }
 
         private void down_page_Click(object sender, RoutedEventArgs e)
         {
-
+            Decorator border = VisualTreeHelper.GetChild(s_1, 0) as Decorator;
+            if (border != null)
+            {
+                // Get scrollviewer
+                ScrollViewer scrollViewer = border.Child as ScrollViewer;
+                if (scrollViewer != null)
+                {
+                    heig += scrollViewer.ScrollableHeight / 3.0;
+                    scrollViewer.ScrollToVerticalOffset(heig);
+                    if (heig > scrollViewer.ScrollableHeight)
+                    {
+                        heig = scrollViewer.ScrollableHeight;
+                    }
+                }
+            }
         }
     }
 }

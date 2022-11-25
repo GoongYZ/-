@@ -503,8 +503,7 @@ namespace XJ_YSG
                             {
                                 zt = true;
                             }
-                        }
-                        MessageBox.Show("状态" + zt.ToString() + "，位置码_操作模式" + wzm + "-" + czms + ",状态命令:" + lockzt );
+                        }                        
                         //状态 1 表示开的状态，状态 0 表示关的状态。
                         if (zt)
                         {
@@ -616,7 +615,14 @@ namespace XJ_YSG
                         LockService.red_light(i.ToString(), false);
                     }
                 }
-                Logo.sWriteYsgh(gh_kp.Substring(0, gh_kp.Length - 1));
+
+
+                string FilePath = Logo.sSetYsgGh();
+                if (!File.Exists(FilePath))
+                {
+                    Logo.sWriteYsgh(gh_kp.Substring(0, gh_kp.Length - 1));
+                }
+               
                 speack("智能钥匙管理柜初始化成功");
             });
         }
@@ -658,5 +664,7 @@ namespace XJ_YSG
         {
             Environment.Exit(0);
         }
+
+        
     }
 }

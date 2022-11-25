@@ -72,6 +72,47 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <SolidColorBrush x:Key="Button.Static.Background2" Color="#FFDDDDDD"/>
+        <SolidColorBrush x:Key="Button.Static.Border2" Color="#FF707070"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border2" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground2" Color="#FF838383"/>
+        <Style x:Key="ButtonStyle2" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="CornflowerBlue"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" CornerRadius="7" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid x:Name="markLayer" Background="Black" Panel.ZIndex="999" Opacity="0.5" Visibility="Hidden"/>
@@ -79,12 +120,12 @@
             <Canvas  Height="1024" Width="768"  Background="Transparent" >
                 <Button x:Name="btn_clos"  Opacity="0" TouchUp="btn_clos_TouchUp"   Width="70" Height="70" Margin="667,25,0,0"></Button>
                 <Button FontSize="32" Width="240" Height="78"  TouchUp="Button_zwlr_TouchUp"  Foreground="#FEFEFE" FontWeight="Black"  FontFamily="MicrosoftYaHei" Style="{DynamicResource ButtonStyle1}" Canvas.Left="36" Canvas.Top="162" >指纹录入</Button>
-                <Button Width="200" Height="60" x:Name="top_page"   Canvas.Left="309" Canvas.Top="180" FontSize="32" Content="上一页" Click="top_page_Click"></Button>
-                <Button Width="200" Height="60" x:Name="down_page"   Canvas.Left="537" Canvas.Top="180" FontSize="32" Content="下一页" Click="down_page_Click" ></Button>
+                <Button Width="200" Height="60" x:Name="top_page"   Canvas.Left="309" Canvas.Top="180" FontSize="32" Content="上一页" Click="top_page_Click" Style="{DynamicResource ButtonStyle2}"></Button>
+                <Button Width="200" Height="60" x:Name="down_page"   Canvas.Left="537" Canvas.Top="180" FontSize="32" Content="下一页" Click="down_page_Click" Style="{DynamicResource ButtonStyle2}"></Button>
                 <ListBox x:Name="s_1"  Focusable="False" Width="740"  Height="740"  ManipulationBoundaryFeedback="s_1_ManipulationBoundaryFeedback"  VerticalAlignment="Top" Opacity="1"  BorderThickness="0"  Background="Transparent"   ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Hidden"  BorderBrush="Transparent" ItemsSource="{Binding}" Margin="15,270,0,0" >
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Columns="4" Rows="13"/>
+                            <UniformGrid Columns="4"/>
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate >
