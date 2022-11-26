@@ -50,10 +50,10 @@ namespace XJ_YSG
         public static string clwg = "0";  //车辆外观
         public static string clns = "0";  //车辆内饰       
         #region  指纹图像数据
-        public byte[] m_pImageBuffer = new byte[640 * 480];
-        public int m_nWidth = 0;
-        public int m_nHeight = 0;
-        public int m_nSize = 640 * 480;
+        public static byte[] m_pImageBuffer = new byte[640 * 480];
+        public static int m_nWidth = 0;
+        public static int m_nHeight = 0;
+        public static int m_nSize = 640 * 480;
         #endregion
 
         #region 用户信息和钥匙柜列表
@@ -77,6 +77,7 @@ namespace XJ_YSG
                 mainbox = this;
             }
             Logo.sWriteLogo("系统启动：" + bbh + "_" + DateTime.Now.ToString(), 8);
+            speack("欢迎使用智能钥匙管理柜");
             UHFService.ConnectCOM();   //刷卡
             UHF2Service.ConnectCOM();   //读钥匙
             activation.InitEngines(); //人脸识别引擎开启           
@@ -109,7 +110,7 @@ namespace XJ_YSG
             RfidTimer.Stop();
             Xj_Rlsb xj_Rlsb = new Xj_Rlsb();
             xj_Rlsb.ShowDialog();
-        }
+        }    
         #endregion
 
 
@@ -132,11 +133,10 @@ namespace XJ_YSG
         /// </summary>
         public void zwthan()
         {
-            zwTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
+            zwTimer.Interval = new TimeSpan(0, 0, 0, 0, 500); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
             zwTimer.Tick += new EventHandler(disTimer_Tick_canShow); //每一秒执行的方法
             zwTimer.Start();
         }
-
 
         void disTimer_Tick_canShow(object sender, EventArgs e)
         {
@@ -144,9 +144,9 @@ namespace XJ_YSG
             int Index = 0;
             int nRet = -1;
             //图像数据
-            nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref m_nWidth, ref m_nHeight, m_pImageBuffer, ref m_nSize);
+            nRet = ParameterModel.ZKFPModule_GetFingerImage(ParameterModel.m_hDevice, ref m_nWidth, ref m_nHeight, m_pImageBuffer, ref m_nSize);           
             if (nRet == 0)
-            {
+            {             
                 //根据图像数据进行比对
                 nRet = ParameterModel.ZKFPModule_IdentifyByImage(ParameterModel.m_hDevice, m_pImageBuffer, m_nSize, ref UserID, ref Index);
                 if (nRet == 0)
@@ -157,7 +157,7 @@ namespace XJ_YSG
                     if (UserID != 0)
                     {
                         usertable = Service.getUserInfo(UserID.ToString());
-                        if (usertable != null && usertable.Count > 0)
+                        if (usertable != null)
                         {
                             //将手机号码传给新页面
                             Xj_BoxList boxList = new Xj_BoxList();
@@ -441,8 +441,7 @@ namespace XJ_YSG
                             Xj_Clpj xj_Clpj = new Xj_Clpj(mainbox, wzm);
                             xj_Clpj.ShowDialog();
                         }
-                    }
-                    MessageBox.Show("准备开门");
+                    }                   
                     LockService.Send(wzm);  //开门
                     LockService.red_light(wzm, true);
                     speack("柜门已打开");
@@ -658,13 +657,18 @@ namespace XJ_YSG
 
         private void Emergency_clos_PreviewTouchUp(object sender, TouchEventArgs e)
         {
-            this.Close();
+            if (MessageBox.Show("您确定退出？", "警告", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                Close();
+            }
         }
         private void MainWindow_Closed(object sender, EventArgs e)
-        {
-            Environment.Exit(0);
+        {          
+                //释放网络资源
+                Environment.Exit(0);           
+                     
         }
 
-        
+     
     }
 }

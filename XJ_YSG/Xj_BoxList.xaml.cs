@@ -18,9 +18,7 @@ namespace XJ_YSG
         private Xj_BoxList BoxList = null;
         Interaction_WebService Service = new Interaction_WebService();
         DataTable cllb = new DataTable();  //车两列表
-        public double heig = 0;
-        private const int MAXSHOWNINDEX = 9;
-        private ScrollViewer scrollViewer = new ScrollViewer();
+        public double heig = 0;       
         public Xj_BoxList()
         {
             InitializeComponent();
@@ -42,73 +40,74 @@ namespace XJ_YSG
         /// </summary>
         private void Bindinfo()
         {
-
             cllb.Columns.Add("BH");
             cllb.Columns.Add("UriSource");
-            cllb.Columns.Add("ZT");           
+            cllb.Columns.Add("ZT");
             if (MainBox.isyjkq)
             {
+               
                 DataTable dt = Service.getListBox("", MainBox.sbbm);
                 //应急开启展示所有柜子                  
                 for (int i = 1; i <= MainBox.gzsl; i++)  //按规格显示
                 {
-                    DataRow dr = cllb.NewRow();
-                    dr["BH"] = i.ToString();                  
+                    DataRow drclib = cllb.NewRow();
+                    drclib["BH"] = i.ToString();                  
                     var DataRowArr = dt.Select("WZM = '" + i + "'");
                     if (DataRowArr.Length > 0)
                     {
                         DataRow New_dr = DataRowArr[0];
                         if (Convert.ToInt32(New_dr["ZT"]) == 0)
                         {
-                            dr["UriSource"] = "img/Boxlist_zaiku.png";
-                            dr["ZT"] = "正常";
+                            drclib["UriSource"] = "img/Boxlist_zaiku.png";
+                            drclib["ZT"] = "正常";
                         }
                         else 
                         {
-                            dr["UriSource"] = "img/Boxlist_chuche.png";
-                            dr["ZT"] = "出车中";
+                            drclib["UriSource"] = "img/Boxlist_chuche.png";
+                            drclib["ZT"] = "出车中";
                         }                       
                     }
                     else
                     {
-                        dr["ZT"] = "未绑定";
-                        dr["UriSource"] = "img/Boxlist_daifenpei.png";
+                        drclib["ZT"] = "未绑定";
+                        drclib["UriSource"] = "img/Boxlist_daifenpei.png";
                         
                     }    
-                    cllb.Rows.Add(dr);
+                    cllb.Rows.Add(drclib);
                 }
-
-                int rows = cllb.Rows.Count / 4;
-
                 s_1.DataContext = cllb;
             }
             else
-            {              
+            {
                 DataTable dt = Service.getListBox(MainBox.usertable["SJHM"].ToString(), MainBox.sbbm);
                 if (dt.Rows.Count > 0 && dt != null)
                 {                 
-                    for (int i = 1; i <= cllb.Rows.Count; i++)
+                    for (int i = 0; i < dt.Rows.Count; i++)
                     {
-                        DataRow dr = dt.NewRow();
-                        dr["BH"] = dt.Rows[i]["WZM"].ToString();
+                        DataRow drclib = cllb.NewRow();
+                        drclib["BH"] = dt.Rows[i]["WZM"].ToString();
                         string zt = dt.Rows[i]["ZT"].ToString();
-                        if (zt == "0" && zt=="1")
+                        if (zt == "0")
                         {
-                            dr["UriSource"] = "img/Boxlist_zaiku.png";
-                            dr["ZT"] = "正常";
+                            drclib["UriSource"] = "img/Boxlist_zaiku.png";
+                            drclib["ZT"] = "正常";
                         }
                         else if (zt == "1")
                         {
-                            dr["UriSource"] = "img/Boxlist_chuche.png";
-                            dr["ZT"] = "出车中";
+                            drclib["UriSource"] = "img/Boxlist_chuche.png";
+                            drclib["ZT"] = "出车中";
                         }
-                        cllb.Rows.Add(dr);
+                        cllb.Rows.Add(drclib);
                     }
-                    s_1.DataContext = cllb;
+                    DataTable sortTable = cllb.Clone();
+
+                    DataView dv = cllb.DefaultView;
+                    dv.Sort = "BH asc";
+                    sortTable = dv.ToTable();
+                    s_1.DataContext = sortTable;
                 }
             }
         }
-
        
 
 

@@ -28,10 +28,10 @@ namespace XJ_YSG
         Logo log = new Logo();
 
         #region  指纹图像数据
-        public byte[] m_pImageBuffer = new byte[640 * 480];
-        public int m_nWidth = 0;
-        public int m_nHeight = 0;
-        public int m_nSize = 640 * 480;
+        public static byte[] m_pImageBuffer = new byte[640 * 480];
+        public static int m_nWidth = 0;
+        public static int m_nHeight = 0;
+        public static int m_nSize = 640 * 480;
         int nRet = -1;
         #endregion
 
@@ -106,7 +106,7 @@ namespace XJ_YSG
                 if (0 == nRet)
                 {
                     speack("录入成功");
-                    log.WriteLogo("录入成功", 5);
+                    log.WriteLogo("录入成功USERID="+ userid, 5);
                     disTimer.Stop();
                     Close();
                 }

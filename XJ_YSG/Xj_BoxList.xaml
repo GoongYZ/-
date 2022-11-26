@@ -125,7 +125,7 @@
                 <ListBox x:Name="s_1"  Focusable="False" Width="740"  Height="740"  ManipulationBoundaryFeedback="s_1_ManipulationBoundaryFeedback"  VerticalAlignment="Top" Opacity="1"  BorderThickness="0"  Background="Transparent"   ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Hidden"  BorderBrush="Transparent" ItemsSource="{Binding}" Margin="15,270,0,0" >
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Columns="4"/>
+                            <UniformGrid Columns="4" Rows="13"/>
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate >

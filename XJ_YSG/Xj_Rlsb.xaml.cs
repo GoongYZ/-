@@ -27,8 +27,6 @@ namespace XJ_YSG
         Activation activation = new Activation();
         Interaction_WebService Service = new Interaction_WebService();
         Logo log = new Logo();
-        private  DispatcherTimer disTimer = new DispatcherTimer();
-
         System.Timers.Timer t = new System.Timers.Timer();
         int i = 30;
         public Xj_Rlsb()
@@ -39,11 +37,8 @@ namespace XJ_YSG
             ImageBrush b3 = new ImageBrush();
             b3.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Img/key_rlsb.png", UriKind.Absolute));
             this.Background = b3;
-
             djs2();
-
             btnStartVideo_Click();
-            this.Closed += Xj_Rlsb_Closed; //窗体关闭时人脸资源释放掉，否则下次无法正常显示
         }
 
 
@@ -64,15 +59,21 @@ namespace XJ_YSG
                 if (i == 0)//到时间判断条件，执行响应的事件停止计时
                 {
                     t.Stop();
+                    rgbVideoSource.SignalToStop();
+                    rgbVideoSource.Hide();
+                    EntityModel.exitVideoRGBFR = true;
+                    EntityModel.exitVideoRGBLiveness = true;
+                    MainBox.zwTimer.Start();
+                    MainBox.RfidTimer.Start();
                     this.Close();
                 }
             }));
-        }   
+        }
         #endregion
 
 
-      
-        
+
+
 
 
 
@@ -368,6 +369,7 @@ namespace XJ_YSG
         {
             try
             {
+               
                 if (!rgbVideoSource.IsRunning)
                 {
                     return;
@@ -378,6 +380,7 @@ namespace XJ_YSG
                     EntityModel.rgbVideoBitmap = rgbVideoSource.GetCurrentVideoFrame();
                 }
                 Bitmap bitmapClone = null;
+               
                 try
                 {
                     lock (EntityModel.rgbVideoImageLocker)
@@ -441,29 +444,33 @@ namespace XJ_YSG
                                 if (!string.IsNullOrWhiteSpace(currentFaceTrack.GetCombineMessage()) && x > 0 && y > 0)
                                 {
                                     //将相似度信息实时显示     
-                                    //g.DrawString(currentFaceTrack.GetCombineMessage(), EntityModel.font, currentFaceTrack.CertifySuccess() ? EntityModel.greenBrush : EntityModel.redBrush, x, y - 15);
+                                    g.DrawString(currentFaceTrack.GetCombineMessage(), EntityModel.font, currentFaceTrack.CertifySuccess() ? EntityModel.greenBrush : EntityModel.redBrush, x, y - 15);
                                     //14号:0.91|RGB:真人|faceId:1
                                     string similarityindex = currentFaceTrack.GetCombineMessage().Split('|')[0];
                                     string index = similarityindex.Split(':')[0];
                                     string similarity = similarityindex.Split(':')[1];
-                                    if (Convert.ToDouble(similarity) >= 0.88)
-                                    {
+                                    if (Convert.ToDouble(similarity) >= 0.8)
+                                    {                                      
                                         string aimil = "";
                                         EntityModel.imageLists.TryGetValue(index, out aimil);
-                                        //截取aimil 拿到手机号码  D:\ixjkj\synchro\龚于诏_19888925110.jpg
-                                        log.WriteLogo(aimil + "识别成功", 3);
                                         string sjhm = System.Text.RegularExpressions.Regex.Replace(aimil, @"[^0-9]+", "");
+                                        log.WriteLogo("手机号码：" + sjhm, 3);
                                         if (sjhm != "")
                                         {
-                                            MainBox.usertable = Service.getUserInfo(sjhm);                                            
-                                            if (MainBox.usertable != null && MainBox.usertable.Count > 0)
+                                            MainBox.usertable = Service.getUserInfo(sjhm);
+                                            log.WriteLogo(MainBox.usertable.Count.ToString(), 3);
+                                            if (MainBox.usertable != null)
                                             {
-                                                //将手机号码传给新页面
                                                 Xj_BoxList boxList = new Xj_BoxList();
-                                                this.Close();
-                                                boxList.ShowDialog();
-                                            }                                           
-                                        }
+                                                rgbVideoSource.SignalToStop();
+                                                rgbVideoSource.Hide();
+                                                EntityModel.exitVideoRGBFR = true;
+                                                EntityModel.exitVideoRGBLiveness = true;
+                                                t.Stop();
+                                                boxList.ShowDialog(); ;
+                                                Close();
+                                            }
+                                        }                                       
                                     }
                                 }
                             }
@@ -513,6 +520,7 @@ namespace XJ_YSG
                         bitmapClone.Dispose();
                     }
                 }
+
             }
             catch (Exception ex)
             {
@@ -535,11 +543,7 @@ namespace XJ_YSG
         }
         #endregion
 
-
-
-
-
-        private void Xj_Rlsb_Closed(object sender, EventArgs e)
+        private void Image_TouchDown(object sender, System.Windows.Input.TouchEventArgs e)
         {
             rgbVideoSource.SignalToStop();
             rgbVideoSource.Hide();
@@ -547,12 +551,6 @@ namespace XJ_YSG
             EntityModel.exitVideoRGBLiveness = true;
             MainBox.zwTimer.Start();
             MainBox.RfidTimer.Start();
-        }
-
-
-
-        private void Image_TouchDown(object sender, System.Windows.Input.TouchEventArgs e)
-        {
             this.Close();
         }
        
