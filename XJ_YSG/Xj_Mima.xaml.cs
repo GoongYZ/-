@@ -84,6 +84,7 @@ namespace XJ_YSG
                     }
                     else
                     {
+                        mm.Content= "";
                         speack("密码错误");
                     }
                 }
@@ -104,11 +105,17 @@ namespace XJ_YSG
                         }
                         else
                         {
+                            mm.Content = "";
                             speack("验证码不正确，请重新输入");
                         }
                     }
                 }
 
+            }
+            else 
+            {
+                mm.Content = "";
+                speack("验证码不正确，请重新输入");
             }
         }
        
