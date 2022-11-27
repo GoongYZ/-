@@ -179,21 +179,13 @@ namespace XJ_YSG
                 {
                     LockService.Send(gh);
                     LockService.red_light(gh, true);
-                    speack("柜门已打开,取后请关门");
+                    MainBox.speack("柜门已打开,取后请关门");
                     MainBox.locklis.Add(gh + "_qtqys");
                     Close();
                 }                             
             }
         }
-        #region 语音播报
-        private void speack(string text)
-        {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                SpeechVoice.speack(text);
-            }), System.Windows.Threading.DispatcherPriority.Normal);
-        }
-        #endregion   
+       
 
         private void btn_tc_TouchUp(object sender, TouchEventArgs e)
         {

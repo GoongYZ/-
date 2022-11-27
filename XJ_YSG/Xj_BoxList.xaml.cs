@@ -40,73 +40,98 @@ namespace XJ_YSG
         /// </summary>
         private void Bindinfo()
         {
-            cllb.Columns.Add("BH");
-            cllb.Columns.Add("UriSource");
-            cllb.Columns.Add("ZT");
-            if (MainBox.isyjkq)
+            try
             {
-               
-                DataTable dt = Service.getListBox("", MainBox.sbbm);
-                //应急开启展示所有柜子                  
-                for (int i = 1; i <= MainBox.gzsl; i++)  //按规格显示
+                cllb.Columns.Add("BH");
+                cllb.Columns.Add("UriSource");
+                cllb.Columns.Add("ZT");
+                if (MainBox.islxkq == true)
                 {
-                    DataRow drclib = cllb.NewRow();
-                    drclib["BH"] = i.ToString();                  
-                    var DataRowArr = dt.Select("WZM = '" + i + "'");
-                    if (DataRowArr.Length > 0)
+                    for (int i = 1; i <= MainBox.gzsl; i++)  //按规格显示
                     {
-                        DataRow New_dr = DataRowArr[0];
-                        if (Convert.ToInt32(New_dr["ZT"]) == 0)
+                        DataRow drclib = cllb.NewRow();
+                        drclib["BH"] = i.ToString();
+                        drclib["UriSource"] = "img/Boxlist_daifenpei.png";
+                        drclib["ZT"] = "未联网";
+                        cllb.Rows.Add(drclib);
+                    }
+                    s_1.DataContext = cllb;
+                }
+                else
+                {
+                    if (MainBox.isyjkq)
+                    {
+
+                        DataTable dt = Service.getListBox("", MainBox.sbbm);
+                        //应急开启展示所有柜子                  
+                        for (int i = 1; i <= MainBox.gzsl; i++)  //按规格显示
                         {
-                            drclib["UriSource"] = "img/Boxlist_zaiku.png";
-                            drclib["ZT"] = "正常";
+                            DataRow drclib = cllb.NewRow();
+                            drclib["BH"] = i.ToString();
+                            var DataRowArr = dt.Select("WZM = '" + i + "'");
+                            if (DataRowArr.Length > 0)
+                            {
+                                DataRow New_dr = DataRowArr[0];
+                                if (Convert.ToInt32(New_dr["ZT"]) == 0)
+                                {
+                                    drclib["UriSource"] = "img/Boxlist_zaiku.png";
+                                    drclib["ZT"] = "正常";
+                                }
+                                else
+                                {
+                                    drclib["UriSource"] = "img/Boxlist_chuche.png";
+                                    drclib["ZT"] = "出车中";
+                                }
+                            }
+                            else
+                            {
+                                drclib["ZT"] = "未绑定";
+                                drclib["UriSource"] = "img/Boxlist_daifenpei.png";
+
+                            }
+                            cllb.Rows.Add(drclib);
                         }
-                        else 
-                        {
-                            drclib["UriSource"] = "img/Boxlist_chuche.png";
-                            drclib["ZT"] = "出车中";
-                        }                       
+                        s_1.DataContext = cllb;
                     }
                     else
                     {
-                        drclib["ZT"] = "未绑定";
-                        drclib["UriSource"] = "img/Boxlist_daifenpei.png";
-                        
-                    }    
-                    cllb.Rows.Add(drclib);
-                }
-                s_1.DataContext = cllb;
-            }
-            else
-            {
-                DataTable dt = Service.getListBox(MainBox.usertable["SJHM"].ToString(), MainBox.sbbm);
-                if (dt.Rows.Count > 0 && dt != null)
-                {                 
-                    for (int i = 0; i < dt.Rows.Count; i++)
-                    {
-                        DataRow drclib = cllb.NewRow();
-                        drclib["BH"] = dt.Rows[i]["WZM"].ToString();
-                        string zt = dt.Rows[i]["ZT"].ToString();
-                        if (zt == "0")
+                        DataTable dt = Service.getListBox(MainBox.usertable["SJHM"].ToString(), MainBox.sbbm);
+                        if (dt.Rows.Count > 0 && dt != null)
                         {
-                            drclib["UriSource"] = "img/Boxlist_zaiku.png";
-                            drclib["ZT"] = "正常";
-                        }
-                        else if (zt == "1")
-                        {
-                            drclib["UriSource"] = "img/Boxlist_chuche.png";
-                            drclib["ZT"] = "出车中";
-                        }
-                        cllb.Rows.Add(drclib);
-                    }
-                    DataTable sortTable = cllb.Clone();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                DataRow drclib = cllb.NewRow();
+                                drclib["BH"] = dt.Rows[i]["WZM"].ToString();
+                                string zt = dt.Rows[i]["ZT"].ToString();
+                                if (zt == "0")
+                                {
+                                    drclib["UriSource"] = "img/Boxlist_zaiku.png";
+                                    drclib["ZT"] = "正常";
+                                }
+                                else if (zt == "1")
+                                {
+                                    drclib["UriSource"] = "img/Boxlist_chuche.png";
+                                    drclib["ZT"] = "出车中";
+                                }
+                                cllb.Rows.Add(drclib);
+                            }
+                            DataTable sortTable = cllb.Clone();
 
-                    DataView dv = cllb.DefaultView;
-                    dv.Sort = "BH asc";
-                    sortTable = dv.ToTable();
-                    s_1.DataContext = sortTable;
+                            DataView dv = cllb.DefaultView;
+                            dv.Sort = "BH asc";
+                            sortTable = dv.ToTable();
+                            s_1.DataContext = sortTable;
+                        }
+                    }
                 }
             }
+            catch (Exception ex)
+            {              
+                cllb.Clear();
+            }
+           
+
+           
         }
        
 
@@ -114,8 +139,16 @@ namespace XJ_YSG
 
         private void Button_zwlr_TouchUp(object sender, TouchEventArgs e)
         {
-            Xj_Zwlr zwlr = new Xj_Zwlr(BoxList);
-            zwlr.ShowDialog();
+            if (MainBox.islxkq == false)
+            {
+                Xj_Zwlr zwlr = new Xj_Zwlr(BoxList);
+                zwlr.ShowDialog();
+            }
+            else 
+            {
+                MainBox.speack("系统无网络，请稍后在试");
+            }
+            
         }
        
 
@@ -132,13 +165,13 @@ namespace XJ_YSG
             var d = sender as Grid;
             d.Focus();
             UIElementCollection Childrens = d.Children;
-            string dwm = "";
+            string wzm = "";
             string zt = "";
             foreach (UIElement ui in Childrens)
             {
                 if (((Label)ui).Name == "lab_BH")
                 {
-                    dwm = ((Label)ui).Content.ToString();
+                    wzm = ((Label)ui).Content.ToString();
                 }
             }
             foreach (UIElement ui in Childrens)
@@ -151,16 +184,25 @@ namespace XJ_YSG
             if (zt == "正常")
             {
                 //开启柜门
-                Xj_Ycsy Ycsy = new Xj_Ycsy(BoxList, dwm);
-                Ycsy.ShowDialog();
+                if (MainBox.islxkq)
+                {
+                    LockService.Send(wzm);
+                    LockService.red_light(wzm, true);
+                }
+                else                
+                {
+                    Xj_Ycsy Ycsy = new Xj_Ycsy(BoxList, wzm);
+                    Ycsy.ShowDialog();
+                }
+             
             }
             if (zt == "未绑定")
             {
-                LockService.Send(dwm);
+                LockService.Send(wzm);
             }
             if (zt == "出车中")
             {
-                speack("该车俩已出车");
+                MainBox.speack("该车俩已出车");
             }
         }
 
@@ -185,17 +227,24 @@ namespace XJ_YSG
         /// <param name="e"></param>
         private void btn_clos_TouchUp(object sender, TouchEventArgs e)
         {
-            if (MainBox.usertable.Count != 0 || MainBox.usertable == null)
+            if (MainBox.islxkq == false)
             {
-                MainBox.usertable.Clear();
+                if (MainBox.usertable.Count != 0 || MainBox.usertable == null)
+                {
+                    MainBox.usertable.Clear();
+                }
+                if (MainBox.isyjkq)
+                {
+                    MainBox.isyjkq = false;
+                }
+                MainBox.zwTimer.Start();
+                MainBox.RfidTimer.Start();
             }
-            if (MainBox.isyjkq)
+            else 
             {
-                MainBox.isyjkq = false;
-            }            
-            MainBox.zwTimer.Start();
-            MainBox.RfidTimer.Start();
-            Close();
+                Close();
+            }
+            
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -204,15 +253,7 @@ namespace XJ_YSG
             zwlr.ShowDialog();
         }
 
-        #region 语音播报
-        public void speack(string text)
-        {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                SpeechVoice.speack(text);
-            }), System.Windows.Threading.DispatcherPriority.Normal);
-        }
-        #endregion
+       
 
         private void top_page_Click(object sender, RoutedEventArgs e)
         {
