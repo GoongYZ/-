@@ -61,6 +61,9 @@ namespace BLL
                 case 8:
                     rtn = "_运行日志";
                     break;
+                case 9:
+                    rtn = "_语音播报";
+                    break;
             }
             return rtn;
         }

@@ -461,13 +461,13 @@ namespace XJ_YSG
                                             log.WriteLogo(MainBox.usertable.Count.ToString(), 3);
                                             if (MainBox.usertable != null)
                                             {
-                                                Xj_BoxList boxList = new Xj_BoxList();
+                                                Xj_BoxList boxList = new Xj_BoxList();                                               
+                                                boxList.ShowDialog();
                                                 rgbVideoSource.SignalToStop();
                                                 rgbVideoSource.Hide();
                                                 EntityModel.exitVideoRGBFR = true;
                                                 EntityModel.exitVideoRGBLiveness = true;
                                                 t.Stop();
-                                                boxList.ShowDialog(); ;
                                                 Close();
                                             }
                                         }                                       

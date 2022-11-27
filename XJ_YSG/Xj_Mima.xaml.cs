@@ -85,7 +85,7 @@ namespace XJ_YSG
                     else
                     {
                         mm.Content= "";
-                        speack("密码错误");
+                        MainBox.speack("密码错误");
                     }
                 }
                 else
@@ -99,14 +99,14 @@ namespace XJ_YSG
                             MainBox.QycsqdPK = tb["YCSQDPK"].ToString();
                             LockService.Send(wzm);
                             LockService.red_light(wzm, true);
-                            speack("柜门已打开，取后请关门");
+                            MainBox.speack("柜门已打开，取后请关门");
                             MainBox.locklis.Add(wzm + "_mmqys");
                             Close();
                         }
                         else
                         {
                             mm.Content = "";
-                            speack("验证码不正确，请重新输入");
+                            MainBox.speack("验证码不正确，请重新输入");
                         }
                     }
                 }
@@ -115,7 +115,7 @@ namespace XJ_YSG
             else 
             {
                 mm.Content = "";
-                speack("验证码不正确，请重新输入");
+                MainBox.speack("验证码不正确，请重新输入");
             }
         }
        
@@ -123,15 +123,7 @@ namespace XJ_YSG
 
 
 
-        #region 语音播报
-        public void speack(string text)
-        {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                SpeechVoice.speack(text);
-            }), System.Windows.Threading.DispatcherPriority.Normal);
-        }
-        #endregion
+       
 
         /// <summary>
         /// 取消退出按钮

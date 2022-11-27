@@ -160,7 +160,7 @@ namespace XJ_YSG
             }
             if (zt == "出车中")
             {
-                speack("该车俩已出车");
+                MainBox.speack("该车俩已出车");
             }
         }
 
@@ -204,15 +204,7 @@ namespace XJ_YSG
             zwlr.ShowDialog();
         }
 
-        #region 语音播报
-        public void speack(string text)
-        {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                SpeechVoice.speack(text);
-            }), System.Windows.Threading.DispatcherPriority.Normal);
-        }
-        #endregion
+       
 
         private void top_page_Click(object sender, RoutedEventArgs e)
         {

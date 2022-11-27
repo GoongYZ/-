@@ -105,7 +105,7 @@ namespace XJ_YSG
                 int nRet = ParameterModel.ZKFPModule_EnrollTemplateByImage(ParameterModel.m_hDevice, userid, m_pImageBuffer, m_nSize);
                 if (0 == nRet)
                 {
-                    speack("录入成功");
+                    MainBox.speack("录入成功");
                     log.WriteLogo("录入成功USERID="+ userid, 5);
                     disTimer.Stop();
                     Close();
@@ -118,13 +118,7 @@ namespace XJ_YSG
             }
         }
 
-        private void speack(string text)
-        {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                SpeechVoice.speack(text);
-            }), System.Windows.Threading.DispatcherPriority.Normal);
-        }
+       
 
         private void Button_Clos_TouchUp(object sender, TouchEventArgs e)
         {

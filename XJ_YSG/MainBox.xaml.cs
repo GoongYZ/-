@@ -28,7 +28,7 @@ namespace XJ_YSG
 
     public partial class MainBox : Window
     {
-        public static string bbh = "XJ_YSG_DQXJ_1.0";
+        public static string bbh = "XJ_YSG_LSSJ_1.0";
         Activation activation = new Activation();
         Fingerprint fingerprint = new Fingerprint();
         Logo log = new Logo();       
@@ -76,7 +76,7 @@ namespace XJ_YSG
             {
                 mainbox = this;
             }
-            Logo.sWriteLogo("系统启动：" + bbh + "_" + DateTime.Now.ToString(), 8);
+            Logo.sWriteLogo("系统启动：" + bbh + "_" + DateTime.Now.ToString(), 8);           
             speack("欢迎使用智能钥匙管理柜");
             UHFService.ConnectCOM();   //刷卡
             UHF2Service.ConnectCOM();   //读钥匙
@@ -86,7 +86,7 @@ namespace XJ_YSG
             lockService.initCom(suocom);  //连接锁
             Csh_yskp(); //初始化钥匙柜卡片
             zwthan();   //开始指纹验证
-            Rfidthan(); //实时RFID读信息卡                    
+            Rfidthan(); //实时RFID读信息卡           
             LockDjs(); //监控箱门
             Sbyxzt(); //上报状态
             this.Closed += MainWindow_Closed;
@@ -133,6 +133,7 @@ namespace XJ_YSG
         /// </summary>
         public void zwthan()
         {
+            
             zwTimer.Interval = new TimeSpan(0, 0, 0, 0, 500); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用。
             zwTimer.Tick += new EventHandler(disTimer_Tick_canShow); //每一秒执行的方法
             zwTimer.Start();
@@ -140,6 +141,7 @@ namespace XJ_YSG
 
         void disTimer_Tick_canShow(object sender, EventArgs e)
         {
+            
             int UserID = 0;
             int Index = 0;
             int nRet = -1;
@@ -177,12 +179,17 @@ namespace XJ_YSG
 
 
         #region 语音播报
-        public void speack(string text)
+        public static  void speack(string text)
         {
-            Dispatcher.BeginInvoke(new Action(() =>
+
+            try
             {
                 SpeechVoice.speack(text);
-            }), System.Windows.Threading.DispatcherPriority.Normal);
+            }
+            catch (Exception e)
+            {
+                Logo.sWriteLogo(e.Message, 9);
+            }
         }
         #endregion
 
@@ -396,7 +403,6 @@ namespace XJ_YSG
 
 
         #endregion
-
 
 
         #region 刷卡还钥匙
@@ -614,14 +620,11 @@ namespace XJ_YSG
                         LockService.red_light(i.ToString(), false);
                     }
                 }
-
-
                 string FilePath = Logo.sSetYsgGh();
                 if (!File.Exists(FilePath))
                 {
                     Logo.sWriteYsgh(gh_kp.Substring(0, gh_kp.Length - 1));
-                }
-               
+                }               
                 speack("智能钥匙管理柜初始化成功");
             });
         }
