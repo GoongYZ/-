@@ -76,7 +76,7 @@ namespace XJ_YSG
             {
                 mainbox = this;
             }
-            Logo.sWriteLogo("系统启动：" + bbh + "_" + DateTime.Now.ToString(), 8);
+            Logo.sWriteLogo("系统启动：" + bbh + "_" + DateTime.Now.ToString(), 8);           
             speack("欢迎使用智能钥匙管理柜");
             Closed += MainWindow_Closed;
             UHFService.ConnectCOM();   //刷卡
