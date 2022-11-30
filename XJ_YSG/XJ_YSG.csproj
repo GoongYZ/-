@@ -200,6 +200,7 @@
     </EmbeddedResource>
     <None Include="App.config" />
     <None Include="Config.ini" />
+    <None Include="lib\libarcsoft_face_engine.lib" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -241,6 +242,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\ZKFPModule.dll" />
+    <Content Include="lib\ZKSerialPort.dll" />
     <Resource Include="Img\ycpj.png" />
     <Resource Include="Img\ycsy.png" />
     <Resource Include="Img\jticon.png" />
@@ -249,6 +252,8 @@
     <Resource Include="Img\xj_lxkq.png" />
     <Content Include="lib\CustomControl.dll" />
     <Content Include="lib\DotNetSpeech.dll" />
+    <Content Include="lib\libarcsoft_face.dll" />
+    <Content Include="lib\libarcsoft_face_engine.dll" />
     <Content Include="lib\RFIDReaderNetwork_SerialSDK_ForCSharp.dll" />
     <Resource Include="Img\close.png" />
     <Resource Include="Img\Close1.png" />
